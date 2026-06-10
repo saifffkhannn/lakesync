@@ -1,3 +1,0 @@
-SOURCE,DATABASE,SCHEMA,TABLE,PRIMARY_KEY
-SAPSQLSERVER,OperationsDB,logistics,ShipmentTracking,TrackingID
-SAPSQLSERVER,OperationsDB,logistics,WarehouseInventory,InventoryID

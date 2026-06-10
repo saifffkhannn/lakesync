@@ -36,6 +36,10 @@ pip-delete-this-directory.txt
 *.cfg
 config.json
 
+# Unused/Archived folder moved for cleanup
+test/
+/test/
+
 # Editor/OS configs
 .vscode/
 .idea/
