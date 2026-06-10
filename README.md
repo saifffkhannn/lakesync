@@ -40,6 +40,11 @@ All microservices are bound together by an automated starter script. Follow the 
 - **Python** (v3.10 or v3.11) with `pip`
 - (Optional) **Snowflake Account** and credentials to run ABAP conversions via Cortex AI or MDM unification pipelines.
 
+For detailed module-specific configuration requirements, see:
+- 📊 **[Data Load Prerequisites](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/prerequisites_dataload.md)**
+- ⚙️ **[ABAP Conversion Prerequisites](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/prerequisites_abap.md)**
+- 🔄 **[Master Data Management (MDM) Prerequisites](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/prerequisites_mdm.md)**
+
 ### 2. Set Up Configuration (Optional)
 Configure Snowflake/Cloud credentials inside the `.env` or configuration templates if you wish to run live cloud pipelines. Check:
 - `Conversion_ABAP/backend/.env` (based on `Conversion_ABAP/backend/.env.example`)
