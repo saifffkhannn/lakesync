@@ -20,8 +20,9 @@ This platform integrates four core capabilities into a single, cohesive workflow
 ```
 DATA LOAD ACCELERATORS/
 ├── lakesync/               # React (Vite) Frontend UI for dashboards & configurations
-├── Ingestion_engine/       # FastAPI Backend for Full/Incremental load pipelines & MDM orchestration
+├── Ingestion_engine/       # FastAPI Backend for Full/Incremental load pipelines & API gateway bridge
 ├── Conversion_ABAP/        # Flask Backend & CLI scripts for ABAP-to-Snowflake SQL conversion
+├── mdm/                    # Modular MDM engine (Connection, Schema, Procedures, Queries, Runner)
 ├── api_gateway.py          # Unified Router/Gateway handling incoming frontend API calls
 ├── run_lakesync.bat        # Automated orchestrator script to spin up the entire local stack
 ├── test/                   # (Ignored) Archive folder containing unused references and slides

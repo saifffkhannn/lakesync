@@ -1,4 +1,10 @@
 import logging
+import sys
+import os
+
+# Add parent directory of ingestion_engine to sys.path so the adjacent mdm package can be imported
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from mdm import ConnectionManager, SchemaDeployer, ProcedureDeployer, QueryHandler, PipelineRunner
 
 logger = logging.getLogger("mdm_helper")
