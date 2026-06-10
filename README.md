@@ -93,3 +93,13 @@ This script will automatically:
 1. Mapping configs stage source databases to Bronze schema targets using change tracking.
 2. Snowflake streams capture inputs, triggering `SP_LOAD_GROUP` and Snowpark's `SP_MASTER_ENTITY`.
 3. Records are clustered, matched against existing master identifiers using similarity algorithms, and flattened into the `MASTER_ENTITY_FLAT` view.
+
+---
+
+## 📖 Module Run & Execution Guides
+
+For step-by-step instructions on running each module independently or via the CLI interfaces, consult the execution guides:
+- 📊 **[Data Load Run Guide](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/run_dataload.md)**
+- ⚙️ **[ABAP Conversion Run Guide](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/run_abap.md)**
+- 🔄 **[Master Data Management (MDM) Run Guide](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/run_mdm.md)**
+
