@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+/jspm_packages/
+web_modules/
+
+# Production builds
+dist/
+build/
+out/
+
+# Python caching and environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Zipped archives/compressed files in the workspace (per user project structure)
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# Environment variables & local configuration secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+*.cfg
+config.json
+
+# Editor/OS configs
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

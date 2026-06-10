@@ -1,0 +1,28 @@
+{
+  "sourcePlatform": "SAPSQLServer",
+  "cloudPlatform": "AWS",
+  "targetPlatform": "Snowflake",
+  "source": {
+    "server_name": "DESKTOP-JLOBD2O\\SQLEXPRESS",
+    "database": "bikestores",
+    "user": "sa",
+    "password": "synthlake@1",
+    "platform": "SAPSQLServer"
+  },
+  "target": {
+    "account": "BYVCTSJ-CVB58275",
+    "user": "SAIADITHYA",
+    "password": "Synthlake@2026",
+    "warehouse": "COMPUTE_WH",
+    "database": "bikestores",
+    "platform": "Snowflake"
+  },
+  "cloud": {
+    "aws_region": "eu-north-1",
+    "aws_access_key_id": "YOUR_AWS_ACCESS_KEY_ID",
+    "aws_secret_access_key": "YOUR_AWS_SECRET_ACCESS_KEY",
+    "s3_bucket_name": "stageddataparqe",
+    "base_path": "s3://stageddataparqe/",
+    "platform": "AWS"
+  }
+}

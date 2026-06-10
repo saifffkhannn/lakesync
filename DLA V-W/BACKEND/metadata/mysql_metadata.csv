@@ -1,0 +1,3 @@
+SOURCE,DATABASE,SCHEMA,TABLE,PRIMARY_KEY
+MYSQL,migration_source,migration_source,customers,customer_id
+MYSQL,migration_source,migration_source,orders,order_id

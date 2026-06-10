@@ -1,0 +1,28 @@
+POSTGRES,SNOWFLAKE
+smallint,"NUMBER(5,0)"
+integer,"NUMBER(10,0)"
+bigint,"NUMBER(19,0)"
+numeric,"NUMBER(38,18)"
+decimal,"NUMBER(38,18)"
+real,FLOAT
+double precision,FLOAT
+smallserial,"NUMBER(5,0)"
+serial,"NUMBER(10,0)"
+bigserial,"NUMBER(19,0)"
+money,"NUMBER(19,4)"
+boolean,BOOLEAN
+char,CHAR
+character,CHAR
+character varying,VARCHAR
+varchar,VARCHAR
+text,VARCHAR
+date,DATE
+timestamp without time zone,TIMESTAMP_NTZ
+timestamp with time zone,TIMESTAMP_TZ
+time without time zone,TIME
+time with time zone,TIME
+bytea,BINARY
+json,VARIANT
+jsonb,VARIANT
+uuid,VARCHAR
+xml,VARIANT

@@ -1,0 +1,16 @@
+pandas
+pyarrow
+fastapi
+uvicorn
+pydantic
+boto3
+pyodbc
+pymysql
+psycopg2-binary
+oracledb
+databricks-sql-connector
+configparser
+azure-storage-blob
+google-cloud-bigquery
+google-cloud-storage
+snowflake-connector-python

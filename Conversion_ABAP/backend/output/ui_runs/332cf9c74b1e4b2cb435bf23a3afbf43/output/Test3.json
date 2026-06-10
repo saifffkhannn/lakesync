@@ -1,0 +1,61 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\332cf9c74b1e4b2cb435bf23a3afbf43\\input\\Test3.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\332cf9c74b1e4b2cb435bf23a3afbf43\\output\\Test3.sql",
+  "confidence": 0.72,
+  "warnings": [
+    "SAP session variables like $session.client cannot be directly mapped to Snowflake - using placeholders",
+    "ABAP-specific functions like dats_days_between, unit_conversion, fltp_to_dec have no direct Snowflake equivalents - approximated with standard functions",
+    "ABAP typed literals (abap.int4, abap.char, etc.) converted to standard SQL literals",
+    "Some fields referenced (seatsocc_b, seatsocc_f) may not exist in source table - assumed to be valid columns",
+    "ABAP 'IS NOT INITIAL' converted to 'IS NOT NULL' which may have different semantics for empty strings",
+    "Parameter handling differs between ABAP CDS and Snowflake views - parameters become view parameters",
+    "ABAP regex function replace_regexpr has different syntax than Snowflake REGEXP_REPLACE",
+    "Unit conversion from miles to kilometers approximated with multiplication factor"
+  ],
+  "assumptions": [
+    "Source table zdemo_abap_fli exists in Snowflake with same column structure",
+    "Columns seatsocc_b and seatsocc_f exist in the source table",
+    "Parameter p_smax will be passed as view parameter",
+    "ABAP semantic annotations are not preserved in Snowflake view",
+    "Client handling is not required (original had @AccessControl.authorizationCheck: #NOT_REQUIRED)",
+    "Date literal '20240101' represents January 1, 2024",
+    "String functions behavior matches between ABAP and Snowflake for trailing blanks handling"
+  ],
+  "conversion_notes": [
+    "Converted ABAP CDS view entity to Snowflake parameterized view",
+    "Mapped ABAP built-in functions to closest Snowflake equivalents",
+    "Preserved all arithmetic, case, and logical expressions",
+    "Maintained WHERE clause filtering logic with parameter",
+    "Converted ABAP session variables to Snowflake system functions where possible",
+    "Approximated SAP-specific date/time functions with standard SQL functions",
+    "Removed SAP-specific annotations as they have no Snowflake equivalent",
+    "Maintained key field semantics through comments (Snowflake views don't have formal keys)"
+  ],
+  "learning_memory": {
+    "stored": true,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\332cf9c74b1e4b2cb435bf23a3afbf43\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 41,
+      "select": 2
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "ABOVE",
+      "AN",
+      "MULTIPLE",
+      "THE",
+      "TODAY",
+      "WHERE",
+      "WHICH",
+      "ZDEMO_ABAP_FLI"
+    ]
+  }
+}

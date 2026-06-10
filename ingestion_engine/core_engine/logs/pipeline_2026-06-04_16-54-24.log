@@ -1,0 +1,65 @@
+2026-06-04 16:54:24,398 | INFO | Config file verified     : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\config\sapsqlserver_aws_snowflake.cfg
+2026-06-04 16:54:24,399 | INFO | Metadata file verified   : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\metadata\sapsqlserver_metadata.csv
+2026-06-04 16:54:24,400 | INFO | Starting Full Load Pipeline
+2026-06-04 16:54:24,404 | INFO | Connecting to SAP SQL Server...
+2026-06-04 16:54:24,408 | INFO | Connected to SAP SQL Server.
+2026-06-04 16:54:31,830 | INFO | Connected to Snowflake
+2026-06-04 16:54:31,838 | INFO | Processing table bikestores_stg.production.brands
+2026-06-04 16:54:31,880 | INFO | Starting extraction for bikestores.production.brands
+2026-06-04 16:54:32,105 | INFO | Schema retrieved
+2026-06-04 16:54:32,106 | INFO | brand_id                     int64
+brand_name                  object
+LastModifiedDate    datetime64[us]
+dtype: object
+2026-06-04 16:54:32,209 | INFO | Source count: 9
+2026-06-04 16:54:32,209 | INFO | Parquet count: 9
+2026-06-04 16:54:32,210 | INFO | Reconciliation Passed
+2026-06-04 16:54:32,210 | INFO | Parquet file created at D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/brands\brands_20260604_165432.parquet
+2026-06-04 16:54:32,210 | INFO | Extraction completed for brands
+2026-06-04 16:54:32,213 | INFO | Uploading brands_20260604_165432.parquet to AWS S3
+2026-06-04 16:54:32,531 | INFO | S3 client created successfully
+2026-06-04 16:54:39,099 | INFO | Archiving: bikestores/production/brands/brands_20260604_165240.parquet -> archive/bikestores/production/brands/brands_20260604_165240.parquet
+2026-06-04 16:54:39,708 | INFO | All existing files archived successfully
+2026-06-04 16:54:39,722 | INFO | Previous S3 file archived successfully
+2026-06-04 16:54:39,790 | INFO | S3 client created successfully
+2026-06-04 16:54:39,792 | INFO | Upload attempt 1
+2026-06-04 16:54:46,251 | INFO | Upload Successful
+2026-06-04 16:54:46,451 | INFO | Local File Size: 2569
+2026-06-04 16:54:46,453 | INFO | S3 File Size: 2569
+2026-06-04 16:54:46,453 | INFO | Uploaded brands_20260604_165432.parquet to s3://stageddataparqe/bikestores/production/brands/brands_20260604_165432.parquet
+2026-06-04 16:54:46,465 | INFO | Local file Not deleted after upload: D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/brands\brands_20260604_165432.parquet
+2026-06-04 16:54:46,467 | INFO | Creating target objects on 'snowflake' for table: bikestores.production.brands
+2026-06-04 16:54:46,468 | INFO | Starting Snowflake object creation for bikestores.production.brands
+2026-06-04 16:54:46,526 | INFO | Retrieved source schema:
+        COLUMN_NAME DATA_TYPE
+0          brand_id       int
+1        brand_name   varchar
+2  LastModifiedDate  datetime
+2026-06-04 16:54:46,550 | INFO | Creating snowflake Database bikestores 
+2026-06-04 16:54:51,330 | INFO | RAW & TGT objects created successfully
+2026-06-04 16:54:51,332 | INFO | Cursor closed
+2026-06-04 16:54:51,333 | INFO | Target objects created successfully on 'snowflake' 
+2026-06-04 16:54:52,269 | INFO | Snowflake control table ready in bikestores.control_schema
+2026-06-04 16:54:52,270 | INFO | Snowflake control table created successfully.
+2026-06-04 16:54:52,275 | INFO | Loading data into Snowflake table bikestore_stg.production.brands
+2026-06-04 16:54:55,279 | INFO | File: s3://stageddataparqe/bikestores/production/brands/brands_20260604_165432.parquet, Status: LOADED, Parsed: 9, Loaded: 9, Errors: 0, Error Limit: 1
+2026-06-04 16:54:57,938 | INFO | RAW MERGE RESULT: (9, 0)
+2026-06-04 16:54:57,939 | INFO | MERGE complete — Inserted: 9, Updated: 0
+2026-06-04 16:54:58,961 | INFO | Truncated Table brands in bikestore_stg
+2026-06-04 16:54:58,963 | INFO | Merge metrics | Inserted: 9, Updated: 0
+2026-06-04 16:54:58,964 | INFO | {'event': 'snowflake_load_complete', 'table': 'bikestore_stg.production.brands', 'rows_loaded': 9, 'status': 'SUCCESS'}
+2026-06-04 16:54:58,964 | INFO | Snowflake Loading completed successfully
+2026-06-04 16:54:59,382 | INFO | Completed table brands
+2026-06-04 16:55:00,193 | INFO | Inserted into Snowflake control table in control_schema: brands
+2026-06-04 16:55:00,195 | INFO | Full Load Pipeline Completed Successfully
+2026-06-04 16:55:00,207 | INFO | Source Connection closed successfully
+2026-06-04 16:55:00,970 | INFO | Target Connection closed successfully
+2026-06-04 16:55:06,732 | INFO | Connecting to SAP SQL Server...
+2026-06-04 16:55:06,736 | INFO | Connected to SAP SQL Server.
+2026-06-04 16:55:09,213 | INFO | Connected to Snowflake
+2026-06-04 16:55:13,514 | INFO | Connecting to SAP SQL Server...
+2026-06-04 16:55:13,521 | INFO | Connected to SAP SQL Server.
+2026-06-04 16:55:17,607 | INFO | Connected to Snowflake
+2026-06-04 16:55:24,132 | INFO | Connecting to SAP SQL Server...
+2026-06-04 16:55:24,135 | INFO | Connected to SAP SQL Server.
+2026-06-04 16:55:26,017 | INFO | Connected to Snowflake

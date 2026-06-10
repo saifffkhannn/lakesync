@@ -1,0 +1,52 @@
+{
+  "source": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\deaab8b26504472fb9a5fce99fe15ead\\input\\Test3.txt",
+  "sql": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\deaab8b26504472fb9a5fce99fe15ead\\output\\Test3.sql",
+  "confidence": 0.75,
+  "warnings": [
+    "ABAP session variables like $session.user_timezone have no direct SQL equivalent",
+    "ABAP-specific functions like unit_conversion, dats_days_between, utcl_current have no direct SQL equivalent",
+    "Parameters syntax $parameters.p_smax translated to :p_smax bind variable",
+    "Some ABAP built-in functions like div(), concat_with_space() may not exist in Snowflake"
+  ],
+  "assumptions": [
+    "Parameters are passed as bind variables using :parameter_name syntax",
+    "ABAP session variables mapped to SQL equivalents where possible",
+    "ABAP-specific date/time functions replaced with standard SQL DATEDIFF/DATEADD",
+    "ABAP typed literals converted to standard SQL literals",
+    "Projection references resolved to column aliases within same SELECT"
+  ],
+  "conversion_notes": [
+    "Stripped ABAP annotations @AccessControl, @EndUserText, @Semantics",
+    "Converted ABAP CDS DEFINE VIEW to SQL CREATE OR REPLACE VIEW",
+    "Translated ABAP CASE expressions to SQL CASE WHEN...THEN...ELSE...END",
+    "Converted ABAP cast expressions to SQL CAST functions",
+    "Mapped ABAP built-in functions to closest SQL equivalents"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\deaab8b26504472fb9a5fce99fe15ead\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 41,
+      "select": 2
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "ABOVE",
+      "AN",
+      "MULTIPLE",
+      "THE",
+      "TODAY",
+      "WHERE",
+      "WHICH",
+      "ZDEMO_ABAP_FLI"
+    ]
+  }
+}

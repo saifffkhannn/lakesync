@@ -1,0 +1,38 @@
+{
+  "source": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\2081f83b8d184e15b51f5913a681e44e\\input\\Test2.txt",
+  "sql": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\2081f83b8d184e15b51f5913a681e44e\\output\\Test2.sql",
+  "confidence": 0.95,
+  "warnings": [],
+  "assumptions": [
+    "ABAP decimal type 'abap.dec(15,2)' translated to SQL DECIMAL(15,2)",
+    "ABAP 'ALL' keyword in MAX function removed as it's default behavior in SQL"
+  ],
+  "conversion_notes": [
+    "Stripped ABAP annotations: @AccessControl.authorizationCheck, @EndUserText.label, @Semantics.amount.currencyCode",
+    "Translated CDS DEFINE VIEW to CREATE OR REPLACE VIEW",
+    "Converted ABAP aggregate functions to standard SQL aggregate functions",
+    "Preserved all column aliases and GROUP BY clause structure",
+    "Removed 'key' keyword as it has no equivalent in SQL view definition"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\2081f83b8d184e15b51f5913a681e44e\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 10,
+      "select": 1
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "THE",
+      "ZDEMO_ABAP_FLI"
+    ]
+  }
+}

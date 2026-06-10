@@ -1,0 +1,31 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\0a69e4725cff45889ba128deebd7ee37\\input\\Test1.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\0a69e4725cff45889ba128deebd7ee37\\output\\Test1.sql",
+  "confidence": 0.72,
+  "warnings": [],
+  "assumptions": [
+    "ABAP host variables are emitted as Snowflake bind-style placeholders where possible.",
+    "MANDT client handling is removed unless explicitly represented in business filters."
+  ],
+  "conversion_notes": [
+    "No SAP metadata rows were found; conversion used source-only inference."
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\0a69e4725cff45889ba128deebd7ee37\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "select": 1
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "MARA"
+    ]
+  }
+}

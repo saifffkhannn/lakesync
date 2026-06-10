@@ -1,0 +1,60 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\7002ade38ce54d4d92f66cbf5ea0a438\\input\\Test3.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\7002ade38ce54d4d92f66cbf5ea0a438\\output\\Test3.sql",
+  "confidence": 0.72,
+  "warnings": [
+    "SAP-specific session variables like $session.client cannot be directly mapped to Snowflake equivalents",
+    "ABAP typed literals (abap.int4, abap.char, etc.) converted to standard SQL types",
+    "SAP CDS $projection references replaced with inline expressions or subqueries",
+    "ABAP CDS parameters converted to view parameters - may need procedure wrapper for dynamic execution",
+    "SAP-specific functions like unit_conversion, dats_days_between, utcl_current have no direct Snowflake equivalents",
+    "ABAP 'IS NOT INITIAL' converted to 'IS NOT NULL' - semantic difference for empty strings",
+    "Some ABAP string functions have different trailing space handling than Snowflake equivalents",
+    "Fields seatsocc_b and seatsocc_f referenced but not defined in source table - may be missing columns"
+  ],
+  "assumptions": [
+    "Table zdemo_abap_fli exists in Snowflake with same column structure",
+    "View parameters in Snowflake require explicit passing, unlike SAP CDS dynamic parameters",
+    "SAP client field handling not required in target system",
+    "ABAP initial value semantics approximated with NULL checks",
+    "Date literals converted from ABAP DATS format to standard SQL DATE format",
+    "Numeric precision maintained where possible in type conversions"
+  ],
+  "conversion_notes": [
+    "Converted SAP CDS view entity to Snowflake parameterized view",
+    "Replaced SAP-specific session variables with Snowflake equivalents where available",
+    "Converted ABAP typed literals to standard SQL literals with appropriate casting",
+    "Mapped most SQL functions to Snowflake equivalents with similar semantics",
+    "Preserved all logical expressions, case statements, and arithmetic operations",
+    "Maintained WHERE clause logic with parameter reference",
+    "Some SAP-specific functions like unit conversion require custom UDF implementation",
+    "Date/time functions approximated - may need adjustment based on exact requirements"
+  ],
+  "learning_memory": {
+    "stored": true,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\7002ade38ce54d4d92f66cbf5ea0a438\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 41,
+      "select": 2
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "ABOVE",
+      "AN",
+      "MULTIPLE",
+      "THE",
+      "TODAY",
+      "WHERE",
+      "WHICH",
+      "ZDEMO_ABAP_FLI"
+    ]
+  }
+}

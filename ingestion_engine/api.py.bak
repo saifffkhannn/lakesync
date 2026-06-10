@@ -1,0 +1,200 @@
+import json
+import csv
+import os
+import logging
+import traceback
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Dict, Any, Optional
+
+from connectors.sqlserver_connector import SQLServerConnector
+from connectors.snowflake_connector import SnowflakeConnector
+from connectors.bigquery_connector import BigQueryConnector
+from connectors.databricks_connector import DatabricksConnector
+from orchestrator import IngestionEngine
+from execution.manager import StatusTracker
+
+logger = logging.getLogger("data_accelerator")
+logging.basicConfig(level=logging.INFO)
+
+app = FastAPI()
+
+# Enable CORS for React frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+CONFIG_PATH = os.path.join(BASE_DIR, "config", "config.json")
+MAPPING_CSV_PATH = os.path.join(BASE_DIR, "config", "COLUMN_MAPPING.csv")
+
+class Config(BaseModel):
+    source: Dict[str, Any]
+    target: Dict[str, Any]
+    cloud: Dict[str, Any]
+    spark: Optional[Dict[str, Any]] = None
+
+DEFAULT_SPARK_CONFIG = {
+    "sql_jar": "C:\spark\spark-3.4.1-bin-hadoop3\jars\mssql-jdbc-12.4.1.jre11.jar",
+    
+}
+
+@app.get("/config")
+def get_config():
+    if not os.path.exists(CONFIG_PATH):
+        return {}
+    with open(CONFIG_PATH, "r") as f:
+        return json.load(f)
+
+@app.post("/config")
+def save_config(config: Config):
+    config_dict = config.dict()
+    if not config_dict.get("spark"):
+        config_dict["spark"] = DEFAULT_SPARK_CONFIG
+    
+    with open(CONFIG_PATH, "w") as f:
+        json.dump(config_dict, f, indent=2)
+    return {"status": "success"}
+
+@app.get("/source/schemas")
+def get_source_schemas():
+    with open(CONFIG_PATH) as f:
+        cfg = json.load(f)["source"]
+    conn = SQLServerConnector(cfg["server"], cfg["database"], cfg["username"], cfg["password"])
+    conn.connect()
+    return conn.fetch_schemas()
+
+@app.get("/source/tables")
+def get_source_tables(schema: str):
+    with open(CONFIG_PATH) as f:
+        cfg = json.load(f)["source"]
+    conn = SQLServerConnector(cfg["server"], cfg["database"], cfg["username"], cfg["password"])
+    conn.connect()
+    return conn.fetch_tables(schema)
+
+@app.get("/source/columns")
+def get_source_columns(schema: str, table: str):
+    with open(CONFIG_PATH) as f:
+        cfg = json.load(f)["source"]
+    conn = SQLServerConnector(cfg["server"], cfg["database"], cfg["username"], cfg["password"])
+    conn.connect()
+    return conn.fetch_table_metadata(schema, table)
+
+def get_target_connector():
+    with open(CONFIG_PATH) as f:
+        cfg = json.load(f)["target"]
+    
+    platform = cfg.get("platform", "Snowflake").lower()
+    if platform == "bigquery":
+        return BigQueryConnector(cfg["project_id"], cfg["dataset_id"], cfg["service_account_json"])
+    elif platform == "databricks":
+        return DatabricksConnector(cfg["server_hostname"], cfg["http_path"], cfg["access_token"], cfg.get("catalog"))
+    else:
+        return SnowflakeConnector(cfg["username"], cfg["password"], cfg["account"], cfg["warehouse"], cfg["database"], cfg["schema"])
+
+@app.get("/target/schemas")
+def get_target_schemas():
+    conn = get_target_connector()
+    return conn.fetch_schemas()
+
+@app.get("/target/tables")
+def get_target_tables(schema: str):
+    conn = get_target_connector()
+    return conn.fetch_tables(schema)
+
+@app.get("/target/columns")
+def get_target_columns(schema: str, table: str):
+    conn = get_target_connector()
+    return conn.fetch_table_metadata(schema, table)
+
+class MappingRequest(BaseModel):
+    src_db: str
+    src_schema: str
+    src_table: str
+    tgt_db: str
+    tgt_schema: str
+    tgt_table: str
+    column_map: Dict[str, Any] # tgt_col -> src_col(s)
+    source_columns: List[str]
+    target_columns: List[str]
+    incremental_src_col: str = ""
+    incremental_tgt_col: str = ""
+    primary_keys: List[str] = []
+
+@app.post("/mapping")
+def save_mapping(mapping: MappingRequest):
+    return save_mapping_batch([mapping])
+
+@app.post("/mapping/batch")
+def save_mapping_batch(mappings: List[MappingRequest]):
+    logger.info(f"Received batch mapping save request for {len(mappings)} tables")
+    try:
+        # Overwrite the CSV with headers and then all rows from the batch
+        os.makedirs(os.path.dirname(MAPPING_CSV_PATH), exist_ok=True)
+        with open(MAPPING_CSV_PATH, "w", newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([
+                "src_db", "src_schema", "src_table", 
+                "tgt_db", "tgt_schema", "tgt_table", 
+                "column_map_json",
+                "source_columns_json", "target_columns_json", 
+                "incremental_src_col", "incremental_tgt_col", "primary_keys"
+            ])
+            
+            for mapping in mappings:
+                row = [
+                    mapping.src_db,
+                    mapping.src_schema,
+                    mapping.src_table,
+                    mapping.tgt_db,
+                    mapping.tgt_schema,
+                    mapping.tgt_table,
+                    json.dumps(mapping.column_map),
+                    json.dumps(mapping.source_columns),
+                    json.dumps(mapping.target_columns),
+                    mapping.incremental_src_col,
+                    mapping.incremental_tgt_col,
+                    json.dumps(mapping.primary_keys)
+                ]
+                writer.writerow(row)
+        
+        logger.info(f"Successfully saved {len(mappings)} mappings to {MAPPING_CSV_PATH}")
+        return {"status": "success", "count": len(mappings)}
+    except Exception as e:
+        logger.error(f"Failed to save mappings: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+def run_ingestion():
+    try:
+        engine = IngestionEngine()
+        engine.run()
+    except Exception as e:
+        error_msg = traceback.format_exc()
+        logger.error(f"Ingestion failed with error:\n{error_msg}")
+        StatusTracker.update("FAILED", message=f"Fatal Error: {str(e)}")
+
+@app.post("/ingest")
+def start_ingestion(background_tasks: BackgroundTasks):
+    StatusTracker.set_abort(False)
+    StatusTracker.update("IDLE", message="Starting background ingestion task...")
+    background_tasks.add_task(run_ingestion)
+    return {"status": "success", "message": "Ingestion started in background"}
+
+@app.post("/ingest/stop")
+def stop_ingestion():
+    StatusTracker.set_abort(True)
+    StatusTracker.update("HALTED", message="Ingestion stopped by user")
+    return {"status": "success"}
+
+@app.get("/ingest/status")
+def get_ingestion_status():
+    return StatusTracker.get()
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+

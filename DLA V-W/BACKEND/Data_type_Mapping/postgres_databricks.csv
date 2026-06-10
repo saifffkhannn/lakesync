@@ -1,0 +1,28 @@
+POSTGRES,DATABRICKS
+smallint,BIGINT
+integer,BIGINT
+bigint,BIGINT
+numeric,DOUBLE
+decimal,DOUBLE
+real,DOUBLE
+double precision,DOUBLE
+smallserial,BIGINT
+serial,BIGINT
+bigserial,BIGINT
+money,DOUBLE
+boolean,BOOLEAN
+char,STRING
+character,STRING
+character varying,STRING
+varchar,STRING
+text,STRING
+date,DATE
+timestamp without time zone,TIMESTAMP
+timestamp with time zone,TIMESTAMP
+time without time zone,STRING
+time with time zone,STRING
+bytea,BINARY
+json,STRING
+jsonb,STRING
+uuid,STRING
+xml,STRING

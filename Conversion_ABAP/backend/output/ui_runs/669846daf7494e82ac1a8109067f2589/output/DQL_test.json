@@ -1,0 +1,42 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\669846daf7494e82ac1a8109067f2589\\input\\DQL_test.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\669846daf7494e82ac1a8109067f2589\\output\\DQL_test.sql",
+  "confidence": 0.35,
+  "warnings": [
+    "WRITE statement output cannot be translated to SQL - it is GUI output functionality",
+    "Confidence capped because the output identifies core SAP runtime behavior that is not SQL-convertible."
+  ],
+  "assumptions": [
+    "Table names vbak, vbap, kna1 exist in Snowflake with same column names",
+    "Date format '20240101' is compatible with target date column format"
+  ],
+  "conversion_notes": [
+    "Stripped REPORT declaration as it has no SQL equivalent",
+    "Removed INTO TABLE @DATA(lt_sales) as it is just a target variable",
+    "Converted ABAP table~column syntax to SQL table.column syntax",
+    "Removed LOOP AT and WRITE statements as they are ABAP-specific output logic",
+    "The SELECT result represents what would have been written to output"
+  ],
+  "learning_memory": {
+    "stored": true,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\669846daf7494e82ac1a8109067f2589\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 3,
+      "select": 1,
+      "loop": 1
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "KNA1",
+      "VBAK",
+      "VBAP"
+    ]
+  }
+}

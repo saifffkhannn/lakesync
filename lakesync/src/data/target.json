@@ -1,0 +1,16 @@
+{
+
+    "Snowflake": {
+        "account": "",
+        "warehouse": "",
+        "database": "",
+        "user": "",
+        "password": ""
+    },
+    "Databricks": {
+        "server_hostname": "",
+        "http_path": "",
+        "access_token": "",
+        "catalog": ""
+    }
+}

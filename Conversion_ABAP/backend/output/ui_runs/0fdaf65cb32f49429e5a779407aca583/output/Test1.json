@@ -1,0 +1,52 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\0fdaf65cb32f49429e5a779407aca583\\input\\Test1.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\0fdaf65cb32f49429e5a779407aca583\\output\\Test1.sql",
+  "confidence": 0.92,
+  "warnings": [
+    "ABAP CDS annotations (@AccessControl.authorizationCheck, @EndUserText.label) are not migrated - implement security and metadata in Snowflake separately",
+    "The original ABAP source contains multiple commented-out join patterns - only the active INNER JOIN pattern is implemented in the main view",
+    "ABAP CDS 'key' designation is not preserved in Snowflake view - implement primary key constraints separately if needed",
+    "Alternative join patterns are provided as commented SQL for reference but would need separate view definitions"
+  ],
+  "assumptions": [
+    "Tables zdemo_abap_carr and zdemo_abap_flsch exist in Snowflake with same structure and column names",
+    "The INNER JOIN pattern was the active/uncommented version in the source ABAP CDS view",
+    "COALESCE and CASE expressions work identically in Snowflake as in ABAP CDS",
+    "No client handling (MANDT) is required based on the demo nature of the source tables"
+  ],
+  "conversion_notes": [
+    "Converted ABAP CDS view entity to Snowflake CREATE VIEW statement",
+    "Preserved the active INNER JOIN logic with exact same join condition and column aliases",
+    "Maintained all column aliases (cityfr_in, cityto_in) from the original",
+    "Added commented examples of the other join types for reference",
+    "ABAP CDS element list syntax converted to standard SQL SELECT list",
+    "Join syntax is directly compatible between ABAP CDS and Snowflake SQL"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\0fdaf65cb32f49429e5a779407aca583\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 22,
+      "select": 3
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "AND",
+      "CONDITION",
+      "CONDITIONS",
+      "MUST",
+      "SELECTS",
+      "TYPE",
+      "ZDEMO_ABAP_CARR",
+      "ZDEMO_ABAP_FLSCH"
+    ]
+  }
+}

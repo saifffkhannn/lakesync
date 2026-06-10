@@ -1,0 +1,58 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\c5c66669076a4caabc665b8958b8a764\\input\\Test3.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\c5c66669076a4caabc665b8958b8a764\\output\\Test3.sql",
+  "confidence": 0.72,
+  "warnings": [
+    "SAP-specific session variables ($session.*) mapped to Snowflake equivalents but may not have identical behavior",
+    "ABAP typed literals (abap.int4, abap.char, etc.) converted to standard SQL literals",
+    "SAP CDS $projection references resolved inline as they cannot be directly represented in Snowflake",
+    "SAP-specific functions (unit_conversion, dats_days_between, etc.) approximated with Snowflake equivalents",
+    "ABAP 'IS NOT INITIAL' converted to 'IS NOT NULL' - may have different null handling semantics",
+    "Parameter handling converted to view parameter - actual parameter passing mechanism may differ",
+    "Some ABAP CDS annotations (@Semantics.*) cannot be represented in Snowflake SQL",
+    "Fields seatsocc_b and seatsocc_f referenced but not present in source table - may cause runtime errors"
+  ],
+  "assumptions": [
+    "Table zdemo_abap_fli exists in Snowflake with similar structure to SAP version",
+    "Client field (MANDT) handling not required in target system",
+    "Parameter p_smax will be passed as view parameter",
+    "Session variables mapped to Snowflake built-in functions provide acceptable equivalents",
+    "ABAP initial value semantics can be approximated with NULL checks"
+  ],
+  "conversion_notes": [
+    "Converted SAP CDS view entity to Snowflake parameterized view",
+    "Preserved all arithmetic and logical expressions with standard SQL syntax",
+    "Maintained case expression logic and structure",
+    "Converted string functions to Snowflake equivalents where possible",
+    "Approximated SAP-specific date/time functions with Snowflake DATEADD/DATEDIFF",
+    "Removed SAP CDS annotations as they have no Snowflake equivalent",
+    "Converted ABAP typed literals to standard SQL data types"
+  ],
+  "learning_memory": {
+    "stored": true,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\c5c66669076a4caabc665b8958b8a764\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 41,
+      "select": 2
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "ABOVE",
+      "AN",
+      "MULTIPLE",
+      "THE",
+      "TODAY",
+      "WHERE",
+      "WHICH",
+      "ZDEMO_ABAP_FLI"
+    ]
+  }
+}

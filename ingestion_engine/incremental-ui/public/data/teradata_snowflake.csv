@@ -1,0 +1,19 @@
+TERADATA,SNOWFLAKE
+byteint,"NUMBER(3,0)"
+smallint,"NUMBER(5,0)"
+integer,"NUMBER(10,0)"
+bigint,"NUMBER(19,0)"
+decimal,"NUMBER(38,18)"
+numeric,"NUMBER(38,18)"
+float,FLOAT
+double precision,FLOAT
+real,FLOAT
+char,CHAR
+varchar,VARCHAR
+clob,VARCHAR
+date,DATE
+time,TIME
+timestamp,TIMESTAMP
+timestamp with time zone,TIMESTAMP_TZ
+blob,BINARY
+varbyte,BINARY

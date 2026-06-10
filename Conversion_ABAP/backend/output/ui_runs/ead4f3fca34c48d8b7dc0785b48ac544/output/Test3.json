@@ -1,0 +1,56 @@
+{
+  "source": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\ead4f3fca34c48d8b7dc0785b48ac544\\input\\Test3.txt",
+  "sql": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\ead4f3fca34c48d8b7dc0785b48ac544\\output\\Test3.sql",
+  "confidence": 0.75,
+  "warnings": [
+    "ABAP session variables like $session.client, $session.system_language, $session.user_timezone may not have direct Snowflake equivalents",
+    "ABAP-specific functions like unit_conversion, dats_days_between, dats_to_datn, dats_add_days, utcl_current, utcl_add_seconds may not translate directly",
+    "ABAP typed literals (abap.int4, abap.char, etc.) converted to standard SQL literals",
+    "Parameters syntax changed from $parameters.p_smax to :p_smax",
+    "Some ABAP CDS functions may not have exact Snowflake equivalents"
+  ],
+  "assumptions": [
+    "Parameters are passed as bind variables using :parameter_name syntax",
+    "ABAP session variables mapped to closest Snowflake equivalents where possible",
+    "ABAP-specific date/time functions replaced with standard SQL DATEDIFF/DATEADD",
+    "Unit conversion function replaced with simple multiplication factor",
+    "Projection references resolved to actual column names in same SELECT",
+    "ABAP 'IS NOT INITIAL' translated to 'IS NOT NULL'"
+  ],
+  "conversion_notes": [
+    "Stripped ABAP annotations (@AccessControl, @EndUserText, @Semantics)",
+    "Converted ABAP CDS DEFINE VIEW to SQL CREATE OR REPLACE VIEW",
+    "Translated ABAP typed literals to standard SQL literals",
+    "Converted ABAP case expressions to SQL CASE WHEN...THEN...ELSE...END",
+    "Replaced ABAP-specific functions with closest SQL equivalents",
+    "Parameters converted from $parameters.name to :name bind variable syntax",
+    "Session variables converted to Snowflake system functions where available"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\ead4f3fca34c48d8b7dc0785b48ac544\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 41,
+      "select": 2
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "ABOVE",
+      "AN",
+      "MULTIPLE",
+      "THE",
+      "TODAY",
+      "WHERE",
+      "WHICH",
+      "ZDEMO_ABAP_FLI"
+    ]
+  }
+}

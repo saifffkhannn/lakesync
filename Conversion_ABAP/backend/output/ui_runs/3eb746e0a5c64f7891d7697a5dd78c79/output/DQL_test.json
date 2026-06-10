@@ -1,0 +1,48 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\3eb746e0a5c64f7891d7697a5dd78c79\\input\\DQL_test.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\3eb746e0a5c64f7891d7697a5dd78c79\\output\\DQL_test.sql",
+  "confidence": 0.65,
+  "warnings": [
+    "ABAP WRITE statements for output formatting cannot be represented in Snowflake SQL",
+    "LOOP AT processing logic is not migrated - only the underlying SELECT query is converted",
+    "SAP table structures (VBAK, VBAP, KNA1) assumed to exist in Snowflake with same column names and types",
+    "Date literal '20240101' format assumed compatible between SAP and Snowflake",
+    "Confidence capped because material behavior is omitted, simplified, or delegated outside SQL."
+  ],
+  "assumptions": [
+    "SAP tables VBAK (Sales Document Header), VBAP (Sales Document Item), and KNA1 (Customer Master) exist in Snowflake",
+    "Column names and data types are preserved from SAP to Snowflake",
+    "No client (MANDT) filtering required in target system",
+    "Date format conversion handled by Snowflake or data pipeline",
+    "Output formatting and display logic will be handled by consuming application"
+  ],
+  "conversion_notes": [
+    "Converted ABAP SELECT statement to Snowflake view preserving all joins and filters",
+    "Removed SAP-specific table alias syntax (~ replaced with .)",
+    "Preserved all selected fields and WHERE clause conditions",
+    "INNER JOIN logic maintained exactly as in source",
+    "Procedural LOOP and WRITE statements documented as non-SQL behavior requiring application layer implementation"
+  ],
+  "learning_memory": {
+    "stored": true,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\3eb746e0a5c64f7891d7697a5dd78c79\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 3,
+      "select": 1,
+      "loop": 1
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "KNA1",
+      "VBAK",
+      "VBAP"
+    ]
+  }
+}

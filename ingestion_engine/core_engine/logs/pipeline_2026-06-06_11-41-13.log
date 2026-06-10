@@ -1,0 +1,42 @@
+2026-06-06 11:41:13,641 | INFO | Config file verified     : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\config\sapsqlserver_aws_snowflake.cfg
+2026-06-06 11:41:13,642 | INFO | Metadata file verified   : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\metadata\sapsqlserver_metadata.csv
+2026-06-06 11:41:13,648 | INFO | Starting Modular Incremental/Full Load Pipeline
+2026-06-06 11:41:13,670 | INFO | Connecting to SAP SQL Server...
+2026-06-06 11:41:13,680 | INFO | Connected to SAP SQL Server.
+2026-06-06 11:41:15,277 | INFO | Connected to Snowflake
+2026-06-06 11:41:16,298 | INFO | Snowflake control table ready in bikestores.control_schema
+2026-06-06 11:41:16,929 | INFO | [production.categories] Target last run timestamp = None; Extraction window start = None
+2026-06-06 11:41:16,939 | INFO | Starting incremental extraction for bikestores.production.categories
+2026-06-06 11:41:16,940 | INFO | Incremental extract query: SELECT [category_id], [category_name], [LastModifiedDate] FROM [bikestores].[production].[categories] ORDER BY [LastModifiedDate]
+2026-06-06 11:41:16,953 | INFO | Schema retrieved
+2026-06-06 11:41:16,953 | INFO | CATEGORY_ID                  int64
+CATEGORY_NAME               object
+LASTMODIFIEDDATE    datetime64[us]
+dtype: object
+2026-06-06 11:41:16,990 | INFO | Reconciliation Passed
+2026-06-06 11:41:16,991 | INFO | Parquet file created at D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/categories\categories_20260606_114116.parquet
+2026-06-06 11:41:16,994 | INFO | Incremental extraction completed for categories; rows=7
+2026-06-06 11:41:17,019 | INFO | S3 client created successfully
+2026-06-06 11:41:21,314 | INFO | Archiving: bikestores/production/categories/categories_20260606_113928.parquet -> archive/bikestores/production/categories/categories_20260606_113928.parquet
+2026-06-06 11:41:21,824 | INFO | All existing files archived successfully
+2026-06-06 11:41:21,828 | INFO | Previous S3 files archived successfully
+2026-06-06 11:41:21,850 | INFO | S3 client created successfully
+2026-06-06 11:41:21,851 | INFO | Upload attempt 1
+2026-06-06 11:41:25,934 | INFO | Upload Successful
+2026-06-06 11:41:26,231 | INFO | Local File Size: 2666
+2026-06-06 11:41:26,232 | INFO | S3 File Size: 2666
+2026-06-06 11:41:26,232 | INFO | Uploaded categories_20260606_114116.parquet to s3://stageddataparqe/bikestores/production/categories/categories_20260606_114116.parquet
+2026-06-06 11:41:26,239 | INFO | Local file deleted after upload: D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/categories\categories_20260606_114116.parquet
+2026-06-06 11:41:31,496 | INFO | Loading data into Snowflake table bikestores_stg.PRODUCTION.CATEGORIES
+2026-06-06 11:41:34,218 | INFO | File: s3://stageddataparqe/bikestores/production/categories/categories_20260606_114116.parquet, Status: LOADED, Parsed: 7, Loaded: 7, Errors: 0, Error Limit: 1
+2026-06-06 11:41:36,367 | INFO | RAW MERGE RESULT: (0, 7)
+2026-06-06 11:41:36,367 | INFO | MERGE complete — Inserted: 0, Updated: 7
+2026-06-06 11:41:36,878 | INFO | Truncated Table CATEGORIES in bikestores_stg
+2026-06-06 11:41:36,879 | INFO | Merge metrics | Inserted: 0, Updated: 7
+2026-06-06 11:41:36,880 | INFO | {'event': 'snowflake_load_complete', 'table': 'bikestores_stg.PRODUCTION.CATEGORIES', 'rows_loaded': 7, 'status': 'SUCCESS'}
+2026-06-06 11:41:36,880 | INFO | Snowflake Loading completed successfully
+2026-06-06 11:41:37,912 | INFO | Snowflake control table ready in bikestores.control_schema
+2026-06-06 11:41:38,609 | INFO | Inserted into Snowflake control table in control_schema: categories
+2026-06-06 11:41:38,610 | INFO | Pipeline Execution Completed Successfully
+2026-06-06 11:41:38,617 | INFO | Source Connection closed
+2026-06-06 11:41:39,236 | INFO | Target Connection closed

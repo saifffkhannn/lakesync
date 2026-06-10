@@ -1,0 +1,25 @@
+ORACLE,SNOWFLAKE
+number,NUMBER(38,18)
+float,FLOAT
+binary_float,FLOAT
+binary_double,FLOAT
+integer,NUMBER(10,0)
+smallint,NUMBER(5,0)
+int,NUMBER(10,0)
+varchar2,VARCHAR
+nvarchar2,VARCHAR
+char,CHAR
+nchar,CHAR
+clob,VARCHAR
+nclob,VARCHAR
+long,VARCHAR
+date,TIMESTAMP_NTZ
+timestamp,TIMESTAMP_NTZ
+timestamp with time zone,TIMESTAMP_TZ
+timestamp with local time zone,TIMESTAMP_LTZ
+interval year to month,VARCHAR
+interval day to second,VARCHAR
+blob,BINARY
+raw,BINARY
+long raw,BINARY
+xmltype,VARIANT

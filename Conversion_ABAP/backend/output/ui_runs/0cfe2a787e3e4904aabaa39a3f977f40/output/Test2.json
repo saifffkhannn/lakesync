@@ -1,0 +1,45 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\0cfe2a787e3e4904aabaa39a3f977f40\\input\\Test2.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\0cfe2a787e3e4904aabaa39a3f977f40\\output\\Test2.sql",
+  "confidence": 0.65,
+  "warnings": [
+    "ABAP decimal type 'abap.dec(15,2)' converted to Snowflake DECIMAL(15,2) - verify precision requirements",
+    "SAP @Semantics.amount.currencyCode annotation removed - currency semantics must be handled at application layer",
+    "SAP @AccessControl.authorizationCheck annotation removed - authorization must be implemented separately",
+    "Confidence capped because material behavior is omitted, simplified, or delegated outside SQL."
+  ],
+  "assumptions": [
+    "Source table 'zdemo_abap_fli' exists in Snowflake with same column names and compatible data types",
+    "Columns seatsocc, paymentsum, planetype exist in source table",
+    "No client (MANDT) handling required in target system",
+    "Currency field semantics will be handled by consuming applications"
+  ],
+  "conversion_notes": [
+    "Direct translation of ABAP CDS aggregate view to Snowflake view",
+    "All aggregate functions (AVG, SUM, MIN, MAX, COUNT) have direct Snowflake equivalents",
+    "ABAP 'ALL' keyword in MAX function is default behavior in Snowflake, so omitted",
+    "GROUP BY clause preserved exactly as in source",
+    "SAP-specific annotations and metadata removed as they have no Snowflake equivalent"
+  ],
+  "learning_memory": {
+    "stored": true,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\0cfe2a787e3e4904aabaa39a3f977f40\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 10,
+      "select": 1
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "THE",
+      "ZDEMO_ABAP_FLI"
+    ]
+  }
+}

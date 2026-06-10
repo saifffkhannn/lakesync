@@ -1,0 +1,391 @@
+2026-05-28 10:41:55,773 | INFO | Config file verified     : D:\Accelerator\DEMO\DLA V-W\BACKEND\config\sapsqlserver_aws_snowflake.cfg
+2026-05-28 10:41:55,773 | INFO | Metadata file verified   : D:\Accelerator\DEMO\DLA V-W\BACKEND\metadata\sapsqlserver_metadata.csv
+2026-05-28 10:41:55,773 | INFO | Starting Full Load Pipeline
+2026-05-28 10:41:55,774 | INFO | Connecting to SAP SQL Server...
+2026-05-28 10:41:55,776 | INFO | Connected to SAP SQL Server.
+2026-05-28 10:41:57,192 | INFO | Connected to Snowflake
+2026-05-28 10:41:57,196 | INFO | Processing table OperationsDB_raw.finance.ClientAccounts
+2026-05-28 10:41:57,771 | INFO | Starting extraction for OperationsDB.finance.ClientAccounts
+2026-05-28 10:42:01,569 | INFO | Schema retrieved
+2026-05-28 10:42:01,569 | INFO | ClientID                       int64
+ClientName                    object
+BusinessType                  object
+RegistrationNumber            object
+AccountManager                object
+EmailAddress                  object
+PhoneNumber                   object
+BillingCity                   object
+BillingCountry                object
+CreditScore                    int64
+AnnualRevenue                float64
+AccountStatus                 object
+CreatedDate           datetime64[us]
+LastModifiedDate      datetime64[us]
+dtype: object
+2026-05-28 10:42:03,270 | INFO | Source count: 157577
+2026-05-28 10:42:03,271 | INFO | Parquet count: 157577
+2026-05-28 10:42:03,271 | INFO | Reconciliation Passed
+2026-05-28 10:42:03,271 | INFO | Parquet file created at D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/ClientAccounts\ClientAccounts_20260528_104201.parquet
+2026-05-28 10:42:03,271 | INFO | Extraction completed for ClientAccounts
+2026-05-28 10:42:03,362 | INFO | Uploading ClientAccounts_20260528_104201.parquet to AWS S3
+2026-05-28 10:42:03,372 | INFO | S3 client created successfully
+2026-05-28 10:42:06,312 | INFO | All existing files archived successfully
+2026-05-28 10:42:06,314 | INFO | Previous S3 file archived successfully
+2026-05-28 10:42:06,326 | INFO | S3 client created successfully
+2026-05-28 10:42:06,327 | INFO | Upload attempt 1
+2026-05-28 10:42:10,526 | INFO | Upload Successful
+2026-05-28 10:42:10,743 | INFO | Local File Size: 5184828
+2026-05-28 10:42:10,743 | INFO | S3 File Size: 5184828
+2026-05-28 10:42:10,744 | INFO | Uploaded ClientAccounts_20260528_104201.parquet to s3://stageddataparqe/OperationsDB/finance/ClientAccounts/ClientAccounts_20260528_104201.parquet
+2026-05-28 10:42:10,750 | INFO | Local file Not deleted after upload: D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/ClientAccounts\ClientAccounts_20260528_104201.parquet
+2026-05-28 10:42:10,753 | INFO | Creating target objects on 'snowflake' for table: OperationsDB.finance.ClientAccounts
+2026-05-28 10:42:10,754 | INFO | Starting Snowflake object creation for OperationsDB.finance.ClientAccounts
+2026-05-28 10:42:10,770 | INFO | Retrieved source schema:
+           COLUMN_NAME  DATA_TYPE
+0             ClientID        int
+1           ClientName    varchar
+2         BusinessType    varchar
+3   RegistrationNumber    varchar
+4       AccountManager    varchar
+5         EmailAddress    varchar
+6          PhoneNumber    varchar
+7          BillingCity    varchar
+8       BillingCountry    varchar
+9          CreditScore        int
+10       AnnualRevenue    decimal
+11       AccountStatus    varchar
+12         CreatedDate  datetime2
+13    LastModifiedDate  datetime2
+2026-05-28 10:42:10,777 | INFO | Creating snwoflake Database OperationsDB 
+2026-05-28 10:42:10,777 | INFO | Creating RAW DB: OperationsDB_RAW
+2026-05-28 10:42:11,175 | INFO | Creating TGT DB: OperationsDB_TGT
+2026-05-28 10:42:12,791 | INFO | Creating Stage: OperationsDB_TGT.OperationsDB_STG.external_aws_stage
+2026-05-28 10:42:13,493 | INFO | Dropping RAW table if exists: OperationsDB_RAW.finance.ClientAccounts
+2026-05-28 10:42:13,851 | INFO | Dropping TGT table if exists: OperationsDB_TGT.finance.ClientAccounts
+2026-05-28 10:42:14,242 | INFO | Creating RAW table OperationsDB_RAW.finance.ClientAccounts
+2026-05-28 10:42:14,830 | INFO | Creating TGT table OperationsDB_TGT.finance.ClientAccounts
+2026-05-28 10:42:15,430 | INFO | RAW & TGT objects created successfully
+2026-05-28 10:42:15,430 | INFO | Cursor closed
+2026-05-28 10:42:15,430 | INFO | Target objects created successfully on 'snowflake' 
+2026-05-28 10:42:24,135 | INFO | Snowflake control table ready
+2026-05-28 10:42:24,137 | INFO | Snowflake control table created successfully.
+2026-05-28 10:42:24,137 | INFO | Loading data into Snowflake table OperationsDB_raw.finance.ClientAccounts
+2026-05-28 10:42:29,840 | INFO | COPY INTO raw result: [('s3://stageddataparqe/OperationsDB/finance/ClientAccounts/ClientAccounts_20260528_104201.parquet', 'LOADED', 157577, 157577, 1, 0, None, None, None, None)]
+2026-05-28 10:42:29,840 | INFO | File: s3://stageddataparqe/OperationsDB/finance/ClientAccounts/ClientAccounts_20260528_104201.parquet, Status: LOADED, Parsed: 157577, Loaded: 157577, ErrorLimit: 1, ErrorsSeen: 0
+2026-05-28 10:42:34,388 | INFO | RAW MERGE RESULT: (157577, 0)
+2026-05-28 10:42:34,389 | INFO | MERGE complete — Inserted: 157577, Updated: 0
+2026-05-28 10:42:35,105 | INFO | Truncated Table ClientAccounts in OperationsDB_RAW
+2026-05-28 10:42:35,106 | INFO | Merge Completed Successfully
+2026-05-28 10:42:35,107 | INFO | {'event': 'snowflake_load_complete', 'table': 'OperationsDB_raw.finance.ClientAccounts', 'rows_loaded': 157577, 'status': 'SUCCESS'}
+2026-05-28 10:42:35,107 | INFO | Snowflake Loading completed successfully
+2026-05-28 10:42:35,548 | INFO | Completed table ClientAccounts
+2026-05-28 10:42:36,608 | INFO | Inserted into Snowflake control table: ClientAccounts
+2026-05-28 10:42:36,609 | INFO | Processing table OperationsDB_raw.finance.InvoiceLineItems
+2026-05-28 10:42:52,343 | INFO | Starting extraction for OperationsDB.finance.InvoiceLineItems
+2026-05-28 10:43:16,865 | INFO | Schema retrieved
+2026-05-28 10:43:16,872 | INFO | LineItemID                     int64
+InvoiceID                      int64
+ProductCode                   object
+ProductDescription            object
+Quantity                       int64
+UnitPrice                    float64
+TaxPercentage                float64
+DiscountPercentage           float64
+TotalLineAmount              float64
+BillingCategory               object
+CostCenter                    object
+RevenueType                   object
+CreatedDate           datetime64[us]
+LastModifiedDate      datetime64[us]
+dtype: object
+2026-05-28 10:43:20,630 | INFO | Source count: 637647
+2026-05-28 10:43:20,630 | INFO | Parquet count: 637647
+2026-05-28 10:43:20,630 | INFO | Reconciliation Passed
+2026-05-28 10:43:20,630 | INFO | Parquet file created at D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/InvoiceLineItems\InvoiceLineItems_20260528_104316.parquet
+2026-05-28 10:43:20,630 | INFO | Extraction completed for InvoiceLineItems
+2026-05-28 10:43:20,858 | INFO | Uploading InvoiceLineItems_20260528_104316.parquet to AWS S3
+2026-05-28 10:43:20,869 | INFO | S3 client created successfully
+2026-05-28 10:43:23,299 | INFO | No existing files found in S3 folder: OperationsDB/finance/InvoiceLineItems/
+2026-05-28 10:43:23,302 | INFO | Previous S3 file archived successfully
+2026-05-28 10:43:23,318 | INFO | S3 client created successfully
+2026-05-28 10:43:23,319 | INFO | Upload attempt 1
+2026-05-28 10:43:28,638 | INFO | Upload Successful
+2026-05-28 10:43:28,854 | INFO | Local File Size: 18915953
+2026-05-28 10:43:28,855 | INFO | S3 File Size: 18915953
+2026-05-28 10:43:28,856 | INFO | Uploaded InvoiceLineItems_20260528_104316.parquet to s3://stageddataparqe/OperationsDB/finance/InvoiceLineItems/InvoiceLineItems_20260528_104316.parquet
+2026-05-28 10:43:28,867 | INFO | Local file Not deleted after upload: D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/InvoiceLineItems\InvoiceLineItems_20260528_104316.parquet
+2026-05-28 10:43:28,868 | INFO | Creating target objects on 'snowflake' for table: OperationsDB.finance.InvoiceLineItems
+2026-05-28 10:43:28,868 | INFO | Starting Snowflake object creation for OperationsDB.finance.InvoiceLineItems
+2026-05-28 10:43:28,879 | INFO | Retrieved source schema:
+           COLUMN_NAME  DATA_TYPE
+0           LineItemID     bigint
+1            InvoiceID        int
+2          ProductCode    varchar
+3   ProductDescription    varchar
+4             Quantity        int
+5            UnitPrice    decimal
+6        TaxPercentage    decimal
+7   DiscountPercentage    decimal
+8      TotalLineAmount    decimal
+9      BillingCategory    varchar
+10          CostCenter    varchar
+11         RevenueType    varchar
+12         CreatedDate  datetime2
+13    LastModifiedDate  datetime2
+2026-05-28 10:43:28,885 | INFO | Creating snwoflake Database OperationsDB 
+2026-05-28 10:43:28,885 | INFO | Creating RAW DB: OperationsDB_RAW
+2026-05-28 10:43:29,249 | INFO | Creating TGT DB: OperationsDB_TGT
+2026-05-28 10:43:30,744 | INFO | Creating Stage: OperationsDB_TGT.OperationsDB_STG.external_aws_stage
+2026-05-28 10:43:31,196 | INFO | Dropping RAW table if exists: OperationsDB_RAW.finance.InvoiceLineItems
+2026-05-28 10:43:31,548 | INFO | Dropping TGT table if exists: OperationsDB_TGT.finance.InvoiceLineItems
+2026-05-28 10:43:31,888 | INFO | Creating RAW table OperationsDB_RAW.finance.InvoiceLineItems
+2026-05-28 10:43:32,509 | INFO | Creating TGT table OperationsDB_TGT.finance.InvoiceLineItems
+2026-05-28 10:43:33,010 | INFO | RAW & TGT objects created successfully
+2026-05-28 10:43:33,010 | INFO | Cursor closed
+2026-05-28 10:43:33,011 | INFO | Target objects created successfully on 'snowflake' 
+2026-05-28 10:43:41,119 | INFO | Snowflake control table ready
+2026-05-28 10:43:41,119 | INFO | Snowflake control table created successfully.
+2026-05-28 10:43:41,119 | INFO | Loading data into Snowflake table OperationsDB_raw.finance.InvoiceLineItems
+2026-05-28 10:43:51,544 | INFO | COPY INTO raw result: [('s3://stageddataparqe/OperationsDB/finance/InvoiceLineItems/InvoiceLineItems_20260528_104316.parquet', 'LOADED', 637647, 637647, 1, 0, None, None, None, None)]
+2026-05-28 10:43:51,545 | INFO | File: s3://stageddataparqe/OperationsDB/finance/InvoiceLineItems/InvoiceLineItems_20260528_104316.parquet, Status: LOADED, Parsed: 637647, Loaded: 637647, ErrorLimit: 1, ErrorsSeen: 0
+2026-05-28 10:43:55,566 | INFO | RAW MERGE RESULT: (637647, 0)
+2026-05-28 10:43:55,567 | INFO | MERGE complete — Inserted: 637647, Updated: 0
+2026-05-28 10:43:56,168 | INFO | Truncated Table InvoiceLineItems in OperationsDB_RAW
+2026-05-28 10:43:56,169 | INFO | Merge Completed Successfully
+2026-05-28 10:43:56,170 | INFO | {'event': 'snowflake_load_complete', 'table': 'OperationsDB_raw.finance.InvoiceLineItems', 'rows_loaded': 637647, 'status': 'SUCCESS'}
+2026-05-28 10:43:56,172 | INFO | Snowflake Loading completed successfully
+2026-05-28 10:43:56,593 | INFO | Completed table InvoiceLineItems
+2026-05-28 10:43:57,768 | INFO | Inserted into Snowflake control table: InvoiceLineItems
+2026-05-28 10:43:57,768 | INFO | Processing table OperationsDB_raw.finance.Invoices
+2026-05-28 10:44:11,508 | INFO | Starting extraction for OperationsDB.finance.Invoices
+2026-05-28 10:44:17,921 | INFO | Schema retrieved
+2026-05-28 10:44:17,923 | INFO | InvoiceID                    int64
+InvoiceNumber               object
+ClientID                     int64
+InvoiceDate                 object
+DueDate                     object
+SubtotalAmount             float64
+TaxAmount                  float64
+DiscountAmount             float64
+TotalAmount                float64
+PaymentStatus               object
+CurrencyCode                object
+ApprovedBy                  object
+CreatedDate         datetime64[us]
+LastModifiedDate    datetime64[us]
+dtype: object
+2026-05-28 10:44:20,656 | INFO | Source count: 171384
+2026-05-28 10:44:20,658 | INFO | Parquet count: 171384
+2026-05-28 10:44:20,658 | INFO | Reconciliation Passed
+2026-05-28 10:44:20,659 | INFO | Parquet file created at D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/Invoices\Invoices_20260528_104417.parquet
+2026-05-28 10:44:20,659 | INFO | Extraction completed for Invoices
+2026-05-28 10:44:20,713 | INFO | Uploading Invoices_20260528_104417.parquet to AWS S3
+2026-05-28 10:44:20,720 | INFO | S3 client created successfully
+2026-05-28 10:44:23,152 | INFO | No existing files found in S3 folder: OperationsDB/finance/Invoices/
+2026-05-28 10:44:23,155 | INFO | Previous S3 file archived successfully
+2026-05-28 10:44:23,163 | INFO | S3 client created successfully
+2026-05-28 10:44:23,163 | INFO | Upload attempt 1
+2026-05-28 10:44:27,419 | INFO | Upload Successful
+2026-05-28 10:44:27,643 | INFO | Local File Size: 5202217
+2026-05-28 10:44:27,643 | INFO | S3 File Size: 5202217
+2026-05-28 10:44:27,643 | INFO | Uploaded Invoices_20260528_104417.parquet to s3://stageddataparqe/OperationsDB/finance/Invoices/Invoices_20260528_104417.parquet
+2026-05-28 10:44:27,649 | INFO | Local file Not deleted after upload: D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/Invoices\Invoices_20260528_104417.parquet
+2026-05-28 10:44:27,649 | INFO | Creating target objects on 'snowflake' for table: OperationsDB.finance.Invoices
+2026-05-28 10:44:27,649 | INFO | Starting Snowflake object creation for OperationsDB.finance.Invoices
+2026-05-28 10:44:27,667 | INFO | Retrieved source schema:
+         COLUMN_NAME  DATA_TYPE
+0          InvoiceID        int
+1      InvoiceNumber    varchar
+2           ClientID        int
+3        InvoiceDate       date
+4            DueDate       date
+5     SubtotalAmount    decimal
+6          TaxAmount    decimal
+7     DiscountAmount    decimal
+8        TotalAmount    decimal
+9      PaymentStatus    varchar
+10      CurrencyCode    varchar
+11        ApprovedBy    varchar
+12       CreatedDate  datetime2
+13  LastModifiedDate  datetime2
+2026-05-28 10:44:27,671 | INFO | Creating snwoflake Database OperationsDB 
+2026-05-28 10:44:27,671 | INFO | Creating RAW DB: OperationsDB_RAW
+2026-05-28 10:44:28,023 | INFO | Creating TGT DB: OperationsDB_TGT
+2026-05-28 10:44:29,723 | INFO | Creating Stage: OperationsDB_TGT.OperationsDB_STG.external_aws_stage
+2026-05-28 10:44:30,152 | INFO | Dropping RAW table if exists: OperationsDB_RAW.finance.Invoices
+2026-05-28 10:44:30,490 | INFO | Dropping TGT table if exists: OperationsDB_TGT.finance.Invoices
+2026-05-28 10:44:30,836 | INFO | Creating RAW table OperationsDB_RAW.finance.Invoices
+2026-05-28 10:44:31,413 | INFO | Creating TGT table OperationsDB_TGT.finance.Invoices
+2026-05-28 10:44:31,930 | INFO | RAW & TGT objects created successfully
+2026-05-28 10:44:31,931 | INFO | Cursor closed
+2026-05-28 10:44:31,931 | INFO | Target objects created successfully on 'snowflake' 
+2026-05-28 10:44:40,665 | INFO | Snowflake control table ready
+2026-05-28 10:44:40,666 | INFO | Snowflake control table created successfully.
+2026-05-28 10:44:40,669 | INFO | Loading data into Snowflake table OperationsDB_raw.finance.Invoices
+2026-05-28 10:44:46,440 | INFO | COPY INTO raw result: [('s3://stageddataparqe/OperationsDB/finance/Invoices/Invoices_20260528_104417.parquet', 'LOADED', 171384, 171384, 1, 0, None, None, None, None)]
+2026-05-28 10:44:46,440 | INFO | File: s3://stageddataparqe/OperationsDB/finance/Invoices/Invoices_20260528_104417.parquet, Status: LOADED, Parsed: 171384, Loaded: 171384, ErrorLimit: 1, ErrorsSeen: 0
+2026-05-28 10:44:50,161 | INFO | RAW MERGE RESULT: (171384, 0)
+2026-05-28 10:44:50,162 | INFO | MERGE complete — Inserted: 171384, Updated: 0
+2026-05-28 10:44:50,810 | INFO | Truncated Table Invoices in OperationsDB_RAW
+2026-05-28 10:44:50,813 | INFO | Merge Completed Successfully
+2026-05-28 10:44:50,813 | INFO | {'event': 'snowflake_load_complete', 'table': 'OperationsDB_raw.finance.Invoices', 'rows_loaded': 171384, 'status': 'SUCCESS'}
+2026-05-28 10:44:50,814 | INFO | Snowflake Loading completed successfully
+2026-05-28 10:44:51,277 | INFO | Completed table Invoices
+2026-05-28 10:44:52,389 | INFO | Inserted into Snowflake control table: Invoices
+2026-05-28 10:44:52,389 | INFO | Processing table OperationsDB_raw.finance.PayrollCycles
+2026-05-28 10:44:54,708 | INFO | Starting extraction for OperationsDB.finance.PayrollCycles
+2026-05-28 10:45:05,002 | INFO | Schema retrieved
+2026-05-28 10:45:05,004 | INFO | PayrollID                      int64
+EmployeeCode                  object
+EmployeeName                  object
+PayrollMonth                  object
+BaseSalary                   float64
+OvertimePay                  float64
+BonusAmount                  float64
+TaxDeduction                 float64
+InsuranceDeduction           float64
+FinalSalary                  float64
+PaymentMode                   object
+PayrollStatus                 object
+CreatedDate           datetime64[us]
+LastModifiedDate      datetime64[us]
+dtype: object
+2026-05-28 10:45:06,677 | INFO | Source count: 216327
+2026-05-28 10:45:06,678 | INFO | Parquet count: 216327
+2026-05-28 10:45:06,678 | INFO | Reconciliation Passed
+2026-05-28 10:45:06,678 | INFO | Parquet file created at D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/PayrollCycles\PayrollCycles_20260528_104505.parquet
+2026-05-28 10:45:06,679 | INFO | Extraction completed for PayrollCycles
+2026-05-28 10:45:06,776 | INFO | Uploading PayrollCycles_20260528_104505.parquet to AWS S3
+2026-05-28 10:45:06,788 | INFO | S3 client created successfully
+2026-05-28 10:45:09,235 | INFO | No existing files found in S3 folder: OperationsDB/finance/PayrollCycles/
+2026-05-28 10:45:09,247 | INFO | Previous S3 file archived successfully
+2026-05-28 10:45:09,263 | INFO | S3 client created successfully
+2026-05-28 10:45:09,263 | INFO | Upload attempt 1
+2026-05-28 10:45:13,602 | INFO | Upload Successful
+2026-05-28 10:45:13,822 | INFO | Local File Size: 6228499
+2026-05-28 10:45:13,822 | INFO | S3 File Size: 6228499
+2026-05-28 10:45:13,822 | INFO | Uploaded PayrollCycles_20260528_104505.parquet to s3://stageddataparqe/OperationsDB/finance/PayrollCycles/PayrollCycles_20260528_104505.parquet
+2026-05-28 10:45:13,822 | INFO | Local file Not deleted after upload: D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/PayrollCycles\PayrollCycles_20260528_104505.parquet
+2026-05-28 10:45:13,822 | INFO | Creating target objects on 'snowflake' for table: OperationsDB.finance.PayrollCycles
+2026-05-28 10:45:13,822 | INFO | Starting Snowflake object creation for OperationsDB.finance.PayrollCycles
+2026-05-28 10:45:13,898 | INFO | Retrieved source schema:
+           COLUMN_NAME  DATA_TYPE
+0            PayrollID        int
+1         EmployeeCode    varchar
+2         EmployeeName    varchar
+3         PayrollMonth    varchar
+4           BaseSalary    decimal
+5          OvertimePay    decimal
+6          BonusAmount    decimal
+7         TaxDeduction    decimal
+8   InsuranceDeduction    decimal
+9          FinalSalary    decimal
+10         PaymentMode    varchar
+11       PayrollStatus    varchar
+12         CreatedDate  datetime2
+13    LastModifiedDate  datetime2
+2026-05-28 10:45:13,903 | INFO | Creating snwoflake Database OperationsDB 
+2026-05-28 10:45:13,904 | INFO | Creating RAW DB: OperationsDB_RAW
+2026-05-28 10:45:14,304 | INFO | Creating TGT DB: OperationsDB_TGT
+2026-05-28 10:45:16,410 | INFO | Creating Stage: OperationsDB_TGT.OperationsDB_STG.external_aws_stage
+2026-05-28 10:45:16,834 | INFO | Dropping RAW table if exists: OperationsDB_RAW.finance.PayrollCycles
+2026-05-28 10:45:17,191 | INFO | Dropping TGT table if exists: OperationsDB_TGT.finance.PayrollCycles
+2026-05-28 10:45:17,571 | INFO | Creating RAW table OperationsDB_RAW.finance.PayrollCycles
+2026-05-28 10:45:18,122 | INFO | Creating TGT table OperationsDB_TGT.finance.PayrollCycles
+2026-05-28 10:45:18,667 | INFO | RAW & TGT objects created successfully
+2026-05-28 10:45:18,667 | INFO | Cursor closed
+2026-05-28 10:45:18,667 | INFO | Target objects created successfully on 'snowflake' 
+2026-05-28 10:45:26,108 | INFO | Snowflake control table ready
+2026-05-28 10:45:26,108 | INFO | Snowflake control table created successfully.
+2026-05-28 10:45:26,109 | INFO | Loading data into Snowflake table OperationsDB_raw.finance.PayrollCycles
+2026-05-28 10:45:32,262 | INFO | COPY INTO raw result: [('s3://stageddataparqe/OperationsDB/finance/PayrollCycles/PayrollCycles_20260528_104505.parquet', 'LOADED', 216327, 216327, 1, 0, None, None, None, None)]
+2026-05-28 10:45:32,262 | INFO | File: s3://stageddataparqe/OperationsDB/finance/PayrollCycles/PayrollCycles_20260528_104505.parquet, Status: LOADED, Parsed: 216327, Loaded: 216327, ErrorLimit: 1, ErrorsSeen: 0
+2026-05-28 10:45:37,023 | INFO | RAW MERGE RESULT: (216327, 0)
+2026-05-28 10:45:37,023 | INFO | MERGE complete — Inserted: 216327, Updated: 0
+2026-05-28 10:45:37,724 | INFO | Truncated Table PayrollCycles in OperationsDB_RAW
+2026-05-28 10:45:37,725 | INFO | Merge Completed Successfully
+2026-05-28 10:45:37,725 | INFO | {'event': 'snowflake_load_complete', 'table': 'OperationsDB_raw.finance.PayrollCycles', 'rows_loaded': 216327, 'status': 'SUCCESS'}
+2026-05-28 10:45:37,726 | INFO | Snowflake Loading completed successfully
+2026-05-28 10:45:38,144 | INFO | Completed table PayrollCycles
+2026-05-28 10:45:39,188 | INFO | Inserted into Snowflake control table: PayrollCycles
+2026-05-28 10:45:39,189 | INFO | Processing table OperationsDB_raw.finance.TransactionHistory
+2026-05-28 10:45:41,939 | INFO | Starting extraction for OperationsDB.finance.TransactionHistory
+2026-05-28 10:45:58,899 | INFO | Schema retrieved
+2026-05-28 10:45:58,902 | INFO | TransactionID                    int64
+TransactionReference            object
+ClientID                         int64
+TransactionType                 object
+PaymentChannel                  object
+TransactionAmount              float64
+TransactionCurrency             object
+TransactionDate         datetime64[us]
+SettlementDate          datetime64[us]
+ProcessingBank                  object
+FraudCheckStatus                object
+ReconciliationStatus            object
+Remarks                         object
+CreatedDate             datetime64[us]
+LastModifiedDate        datetime64[us]
+dtype: object
+2026-05-28 10:46:04,057 | INFO | Source count: 580696
+2026-05-28 10:46:04,076 | INFO | Parquet count: 580696
+2026-05-28 10:46:04,076 | INFO | Reconciliation Passed
+2026-05-28 10:46:04,076 | INFO | Parquet file created at D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/TransactionHistory\TransactionHistory_20260528_104558.parquet
+2026-05-28 10:46:04,076 | INFO | Extraction completed for TransactionHistory
+2026-05-28 10:46:04,407 | INFO | Uploading TransactionHistory_20260528_104558.parquet to AWS S3
+2026-05-28 10:46:04,478 | INFO | S3 client created successfully
+2026-05-28 10:46:06,789 | INFO | No existing files found in S3 folder: OperationsDB/finance/TransactionHistory/
+2026-05-28 10:46:06,789 | INFO | Previous S3 file archived successfully
+2026-05-28 10:46:06,806 | INFO | S3 client created successfully
+2026-05-28 10:46:06,806 | INFO | Upload attempt 1
+2026-05-28 10:46:11,397 | INFO | Upload Successful
+2026-05-28 10:46:11,618 | INFO | Local File Size: 10941216
+2026-05-28 10:46:11,618 | INFO | S3 File Size: 10941216
+2026-05-28 10:46:11,619 | INFO | Uploaded TransactionHistory_20260528_104558.parquet to s3://stageddataparqe/OperationsDB/finance/TransactionHistory/TransactionHistory_20260528_104558.parquet
+2026-05-28 10:46:11,627 | INFO | Local file Not deleted after upload: D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/TransactionHistory\TransactionHistory_20260528_104558.parquet
+2026-05-28 10:46:11,627 | INFO | Creating target objects on 'snowflake' for table: OperationsDB.finance.TransactionHistory
+2026-05-28 10:46:11,629 | INFO | Starting Snowflake object creation for OperationsDB.finance.TransactionHistory
+2026-05-28 10:46:11,653 | INFO | Retrieved source schema:
+             COLUMN_NAME  DATA_TYPE
+0          TransactionID     bigint
+1   TransactionReference    varchar
+2               ClientID        int
+3        TransactionType    varchar
+4         PaymentChannel    varchar
+5      TransactionAmount    decimal
+6    TransactionCurrency    varchar
+7        TransactionDate  datetime2
+8         SettlementDate  datetime2
+9         ProcessingBank    varchar
+10      FraudCheckStatus    varchar
+11  ReconciliationStatus    varchar
+12               Remarks    varchar
+13           CreatedDate  datetime2
+14      LastModifiedDate  datetime2
+2026-05-28 10:46:11,659 | INFO | Creating snwoflake Database OperationsDB 
+2026-05-28 10:46:11,660 | INFO | Creating RAW DB: OperationsDB_RAW
+2026-05-28 10:46:12,012 | INFO | Creating TGT DB: OperationsDB_TGT
+2026-05-28 10:46:13,400 | INFO | Creating Stage: OperationsDB_TGT.OperationsDB_STG.external_aws_stage
+2026-05-28 10:46:13,851 | INFO | Dropping RAW table if exists: OperationsDB_RAW.finance.TransactionHistory
+2026-05-28 10:46:14,211 | INFO | Dropping TGT table if exists: OperationsDB_TGT.finance.TransactionHistory
+2026-05-28 10:46:14,552 | INFO | Creating RAW table OperationsDB_RAW.finance.TransactionHistory
+2026-05-28 10:46:15,214 | INFO | Creating TGT table OperationsDB_TGT.finance.TransactionHistory
+2026-05-28 10:46:15,791 | INFO | RAW & TGT objects created successfully
+2026-05-28 10:46:15,791 | INFO | Cursor closed
+2026-05-28 10:46:15,792 | INFO | Target objects created successfully on 'snowflake' 
+2026-05-28 10:46:23,069 | INFO | Snowflake control table ready
+2026-05-28 10:46:23,069 | INFO | Snowflake control table created successfully.
+2026-05-28 10:46:23,069 | INFO | Loading data into Snowflake table OperationsDB_raw.finance.TransactionHistory
+2026-05-28 10:46:33,299 | INFO | COPY INTO raw result: [('s3://stageddataparqe/OperationsDB/finance/TransactionHistory/TransactionHistory_20260528_104558.parquet', 'LOADED', 580696, 580696, 1, 0, None, None, None, None)]
+2026-05-28 10:46:33,300 | INFO | File: s3://stageddataparqe/OperationsDB/finance/TransactionHistory/TransactionHistory_20260528_104558.parquet, Status: LOADED, Parsed: 580696, Loaded: 580696, ErrorLimit: 1, ErrorsSeen: 0
+2026-05-28 10:46:39,982 | INFO | RAW MERGE RESULT: (580696, 0)
+2026-05-28 10:46:39,982 | INFO | MERGE complete — Inserted: 580696, Updated: 0
+2026-05-28 10:46:40,595 | INFO | Truncated Table TransactionHistory in OperationsDB_RAW
+2026-05-28 10:46:40,595 | INFO | Merge Completed Successfully
+2026-05-28 10:46:40,595 | INFO | {'event': 'snowflake_load_complete', 'table': 'OperationsDB_raw.finance.TransactionHistory', 'rows_loaded': 580696, 'status': 'SUCCESS'}
+2026-05-28 10:46:40,595 | INFO | Snowflake Loading completed successfully
+2026-05-28 10:46:41,058 | INFO | Completed table TransactionHistory
+2026-05-28 10:46:42,119 | INFO | Inserted into Snowflake control table: TransactionHistory
+2026-05-28 10:46:42,293 | INFO | Full Load Pipeline Completed Successfully
+2026-05-28 10:46:42,306 | INFO | Source Connection closed successfully
+2026-05-28 10:46:42,988 | INFO | Target Connection closed successfully

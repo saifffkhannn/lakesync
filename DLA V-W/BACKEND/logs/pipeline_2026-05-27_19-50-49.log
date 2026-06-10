@@ -1,0 +1,84 @@
+2026-05-27 19:50:49,407 | INFO | Config file verified     : D:\Accelerator\DEMO\DLA V-W\BACKEND\config\sapsqlserver_aws_snowflake.cfg
+2026-05-27 19:50:49,407 | INFO | Metadata file verified   : D:\Accelerator\DEMO\DLA V-W\BACKEND\metadata\sapsqlserver_metadata.csv
+2026-05-27 19:50:49,409 | INFO | Starting Full Load Pipeline
+2026-05-27 19:50:49,418 | INFO | Connecting to SAP SQL Server...
+2026-05-27 19:50:49,458 | INFO | Connected to SAP SQL Server.
+2026-05-27 19:50:51,375 | INFO | Connected to Snowflake
+2026-05-27 19:50:51,383 | INFO | Processing table OperationsDB_raw.finance.ClientAccounts
+2026-05-27 19:50:53,436 | INFO | Starting extraction for OperationsDB.finance.ClientAccounts
+2026-05-27 19:51:06,821 | INFO | Schema retrieved
+2026-05-27 19:51:06,823 | INFO | ClientID                       int64
+ClientName                    object
+BusinessType                  object
+RegistrationNumber            object
+AccountManager                object
+EmailAddress                  object
+PhoneNumber                   object
+BillingCity                   object
+BillingCountry                object
+CreditScore                    int64
+AnnualRevenue                float64
+AccountStatus                 object
+CreatedDate           datetime64[us]
+LastModifiedDate      datetime64[us]
+dtype: object
+2026-05-27 19:51:11,267 | INFO | Source count: 157577
+2026-05-27 19:51:11,268 | INFO | Parquet count: 157577
+2026-05-27 19:51:11,269 | INFO | Reconciliation Passed
+2026-05-27 19:51:11,269 | INFO | Parquet file created at D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/ClientAccounts\ClientAccounts_20260527_195106.parquet
+2026-05-27 19:51:11,282 | INFO | Extraction completed for ClientAccounts
+2026-05-27 19:51:11,616 | INFO | Uploading ClientAccounts_20260527_195106.parquet to AWS S3
+2026-05-27 19:51:11,664 | INFO | S3 client created successfully
+2026-05-27 19:51:15,476 | INFO | No existing files found in S3 folder: OperationsDB/finance/ClientAccounts/
+2026-05-27 19:51:15,480 | INFO | Previous S3 file archived successfully
+2026-05-27 19:51:15,530 | INFO | S3 client created successfully
+2026-05-27 19:51:15,533 | INFO | Upload attempt 1
+2026-05-27 19:53:18,649 | INFO | Upload Successful
+2026-05-27 19:53:18,867 | INFO | Local File Size: 5184828
+2026-05-27 19:53:18,869 | INFO | S3 File Size: 5184828
+2026-05-27 19:53:18,869 | INFO | Uploaded ClientAccounts_20260527_195106.parquet to s3://stageddataparqe/OperationsDB/finance/ClientAccounts/ClientAccounts_20260527_195106.parquet
+2026-05-27 19:53:18,874 | INFO | Local file Not deleted after upload: D:\Accelerator\DEMO\DLA V-W\BACKEND\Extract\OperationsDB/finance/ClientAccounts\ClientAccounts_20260527_195106.parquet
+2026-05-27 19:53:18,876 | INFO | Creating target objects on 'snowflake' for table: OperationsDB.finance.ClientAccounts
+2026-05-27 19:53:18,876 | INFO | Starting Snowflake object creation for OperationsDB.finance.ClientAccounts
+2026-05-27 19:53:18,897 | ERROR | Error fetching schema from source | Error: Execution failed on sql: 
+        SELECT COLUMN_NAME, DATA_TYPE
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_CATALOG = 'OperationsDB'
+          AND TABLE_SCHEMA = 'finance'
+          AND TABLE_NAME = 'ClientAccounts'
+        
+('08S01', '[08S01] [Microsoft][ODBC Driver 17 for SQL Server]TCP Provider: An existing connection was forcibly closed by the remote host.\r\n (10054) (SQLExecDirectW); [08S01] [Microsoft][ODBC Driver 17 for SQL Server]Communication link failure (10054)')
+unable to rollback
+2026-05-27 19:53:18,900 | INFO | Error creating Snowflake objects: Execution failed on sql: 
+        SELECT COLUMN_NAME, DATA_TYPE
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_CATALOG = 'OperationsDB'
+          AND TABLE_SCHEMA = 'finance'
+          AND TABLE_NAME = 'ClientAccounts'
+        
+('08S01', '[08S01] [Microsoft][ODBC Driver 17 for SQL Server]TCP Provider: An existing connection was forcibly closed by the remote host.\r\n (10054) (SQLExecDirectW); [08S01] [Microsoft][ODBC Driver 17 for SQL Server]Communication link failure (10054)')
+unable to rollback
+2026-05-27 19:53:18,900 | ERROR | Failed to create target objects on 'snowflake' for OperationsDB.finance.ClientAccounts: Error creating Snowflake objects: Execution failed on sql: 
+        SELECT COLUMN_NAME, DATA_TYPE
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_CATALOG = 'OperationsDB'
+          AND TABLE_SCHEMA = 'finance'
+          AND TABLE_NAME = 'ClientAccounts'
+        
+('08S01', '[08S01] [Microsoft][ODBC Driver 17 for SQL Server]TCP Provider: An existing connection was forcibly closed by the remote host.\r\n (10054) (SQLExecDirectW); [08S01] [Microsoft][ODBC Driver 17 for SQL Server]Communication link failure (10054)')
+unable to rollback
+2026-05-27 19:53:18,902 | ERROR | Creating table Failed for ClientAccounts: Error creating Snowflake objects: Execution failed on sql: 
+        SELECT COLUMN_NAME, DATA_TYPE
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_CATALOG = 'OperationsDB'
+          AND TABLE_SCHEMA = 'finance'
+          AND TABLE_NAME = 'ClientAccounts'
+        
+('08S01', '[08S01] [Microsoft][ODBC Driver 17 for SQL Server]TCP Provider: An existing connection was forcibly closed by the remote host.\r\n (10054) (SQLExecDirectW); [08S01] [Microsoft][ODBC Driver 17 for SQL Server]Communication link failure (10054)')
+unable to rollback
+2026-05-27 19:53:20,208 | INFO | Inserted into Snowflake control table: ClientAccounts
+2026-05-27 19:53:20,301 | WARNING | Full Load Pipeline Completed With Errors
+2026-05-27 19:53:20,306 | INFO | Source Connection closed successfully
+2026-05-27 19:53:20,872 | INFO | Target Connection closed successfully
+2026-05-27 20:10:01,096 | INFO | Connecting to SAP SQL Server...
+2026-05-27 20:10:01,267 | INFO | Connected to SAP SQL Server.

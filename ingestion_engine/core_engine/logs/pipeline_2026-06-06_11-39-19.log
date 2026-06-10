@@ -1,0 +1,65 @@
+2026-06-06 11:39:19,450 | INFO | Config file verified     : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\config\sapsqlserver_aws_snowflake.cfg
+2026-06-06 11:39:19,451 | INFO | Metadata file verified   : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\metadata\sapsqlserver_metadata.csv
+2026-06-06 11:39:19,451 | INFO | Starting Full Load Pipeline
+2026-06-06 11:39:19,468 | INFO | Connecting to SAP SQL Server...
+2026-06-06 11:39:19,469 | INFO | Connected to SAP SQL Server.
+2026-06-06 11:39:27,758 | INFO | Connected to Snowflake
+2026-06-06 11:39:27,763 | INFO | Processing table bikestores_stg.production.categories
+2026-06-06 11:39:27,970 | INFO | Starting extraction for bikestores.production.categories
+2026-06-06 11:39:28,137 | INFO | Schema retrieved
+2026-06-06 11:39:28,137 | INFO | category_id                  int64
+category_name               object
+LastModifiedDate    datetime64[us]
+dtype: object
+2026-06-06 11:39:29,024 | INFO | Source count: 7
+2026-06-06 11:39:29,025 | INFO | Parquet count: 7
+2026-06-06 11:39:29,025 | INFO | Reconciliation Passed
+2026-06-06 11:39:29,026 | INFO | Parquet file created at D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/categories\categories_20260606_113928.parquet
+2026-06-06 11:39:29,026 | INFO | Extraction completed for categories
+2026-06-06 11:39:29,029 | INFO | Uploading categories_20260606_113928.parquet to AWS S3
+2026-06-06 11:39:29,527 | INFO | S3 client created successfully
+2026-06-06 11:39:33,712 | INFO | Archiving: bikestores/production/categories/categories_20260604_145508.parquet -> archive/bikestores/production/categories/categories_20260604_145508.parquet
+2026-06-06 11:39:34,204 | INFO | All existing files archived successfully
+2026-06-06 11:39:34,207 | INFO | Previous S3 file archived successfully
+2026-06-06 11:39:34,220 | INFO | S3 client created successfully
+2026-06-06 11:39:34,221 | INFO | Upload attempt 1
+2026-06-06 11:39:36,970 | INFO | Upload Successful
+2026-06-06 11:39:37,171 | INFO | Local File Size: 2647
+2026-06-06 11:39:37,171 | INFO | S3 File Size: 2647
+2026-06-06 11:39:37,172 | INFO | Uploaded categories_20260606_113928.parquet to s3://stageddataparqe/bikestores/production/categories/categories_20260606_113928.parquet
+2026-06-06 11:39:37,175 | INFO | Local file Not deleted after upload: D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/categories\categories_20260606_113928.parquet
+2026-06-06 11:39:37,175 | INFO | Creating target objects on 'snowflake' for table: bikestores.production.categories
+2026-06-06 11:39:37,175 | INFO | Starting Snowflake object creation for bikestores.production.categories
+2026-06-06 11:39:37,200 | INFO | Retrieved source schema:
+        COLUMN_NAME DATA_TYPE
+0       category_id       int
+1     category_name   varchar
+2  LastModifiedDate  datetime
+2026-06-06 11:39:37,212 | INFO | Creating snowflake Database bikestores 
+2026-06-06 11:39:43,342 | INFO | RAW & TGT objects created successfully
+2026-06-06 11:39:43,342 | INFO | Cursor closed
+2026-06-06 11:39:43,342 | INFO | Target objects created successfully on 'snowflake' 
+2026-06-06 11:39:43,950 | INFO | Snowflake control table ready in bikestores.control_schema
+2026-06-06 11:39:43,950 | INFO | Snowflake control table created successfully.
+2026-06-06 11:39:43,952 | INFO | Loading data into Snowflake table bikestores_stg.production.categories
+2026-06-06 11:39:47,375 | INFO | File: s3://stageddataparqe/bikestores/production/categories/categories_20260606_113928.parquet, Status: LOADED, Parsed: 7, Loaded: 7, Errors: 0, Error Limit: 1
+2026-06-06 11:39:49,768 | INFO | RAW MERGE RESULT: (7, 0)
+2026-06-06 11:39:49,769 | INFO | MERGE complete — Inserted: 7, Updated: 0
+2026-06-06 11:39:50,586 | INFO | Truncated Table categories in bikestores_stg
+2026-06-06 11:39:50,587 | INFO | Merge metrics | Inserted: 7, Updated: 0
+2026-06-06 11:39:50,587 | INFO | {'event': 'snowflake_load_complete', 'table': 'bikestores_stg.production.categories', 'rows_loaded': 7, 'status': 'SUCCESS'}
+2026-06-06 11:39:50,588 | INFO | Snowflake Loading completed successfully
+2026-06-06 11:39:51,408 | INFO | Completed table categories
+2026-06-06 11:39:52,533 | INFO | Inserted into Snowflake control table in control_schema: categories
+2026-06-06 11:39:52,534 | INFO | Full Load Pipeline Completed Successfully
+2026-06-06 11:39:52,550 | INFO | Source Connection closed successfully
+2026-06-06 11:39:53,148 | INFO | Target Connection closed successfully
+2026-06-06 11:40:26,728 | INFO | Connecting to SAP SQL Server...
+2026-06-06 11:40:26,730 | INFO | Connected to SAP SQL Server.
+2026-06-06 11:40:29,053 | INFO | Connected to Snowflake
+2026-06-06 11:40:38,769 | INFO | Connecting to SAP SQL Server...
+2026-06-06 11:40:38,772 | INFO | Connected to SAP SQL Server.
+2026-06-06 11:40:43,447 | INFO | Connected to Snowflake
+2026-06-06 11:41:01,668 | INFO | Connecting to SAP SQL Server...
+2026-06-06 11:41:01,671 | INFO | Connected to SAP SQL Server.
+2026-06-06 11:41:03,706 | INFO | Connected to Snowflake

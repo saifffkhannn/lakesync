@@ -1,0 +1,15 @@
+fastapi
+pydantic
+uvicorn[standard]
+boto3
+botocore
+pyspark
+pyodbc
+snowflake-connector-python
+google-cloud-bigquery
+google-cloud-storage
+databricks-sql-connector
+tqdm
+pandas
+python-multipart
+python-dotenv

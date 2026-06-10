@@ -1,0 +1,51 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\02be56ba01a84254b646e15998b23a66\\input\\DML_test.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\02be56ba01a84254b646e15998b23a66\\output\\DML_test.sql",
+  "confidence": 0.77,
+  "warnings": [
+    "ABAP COMMIT WORK is implicit in Snowflake autocommit mode - transaction control differs from SAP",
+    "Hard-coded sales order ID '5000012345' should be parameterized for production use",
+    "No error handling implemented - ABAP runtime error handling not replicated",
+    "ABAP sy-datum system variable replaced with CURRENT_DATE - timezone behavior may differ"
+  ],
+  "assumptions": [
+    "Tables zsales_order and zsales_order_log exist in Snowflake with compatible column structures",
+    "Column data types are compatible (status as VARCHAR, dates as DATE type)",
+    "No client (MANDT) handling required based on AST analysis",
+    "Snowflake autocommit transaction mode is acceptable",
+    "Single execution context assumed (no concurrent update conflicts)"
+  ],
+  "conversion_notes": [
+    "Converted ABAP UPDATE statement to Snowflake UPDATE with same WHERE clause",
+    "Converted ABAP INSERT FROM VALUE to standard SQL INSERT VALUES syntax",
+    "Replaced SAP system variable sy-datum with Snowflake CURRENT_DATE function",
+    "Wrapped operations in stored procedure to maintain transactional grouping",
+    "COMMIT WORK removed as Snowflake uses autocommit by default"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\02be56ba01a84254b646e15998b23a66\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [
+    {
+      "rule_name": "sy_datum_current_date",
+      "before": "REPORT z_update_order_status.\n\nUPDATE zsales_order\nSET status = 'COMPLETED',\n    changed_on = sy-datum\nWHERE sales_order = '5000012345'.\n\nCOMMIT WORK.\n\n\n\nINSERT zsales_order_log FROM VALUE #(\n    sales_order = '5000012345'\n    action      = 'UPDATED'\n    created_on  = sy-datum ).",
+      "after": "REPORT z_update_order_status.\n\nUPDATE zsales_order\nSET status = 'COMPLETED',\n    changed_on = CURRENT_DATE\nWHERE sales_order = '5000012345'.\n\nCOMMIT WORK.\n\n\n\nINSERT zsales_order_log FROM VALUE #(\n    sales_order = '5000012345'\n    action      = 'UPDATED'\n    created_on  = CURRENT_DATE ).",
+      "confidence_delta": 0.02
+    }
+  ],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 4
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "VALUE",
+      "ZSALES_ORDER"
+    ]
+  }
+}

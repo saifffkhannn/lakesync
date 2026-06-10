@@ -1,0 +1,84 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\bf1b3e280b7b4e759ad2cb120b56e62c\\input\\Test3.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\bf1b3e280b7b4e759ad2cb120b56e62c\\output\\Test3.sql",
+  "confidence": 0.48,
+  "warnings": [
+    "Manual review required for ABAP statement: // ABAP CDS cheat sheet example: // Operands and expressions in CDS view entities // //////////////////////////------ NOTES ------//////////////////////////////",
+    "Manual review required for ABAP statement: // //////////////////////------ DATA PREVIEW ------/////////////////////////////// // - Choose F8 in ADT to open the data preview and check out the data display",
+    "Manual review required for ABAP statement: // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// //////////////////////------ Annotations -",
+    "Manual review required for ABAP statement: // There's a predefined set of SAP annotations. Their specification is optional",
+    "Manual review required for ABAP statement: // Example for a view entity annotation (only possible in CDS view entities) // The following annotation defines implicit access control when ABAP SQL is used /",
+    "Manual review required for ABAP statement: @AccessControl.authorizationCheck: #NOT_REQUIRED // Example for an entity annotation (annotations that can be used in all CDS entities) // The following annotat",
+    "Manual review required for ABAP statement: @EndUserText.label: 'CDS view entity: Operands/Expressions' define view entity zdemo_abap_cds_ve_sel with parameters p_smax : abap.int4 //Input parameter typed ",
+    "Manual review required for ABAP statement: // Note: Many of the operands and expressions demonstrated below can occur in multiple positions",
+    "Manual review required for ABAP statement: // Refer to the ABAP Keyword Documentation for the details",
+    "Manual review required for ABAP statement: { // -------- Specifying fields of the data source -------- //- Multiple fields of the data source from which to be selected are specified",
+    "Manual review required for ABAP statement: //- Field names can be prefixed with the name of the data source (or, if specified, with the alias name)",
+    "Manual review required for ABAP statement: //- Alias names can be specified for the elements. Note: In case of joins (selection from multiple sources) // all elements must be prefixed with the name of th",
+    "Manual review required for ABAP statement: //- KEY defines the current element as a key element; must be placed at the beginning; in CDS entities the key // elements are mainly used to document the seman",
+    "Manual review required for ABAP statement: abap.int4'12345' as int4, //Typed numeric literal abap.char'hallo' as c5, //Typed character literal abap.dats'20240101' as date_lit, //Date // Note: In case of ",
+    "Manual review required for ABAP statement: @Semantics.amount.currencyCode: 'currency' abap.curr'12.34' as curr, abap.dec'0.9' as discnt, abap.unit'KM' as kilometers, // Untyped literals 'Minutes' as flti",
+    "Manual review required for ABAP statement: // The name of the parameter must be prefixed by $parameters",
+    "Manual review required for ABAP statement: $parameters.p_smax as param, // -------- Session variables -------- // Among other sesion variables, there are built-in session variables available",
+    "Manual review required for ABAP statement: $session.user as usr, $session.client as clnt, $session.system_language as langu, $session.system_date as sys_date, $session.user_timezone as usr_time, $session",
+    "Manual review required for ABAP statement: // -------- Cast expressions -------- // Convert the value of operands to a specified type after as // The examples use built-in data types only",
+    "Manual review required for ABAP statement: // Note: Regarding which conversion combinations of types are possible, see the ABAP Keyword Documentation",
+    "Manual review required for ABAP statement: // There are special conversion rules for every combination",
+    "Manual review required for ABAP statement: cast( price as abap.dec(15,2) ) as cast_curr2dec, // The following example uses the prefix $projection. which defines reuse expressions",
+    "Manual review required for ABAP statement: // That is, you can refer to an element defined previously in the element list of the same CDS view entity",
+    "Manual review required for ABAP statement: // Note that this is only possible in dedicated positions. One of them is a cast expression",
+    "Manual review required for ABAP statement: cast( $projection.date_lit as abap.char(8) ) as cast_dats2c, // -------- Arithmetic expressions -------- seatsocc_b + seatsocc_f as occ_seats_classes, seatsmax ",
+    "Manual review required for ABAP statement: // The first operand specified after THEN for which the comparison is true is // returned as a result. No match: Result is determined by the ELSE branch",
+    "Manual review required for ABAP statement: case currency when 'EUR' then 'X' when 'USD' then 'Y' else 'Z' end as case1, // You can use the ELSE NULL addition that returns the null value",
+    "Manual review required for ABAP statement: // Note: If ELSE is not specified, the null value is returned as a result",
+    "Manual review required for ABAP statement: case $projection.case1 when 'X' then 'A' else null end as case2, // Complex case distinction (searched case) for evaluating conditions case when seatsmax <= 150",
+    "Manual review required for ABAP statement: //Comparison operators // Boolean operators AND, OR, NOT as well as parenthesized expressions are possible",
+    "Manual review required for ABAP statement: case when seatsmax = 385 and not ( seatsocc > 380 and seatsocc <> 379 or seatsocc <= 120 or paymentsum >= 200000 ) then 'A' //Interval comparisons when seatsmax",
+    "Manual review required for ABAP statement: abs( abap.int4'-1' ) as nf_abs, ceil( abap.decfloat34'3.333' ) as nf_ceil, floor( abap.decfloat34'3.333' ) as nf_floor, div( 25, 5 ) as nf_div, mod( 11, 3 ) as ",
+    "Manual review required for ABAP statement: replace(currency, 'U', '#') as sf_repl, //String in which all instances of the second argument are replaced by the content from the third argument replace_regex",
+    "Manual review required for ABAP statement: // This example has no null values in carrid, therefore the carrid value is output. See the example view about joins",
+    "Manual review required for ABAP statement: coalesce(carrid, 'N') as coalesced, // Special functions // Type conversion functions fltp_to_dec( abap.fltp'12.34' as abap.dec(10,1) ) as fltp2dec, // Unit con",
+    "Manual review required for ABAP statement: @Semantics.quantity.unitOfMeasure: 'kilometers' unit_conversion( quantity => $parameters.p_smax, source_unit => abap.unit'MI', target_unit => $projection.kilome",
+    "Manual review required for ABAP statement: dats_days_between(fldate,$projection.date_lit) as days_bw1, // The following example is similar to the example above. Here, the function expects the type DATN",
+    "Manual review required for ABAP statement: // It also shows the use of another function (dats_to_datn) that converts the types",
+    "Manual review required for ABAP statement: // Note: Only literals can be passed to the final two parameters on_error, on_initial",
+    "Manual review required for ABAP statement: datn_days_between(dats_to_datn(fldate,'INITIAL','INITIAL') , dats_to_datn($session.user_date,'INITIAL','INITIAL')) as days_bw2, // The following function adds d",
+    "Manual review required for ABAP statement: dats_add_days($session.user_date,7,'INITIAL') as in1week, // Time stamp functions // Getting the current time stamp utcl_current() as ts, // Adding seconds to a",
+    "Manual review required for ABAP statement: // This example uses a simple WHERE clause. It uses a condition that includes the input parameter to restrict the result set",
+    "Manual review required for ABAP statement: where seatsmax > $parameters.p_smax"
+  ],
+  "assumptions": [
+    "ABAP host variables are emitted as Snowflake bind-style placeholders where possible.",
+    "MANDT client handling is removed unless explicitly represented in business filters."
+  ],
+  "conversion_notes": [
+    "No SAP metadata rows were found; conversion used source-only inference."
+  ],
+  "learning_memory": {
+    "stored": true,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\bf1b3e280b7b4e759ad2cb120b56e62c\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 41,
+      "select": 2
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "ABOVE",
+      "AN",
+      "MULTIPLE",
+      "THE",
+      "TODAY",
+      "WHERE",
+      "WHICH",
+      "ZDEMO_ABAP_FLI"
+    ]
+  }
+}

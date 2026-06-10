@@ -1,0 +1,8 @@
+pandas
+pyarrow
+boto3
+pyodbc
+databricks-sql-connector
+configparser
+azure-storage-blob
+snowflake-connector-python

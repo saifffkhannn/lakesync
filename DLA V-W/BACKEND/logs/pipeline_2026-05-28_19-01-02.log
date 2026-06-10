@@ -1,0 +1,169 @@
+2026-05-28 19:01:02,614 | INFO | Config file verified     : C:\After_Demo\DLA V-W\BACKEND\config\sapsqlserver_aws_snowflake.cfg
+2026-05-28 19:01:02,616 | INFO | Metadata file verified   : C:\After_Demo\DLA V-W\BACKEND\metadata\sapsqlserver_metadata.csv
+2026-05-28 19:01:02,616 | INFO | Starting Full Load Pipeline
+2026-05-28 19:01:02,617 | INFO | Connecting to SAP SQL Server...
+2026-05-28 19:01:02,635 | INFO | Connected to SAP SQL Server.
+2026-05-28 19:01:04,981 | INFO | Connected to Snowflake
+2026-05-28 19:01:04,987 | INFO | Processing table OperationsDB_raw.logistics.ShipmentTracking
+2026-05-28 19:01:05,228 | INFO | Starting extraction for OperationsDB.logistics.ShipmentTracking
+2026-05-28 19:01:32,990 | INFO | Schema retrieved
+2026-05-28 19:01:32,991 | INFO | TrackingID                    int64
+ShipmentReference            object
+OriginCity                   object
+DestinationCity              object
+DispatchDate         datetime64[us]
+EstimatedDelivery    datetime64[us]
+ActualDelivery       datetime64[us]
+ShipmentStatus               object
+VehicleNumber                object
+DriverName                   object
+DistanceKM                  float64
+FuelCost                    float64
+CustomerRating              float64
+CreatedDate          datetime64[us]
+LastModifiedDate     datetime64[us]
+dtype: object
+2026-05-28 19:01:39,572 | INFO | Source count: 614045
+2026-05-28 19:01:39,573 | INFO | Parquet count: 614045
+2026-05-28 19:01:39,573 | INFO | Reconciliation Passed
+2026-05-28 19:01:39,573 | INFO | Parquet file created at C:\After_Demo\DLA V-W\BACKEND\Extract\OperationsDB/logistics/ShipmentTracking\ShipmentTracking_20260528_190132.parquet
+2026-05-28 19:01:39,573 | INFO | Extraction completed for ShipmentTracking
+2026-05-28 19:01:40,375 | INFO | Uploading ShipmentTracking_20260528_190132.parquet to AWS S3
+2026-05-28 19:01:40,982 | INFO | S3 client created successfully
+2026-05-28 19:01:45,540 | INFO | All existing files archived successfully
+2026-05-28 19:01:45,543 | INFO | Previous S3 file archived successfully
+2026-05-28 19:01:45,567 | INFO | S3 client created successfully
+2026-05-28 19:01:45,567 | INFO | Upload attempt 1
+2026-05-28 19:01:50,908 | INFO | Upload Successful
+2026-05-28 19:01:51,134 | INFO | Local File Size: 14389673
+2026-05-28 19:01:51,134 | INFO | S3 File Size: 14389673
+2026-05-28 19:01:51,134 | INFO | Uploaded ShipmentTracking_20260528_190132.parquet to s3://stageddataparqe/OperationsDB/logistics/ShipmentTracking/ShipmentTracking_20260528_190132.parquet
+2026-05-28 19:01:51,142 | INFO | Local file Not deleted after upload: C:\After_Demo\DLA V-W\BACKEND\Extract\OperationsDB/logistics/ShipmentTracking\ShipmentTracking_20260528_190132.parquet
+2026-05-28 19:01:51,146 | INFO | Creating target objects on 'snowflake' for table: OperationsDB.logistics.ShipmentTracking
+2026-05-28 19:01:51,147 | INFO | Starting Snowflake object creation for OperationsDB.logistics.ShipmentTracking
+2026-05-28 19:01:51,190 | INFO | Retrieved source schema:
+          COLUMN_NAME  DATA_TYPE
+0          TrackingID     bigint
+1   ShipmentReference    varchar
+2          OriginCity    varchar
+3     DestinationCity    varchar
+4        DispatchDate  datetime2
+5   EstimatedDelivery  datetime2
+6      ActualDelivery  datetime2
+7      ShipmentStatus    varchar
+8       VehicleNumber    varchar
+9          DriverName    varchar
+10         DistanceKM    decimal
+11           FuelCost    decimal
+12     CustomerRating    decimal
+13        CreatedDate  datetime2
+14   LastModifiedDate  datetime2
+2026-05-28 19:01:51,217 | INFO | Creating snwoflake Database OperationsDB 
+2026-05-28 19:01:51,217 | INFO | Creating RAW DB: OperationsDB_RAW
+2026-05-28 19:01:51,671 | INFO | Creating TGT DB: OperationsDB_TGT
+2026-05-28 19:01:53,305 | INFO | Creating Stage: OperationsDB_TGT.OperationsDB_STG.external_aws_stage
+2026-05-28 19:01:53,730 | INFO | Dropping RAW table if exists: OperationsDB_RAW.logistics.ShipmentTracking
+2026-05-28 19:01:54,081 | INFO | Dropping TGT table if exists: OperationsDB_TGT.logistics.ShipmentTracking
+2026-05-28 19:01:54,387 | INFO | Creating RAW table OperationsDB_RAW.logistics.ShipmentTracking
+2026-05-28 19:01:54,997 | INFO | Creating TGT table OperationsDB_TGT.logistics.ShipmentTracking
+2026-05-28 19:01:55,538 | INFO | RAW & TGT objects created successfully
+2026-05-28 19:01:55,538 | INFO | Cursor closed
+2026-05-28 19:01:55,538 | INFO | Target objects created successfully on 'snowflake' 
+2026-05-28 19:02:02,655 | INFO | Snowflake control table ready
+2026-05-28 19:02:02,655 | INFO | Snowflake control table created successfully.
+2026-05-28 19:02:02,657 | INFO | Loading data into Snowflake table OperationsDB_raw.logistics.ShipmentTracking
+2026-05-28 19:02:14,514 | INFO | COPY INTO raw result: [('s3://stageddataparqe/OperationsDB/logistics/ShipmentTracking/ShipmentTracking_20260528_190132.parquet', 'LOADED', 614045, 614045, 1, 0, None, None, None, None)]
+2026-05-28 19:02:14,515 | INFO | File: s3://stageddataparqe/OperationsDB/logistics/ShipmentTracking/ShipmentTracking_20260528_190132.parquet, Status: LOADED, Parsed: 614045, Loaded: 614045, ErrorLimit: 1, ErrorsSeen: 0
+2026-05-28 19:02:19,978 | INFO | RAW MERGE RESULT: (614045, 0)
+2026-05-28 19:02:19,978 | INFO | MERGE complete — Inserted: 614045, Updated: 0
+2026-05-28 19:02:20,653 | INFO | Truncated Table ShipmentTracking in OperationsDB_RAW
+2026-05-28 19:02:20,654 | INFO | Merge Completed Successfully
+2026-05-28 19:02:20,654 | INFO | {'event': 'snowflake_load_complete', 'table': 'OperationsDB_raw.logistics.ShipmentTracking', 'rows_loaded': 614045, 'status': 'SUCCESS'}
+2026-05-28 19:02:20,655 | INFO | Snowflake Loading completed successfully
+2026-05-28 19:02:21,056 | INFO | Completed table ShipmentTracking
+2026-05-28 19:02:22,507 | INFO | Inserted into Snowflake control table: ShipmentTracking
+2026-05-28 19:02:22,508 | INFO | Processing table OperationsDB_raw.logistics.WarehouseInventory
+2026-05-28 19:02:22,626 | INFO | Starting extraction for OperationsDB.logistics.WarehouseInventory
+2026-05-28 19:02:37,225 | INFO | Schema retrieved
+2026-05-28 19:02:37,226 | INFO | InventoryID                    int64
+WarehouseCode                 object
+ProductCode                   object
+ProductName                   object
+CategoryName                  object
+StockQuantity                  int64
+ReorderLevel                   int64
+SupplierName                  object
+ReceivedDate                  object
+ExpiryDate                    object
+StorageTemperature            object
+InventoryStatus               object
+CreatedDate           datetime64[us]
+LastModifiedDate      datetime64[us]
+dtype: object
+2026-05-28 19:02:48,207 | INFO | Source count: 597764
+2026-05-28 19:02:48,208 | INFO | Parquet count: 597764
+2026-05-28 19:02:48,209 | INFO | Reconciliation Passed
+2026-05-28 19:02:48,210 | INFO | Parquet file created at C:\After_Demo\DLA V-W\BACKEND\Extract\OperationsDB/logistics/WarehouseInventory\WarehouseInventory_20260528_190237.parquet
+2026-05-28 19:02:48,210 | INFO | Extraction completed for WarehouseInventory
+2026-05-28 19:02:48,986 | INFO | Uploading WarehouseInventory_20260528_190237.parquet to AWS S3
+2026-05-28 19:02:49,021 | INFO | S3 client created successfully
+2026-05-28 19:02:53,187 | INFO | All existing files archived successfully
+2026-05-28 19:02:53,193 | INFO | Previous S3 file archived successfully
+2026-05-28 19:02:53,216 | INFO | S3 client created successfully
+2026-05-28 19:02:53,216 | INFO | Upload attempt 1
+2026-05-28 19:02:58,415 | INFO | Upload Successful
+2026-05-28 19:02:58,642 | INFO | Local File Size: 10938288
+2026-05-28 19:02:58,643 | INFO | S3 File Size: 10938288
+2026-05-28 19:02:58,644 | INFO | Uploaded WarehouseInventory_20260528_190237.parquet to s3://stageddataparqe/OperationsDB/logistics/WarehouseInventory/WarehouseInventory_20260528_190237.parquet
+2026-05-28 19:02:58,650 | INFO | Local file Not deleted after upload: C:\After_Demo\DLA V-W\BACKEND\Extract\OperationsDB/logistics/WarehouseInventory\WarehouseInventory_20260528_190237.parquet
+2026-05-28 19:02:58,650 | INFO | Creating target objects on 'snowflake' for table: OperationsDB.logistics.WarehouseInventory
+2026-05-28 19:02:58,651 | INFO | Starting Snowflake object creation for OperationsDB.logistics.WarehouseInventory
+2026-05-28 19:02:58,680 | INFO | Retrieved source schema:
+           COLUMN_NAME  DATA_TYPE
+0          InventoryID     bigint
+1        WarehouseCode    varchar
+2          ProductCode    varchar
+3          ProductName    varchar
+4         CategoryName    varchar
+5        StockQuantity        int
+6         ReorderLevel        int
+7         SupplierName    varchar
+8         ReceivedDate       date
+9           ExpiryDate       date
+10  StorageTemperature    varchar
+11     InventoryStatus    varchar
+12         CreatedDate  datetime2
+13    LastModifiedDate  datetime2
+2026-05-28 19:02:58,686 | INFO | Creating snwoflake Database OperationsDB 
+2026-05-28 19:02:58,691 | INFO | Creating RAW DB: OperationsDB_RAW
+2026-05-28 19:02:59,028 | INFO | Creating TGT DB: OperationsDB_TGT
+2026-05-28 19:03:00,307 | INFO | Creating Stage: OperationsDB_TGT.OperationsDB_STG.external_aws_stage
+2026-05-28 19:03:00,843 | INFO | Dropping RAW table if exists: OperationsDB_RAW.logistics.WarehouseInventory
+2026-05-28 19:03:01,167 | INFO | Dropping TGT table if exists: OperationsDB_TGT.logistics.WarehouseInventory
+2026-05-28 19:03:01,584 | INFO | Creating RAW table OperationsDB_RAW.logistics.WarehouseInventory
+2026-05-28 19:03:02,306 | INFO | Creating TGT table OperationsDB_TGT.logistics.WarehouseInventory
+2026-05-28 19:03:02,823 | INFO | RAW & TGT objects created successfully
+2026-05-28 19:03:02,824 | INFO | Cursor closed
+2026-05-28 19:03:02,825 | INFO | Target objects created successfully on 'snowflake' 
+2026-05-28 19:03:10,091 | INFO | Snowflake control table ready
+2026-05-28 19:03:10,092 | INFO | Snowflake control table created successfully.
+2026-05-28 19:03:10,093 | INFO | Loading data into Snowflake table OperationsDB_raw.logistics.WarehouseInventory
+2026-05-28 19:03:20,292 | INFO | COPY INTO raw result: [('s3://stageddataparqe/OperationsDB/logistics/WarehouseInventory/WarehouseInventory_20260528_190237.parquet', 'LOADED', 597764, 597764, 1, 0, None, None, None, None)]
+2026-05-28 19:03:20,292 | INFO | File: s3://stageddataparqe/OperationsDB/logistics/WarehouseInventory/WarehouseInventory_20260528_190237.parquet, Status: LOADED, Parsed: 597764, Loaded: 597764, ErrorLimit: 1, ErrorsSeen: 0
+2026-05-28 19:03:26,840 | INFO | RAW MERGE RESULT: (597764, 0)
+2026-05-28 19:03:26,840 | INFO | MERGE complete — Inserted: 597764, Updated: 0
+2026-05-28 19:03:27,513 | INFO | Truncated Table WarehouseInventory in OperationsDB_RAW
+2026-05-28 19:03:27,514 | INFO | Merge Completed Successfully
+2026-05-28 19:03:27,514 | INFO | {'event': 'snowflake_load_complete', 'table': 'OperationsDB_raw.logistics.WarehouseInventory', 'rows_loaded': 597764, 'status': 'SUCCESS'}
+2026-05-28 19:03:27,514 | INFO | Snowflake Loading completed successfully
+2026-05-28 19:03:27,916 | INFO | Completed table WarehouseInventory
+2026-05-28 19:03:28,985 | INFO | Inserted into Snowflake control table: WarehouseInventory
+2026-05-28 19:03:29,009 | INFO | Full Load Pipeline Completed Successfully
+2026-05-28 19:03:29,027 | INFO | Source Connection closed successfully
+2026-05-28 19:03:29,579 | INFO | Target Connection closed successfully
+2026-05-28 19:33:00,470 | INFO | Connecting to SAP SQL Server...
+2026-05-28 19:33:01,550 | INFO | Connected to SAP SQL Server.
+2026-05-28 20:43:25,291 | INFO | Connecting to SAP SQL Server...
+2026-05-28 20:43:26,127 | INFO | Connected to SAP SQL Server.
+2026-05-28 20:45:57,072 | INFO | Connecting to SAP SQL Server...
+2026-05-28 20:45:57,222 | INFO | Connected to SAP SQL Server.

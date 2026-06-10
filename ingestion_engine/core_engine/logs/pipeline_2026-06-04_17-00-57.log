@@ -1,0 +1,36 @@
+2026-06-04 17:00:57,446 | INFO | Config file verified     : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\config\sapsqlserver_aws_snowflake.cfg
+2026-06-04 17:00:57,448 | INFO | Metadata file verified   : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\metadata\sapsqlserver_metadata.csv
+2026-06-04 17:00:57,449 | INFO | Starting Full Load Pipeline
+2026-06-04 17:00:57,454 | INFO | Connecting to SAP SQL Server...
+2026-06-04 17:00:57,456 | INFO | Connected to SAP SQL Server.
+2026-06-04 17:01:04,955 | INFO | Connected to Snowflake
+2026-06-04 17:01:04,969 | INFO | Processing table bikestores_stg.production.brands
+2026-06-04 17:01:05,132 | INFO | Previous parquet file is unavailable locally. Re-running extraction.
+2026-06-04 17:01:05,132 | INFO | Starting extraction for bikestores.production.brands
+2026-06-04 17:01:05,320 | INFO | Schema retrieved
+2026-06-04 17:01:05,321 | INFO | brand_id                     int64
+brand_name                  object
+LastModifiedDate    datetime64[us]
+dtype: object
+2026-06-04 17:01:05,426 | INFO | Source count: 9
+2026-06-04 17:01:05,428 | INFO | Parquet count: 9
+2026-06-04 17:01:05,428 | INFO | Reconciliation Passed
+2026-06-04 17:01:05,428 | INFO | Parquet file created at D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/brands\brands_20260604_170105.parquet
+2026-06-04 17:01:05,429 | INFO | Extraction completed for brands
+2026-06-04 17:01:05,431 | INFO | Skipping upload (already done)
+2026-06-04 17:01:05,431 | INFO | Skipping table creation
+2026-06-04 17:01:05,431 | INFO | Skipping load
+2026-06-04 17:01:06,275 | INFO | Completed table brands
+2026-06-04 17:01:07,574 | INFO | Inserted into Snowflake control table in control_schema: brands
+2026-06-04 17:01:07,576 | INFO | Full Load Pipeline Completed Successfully
+2026-06-04 17:01:07,616 | INFO | Source Connection closed successfully
+2026-06-04 17:01:08,310 | INFO | Target Connection closed successfully
+2026-06-04 17:01:13,768 | INFO | Connecting to SAP SQL Server...
+2026-06-04 17:01:13,771 | INFO | Connected to SAP SQL Server.
+2026-06-04 17:01:15,812 | INFO | Connected to Snowflake
+2026-06-04 17:01:19,913 | INFO | Connecting to SAP SQL Server...
+2026-06-04 17:01:19,917 | INFO | Connected to SAP SQL Server.
+2026-06-04 17:01:23,805 | INFO | Connected to Snowflake
+2026-06-04 17:01:31,073 | INFO | Connecting to SAP SQL Server...
+2026-06-04 17:01:31,075 | INFO | Connected to SAP SQL Server.
+2026-06-04 17:01:33,320 | INFO | Connected to Snowflake

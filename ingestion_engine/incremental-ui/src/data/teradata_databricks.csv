@@ -1,0 +1,19 @@
+TERADATA,DATABRICKS
+byteint,TINYINT
+smallint,SMALLINT
+integer,INT
+bigint,BIGINT
+decimal,DECIMAL(38,18)
+numeric,DECIMAL(38,18)
+float,DOUBLE
+double precision,DOUBLE
+real,FLOAT
+char,CHAR
+varchar,STRING
+clob,STRING
+date,DATE
+time,STRING
+timestamp,TIMESTAMP
+timestamp with time zone,TIMESTAMP
+blob,BINARY
+varbyte,BINARY

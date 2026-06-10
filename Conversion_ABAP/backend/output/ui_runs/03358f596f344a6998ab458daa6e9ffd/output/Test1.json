@@ -1,0 +1,46 @@
+{
+  "source": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\03358f596f344a6998ab458daa6e9ffd\\input\\Test1.txt",
+  "sql": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\03358f596f344a6998ab458daa6e9ffd\\output\\Test1.sql",
+  "confidence": 0.35,
+  "warnings": [
+    "Confidence capped because the output identifies core SAP runtime behavior that is not SQL-convertible."
+  ],
+  "assumptions": [
+    "Only translating the active (uncommented) INNER JOIN section as specified in the ABAP source",
+    "Stripped ABAP annotations (@AccessControl, @EndUserText) as they have no SQL equivalent",
+    "Converted ABAP table~column syntax to SQL table.column syntax"
+  ],
+  "conversion_notes": [
+    "Translated ABAP CDS DEFINE VIEW to SQL CREATE OR REPLACE VIEW",
+    "Converted ABAP inner join syntax to standard SQL INNER JOIN",
+    "Preserved the exact join condition and column aliases from the active code section",
+    "Ignored all commented out join examples (LEFT OUTER, RIGHT OUTER, CROSS JOIN) as they are not active in the source"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\03358f596f344a6998ab458daa6e9ffd\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 22,
+      "select": 3
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "AND",
+      "CONDITION",
+      "CONDITIONS",
+      "MUST",
+      "SELECTS",
+      "TYPE",
+      "ZDEMO_ABAP_CARR",
+      "ZDEMO_ABAP_FLSCH"
+    ]
+  }
+}

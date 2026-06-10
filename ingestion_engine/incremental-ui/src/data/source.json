@@ -1,0 +1,28 @@
+{
+    "SAPSQLServer": {
+        "server_name": "",
+        "database": "",
+        "user": "",
+        "password": ""
+    },
+    "MySQL": {
+        "host": "",
+        "port": "3306",
+        "database": "",
+        "user": "",
+        "password": ""
+    },
+    "Oracle": {
+        "host": "",
+        "port": "1521",
+        "service_name": "",
+        "user": "",
+        "password": ""
+    },
+    "Teradata": {
+        "host": "",
+        "user": "",
+        "password": "",
+        "database": ""
+    }
+}

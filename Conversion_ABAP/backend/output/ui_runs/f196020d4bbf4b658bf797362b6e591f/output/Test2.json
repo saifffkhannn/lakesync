@@ -1,0 +1,46 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\f196020d4bbf4b658bf797362b6e591f\\input\\Test2.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\f196020d4bbf4b658bf797362b6e591f\\output\\Test2.sql",
+  "confidence": 0.48,
+  "warnings": [
+    "Manual review required for ABAP statement: // ABAP CDS cheat sheet example: // Aggregate expressions in the element list of CDS view entities // //////////////////////////------ NOTES ------/////////////",
+    "Manual review required for ABAP statement: // //////////////////////------ DATA PREVIEW ------/////////////////////////////// // - Choose F8 in ADT to open the data preview and check out the data display",
+    "Manual review required for ABAP statement: // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// @AccessControl.authorizationCheck: #NOT_RE",
+    "Manual review required for ABAP statement: key carrid, currency, // -------- Aggregate expressions -------- // - Aggregate expressions can be used as elements of an element list. Other positions are poss",
+    "Manual review required for ABAP statement: // - An alias name must be specified",
+    "Manual review required for ABAP statement: // - A GROUP BY clause is required. It must list all non-aggregated fields from the element list",
+    "Manual review required for ABAP statement: // - Additions: If ALL is used, all rows in the result set are respected. This is the default setting",
+    "Manual review required for ABAP statement: // If DISTINCT is used, only distinct values of an argument are respected",
+    "Manual review required for ABAP statement: // - Note: There may or may not be spaces between the parentheses following avg, min, etc., and the // content specified within",
+    "Manual review required for ABAP statement: // AVG (Returns the average value of an argument) avg( seatsocc as abap.dec(15,2)) as avg_seats_occ, avg( cast(paymentsum as abap.dec(15, 2)) as abap.dec(15,2))",
+    "Manual review required for ABAP statement: @Semantics.amount.currencyCode: 'currency' sum(paymentsum) as total_paysum, // MIN (Returns the least value of an argument) min( seatsocc ) as min_occ_seats, //"
+  ],
+  "assumptions": [
+    "ABAP host variables are emitted as Snowflake bind-style placeholders where possible.",
+    "MANDT client handling is removed unless explicitly represented in business filters."
+  ],
+  "conversion_notes": [
+    "No SAP metadata rows were found; conversion used source-only inference."
+  ],
+  "learning_memory": {
+    "stored": true,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\f196020d4bbf4b658bf797362b6e591f\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 10,
+      "select": 1
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "THE",
+      "ZDEMO_ABAP_FLI"
+    ]
+  }
+}

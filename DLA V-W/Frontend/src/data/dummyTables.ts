@@ -1,0 +1,20 @@
+export const tables = [
+{
+database:"salesdb",
+schema:"dbo",
+table:"orders",
+primaryKey:"order_id"
+},
+{
+database:"salesdb",
+schema:"dbo",
+table:"customers",
+primaryKey:"customer_id"
+},
+{
+database:"salesdb",
+schema:"sales",
+table:"products",
+primaryKey:"product_id"
+}
+]

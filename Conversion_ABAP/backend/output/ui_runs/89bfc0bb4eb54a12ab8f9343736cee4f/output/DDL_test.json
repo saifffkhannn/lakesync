@@ -1,0 +1,40 @@
+{
+  "source": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\89bfc0bb4eb54a12ab8f9343736cee4f\\input\\DDL_test.txt",
+  "sql": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\89bfc0bb4eb54a12ab8f9343736cee4f\\output\\DDL_test.sql",
+  "confidence": 0.65,
+  "warnings": [
+    "SAP client handling (MANDT) not addressed - verify if source tables are client-partitioned in Snowflake",
+    "No explicit ordering specified - result order may differ from SAP system",
+    "Confidence capped because material behavior is omitted, simplified, or delegated outside SQL."
+  ],
+  "assumptions": [
+    "Tables VBAK and VBAP exist in Snowflake with same column names and compatible data types",
+    "NETWR column contains numeric values compatible with comparison operations",
+    "No client filtering required or handled at application layer"
+  ],
+  "conversion_notes": [
+    "Direct translation of CDS view to Snowflake view",
+    "ABAP key fields translated to regular SELECT columns (Snowflake views don't have key semantics)",
+    "Case expression preserved with same logic and thresholds",
+    "Inner join condition maintained exactly as in source"
+  ],
+  "learning_memory": {
+    "stored": true,
+    "memory_file": "D:\\Accelerator\\ABAP Conversion\\backend\\output\\ui_runs\\89bfc0bb4eb54a12ab8f9343736cee4f\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "select": 1
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "VBAK",
+      "VBAP"
+    ]
+  }
+}

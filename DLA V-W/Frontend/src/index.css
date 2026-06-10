@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 10%;
+    --primary: 213 94% 55%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 215 25% 27%;
+    --muted: 210 18% 95%;
+    --muted-foreground: 215 14% 46%;
+    --accent: 210 20% 96%;
+    --accent-foreground: 215 25% 27%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 20% 92%;
+    --input: 214 20% 92%;
+    --ring: 213 94% 55%;
+    --radius: 0.75rem;
+
+    /* Synthlake custom tokens */
+    --surface: 0 0% 100%;
+    --surface-secondary: 210 25% 97%;
+    --surface-elevated: 0 0% 100%;
+    --text-primary: 215 25% 10%;
+    --text-secondary: 215 14% 46%;
+    --text-tertiary: 215 12% 62%;
+    --brand-blue: 213 94% 55%;
+    --brand-blue-light: 213 94% 96%;
+    --brand-purple: 270 60% 62%;
+    --brand-purple-light: 270 60% 96%;
+    --brand-emerald: 160 60% 45%;
+    --brand-emerald-light: 160 60% 95%;
+    --brand-orange: 30 90% 55%;
+    --brand-orange-light: 30 90% 95%;
+    --glow-blue: 213 94% 55%;
+    --glow-purple: 270 60% 62%;
+    --hero-bg: 0 0% 100%;
+    --hero-decoration: 213 94% 96%;
+    --nav-bg: 0 0% 100%;
+    --nav-border: 214 20% 94%;
+    --illustration-source: 213 80% 62%;
+    --illustration-source-dark: 213 80% 50%;
+    --illustration-target: 270 60% 62%;
+    --illustration-target-dark: 270 60% 50%;
+    --illustration-glow: 0 0% 0%;
+    --status-card-bg: 0 0% 100%;
+    --status-card-border: 214 20% 92%;
+    --status-card-shadow: 215 25% 85%;
+    --cta-bg: 210 25% 97%;
+    --cta-border: 214 20% 92%;
+    --step-connector: 213 40% 80%;
+
+    /* Sidebar tokens */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 95%;
+    --card: 222 40% 9%;
+    --card-foreground: 210 40% 95%;
+    --popover: 222 40% 9%;
+    --popover-foreground: 210 40% 95%;
+    --primary: 195 100% 50%;
+    --primary-foreground: 222 47% 6%;
+    --secondary: 220 30% 14%;
+    --secondary-foreground: 210 40% 90%;
+    --muted: 220 30% 14%;
+    --muted-foreground: 215 20% 60%;
+    --accent: 220 30% 14%;
+    --accent-foreground: 210 40% 90%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 220 25% 16%;
+    --input: 220 25% 16%;
+    --ring: 195 100% 50%;
+    --radius: 0.75rem;
+
+    --surface: 222 40% 9%;
+    --surface-secondary: 222 35% 11%;
+    --surface-elevated: 222 35% 12%;
+    --text-primary: 210 40% 95%;
+    --text-secondary: 215 20% 60%;
+    --text-tertiary: 215 15% 45%;
+    --brand-blue: 195 100% 50%;
+    --brand-blue-light: 195 100% 12%;
+    --brand-purple: 270 80% 65%;
+    --brand-purple-light: 270 80% 12%;
+    --brand-emerald: 160 60% 50%;
+    --brand-emerald-light: 160 60% 12%;
+    --brand-orange: 30 90% 55%;
+    --brand-orange-light: 30 90% 12%;
+    --glow-blue: 195 100% 50%;
+    --glow-purple: 270 80% 65%;
+    --hero-bg: 222 47% 6%;
+    --hero-decoration: 222 40% 10%;
+    --nav-bg: 222 47% 5%;
+    --nav-border: 220 25% 12%;
+    --illustration-source: 195 100% 55%;
+    --illustration-source-dark: 195 100% 40%;
+    --illustration-target: 270 80% 65%;
+    --illustration-target-dark: 270 80% 45%;
+    --illustration-glow: 0 0% 100%;
+    --status-card-bg: 222 35% 12%;
+    --status-card-border: 220 25% 18%;
+    --status-card-shadow: 222 40% 4%;
+    --cta-bg: 222 35% 10%;
+    --cta-border: 220 25% 16%;
+    --step-connector: 195 60% 30%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  html {
+    font-family: 'Inter', sans-serif;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-cyan-400;
+  }
+}
+
+@layer components {
+  .btn-get-started {
+    @apply relative inline-flex items-center justify-center gap-2 font-semibold px-8 py-3.5 rounded-full transition-all duration-300;
+    background: linear-gradient(135deg, hsl(213 94% 55%), hsl(195 100% 50%));
+    color: white;
+    box-shadow: 0 4px 20px -4px hsl(213 94% 55% / 0.5);
+  }
+  .btn-get-started:hover {
+    box-shadow: 0 6px 30px -4px hsl(213 94% 55% / 0.7);
+    transform: translateY(-1px);
+  }
+
+  .dark .btn-get-started {
+    background: linear-gradient(135deg, hsl(195 100% 50%), hsl(195 100% 60%));
+    box-shadow: 0 4px 25px -4px hsl(195 100% 50% / 0.6);
+  }
+  .dark .btn-get-started:hover {
+    box-shadow: 0 6px 35px -4px hsl(195 100% 50% / 0.8);
+  }
+
+  .input {
+    @apply w-full border border-gray-300 rounded-lg p-2 mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500;
+  }
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 999px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

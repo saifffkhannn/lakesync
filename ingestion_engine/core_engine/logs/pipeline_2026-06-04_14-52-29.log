@@ -1,0 +1,194 @@
+2026-06-04 14:52:29,323 | INFO | Config file verified     : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\config\sapsqlserver_aws_snowflake.cfg
+2026-06-04 14:52:29,325 | INFO | Metadata file verified   : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\metadata\sapsqlserver_metadata.csv
+2026-06-04 14:52:29,326 | INFO | Starting Full Load Pipeline
+2026-06-04 14:52:29,330 | INFO | Connecting to SAP SQL Server...
+2026-06-04 14:52:29,332 | INFO | Connected to SAP SQL Server.
+2026-06-04 14:52:33,977 | INFO | Connected to Snowflake
+2026-06-04 14:52:33,981 | INFO | Processing table bikestores_stg.production.brands
+2026-06-04 14:52:34,013 | INFO | Starting extraction for bikestores.production.brands
+2026-06-04 14:52:34,100 | INFO | Schema retrieved
+2026-06-04 14:52:34,101 | INFO | brand_id                     int64
+brand_name                  object
+LastModifiedDate    datetime64[us]
+dtype: object
+2026-06-04 14:52:34,199 | INFO | Source count: 9
+2026-06-04 14:52:34,200 | INFO | Parquet count: 9
+2026-06-04 14:52:34,201 | INFO | Reconciliation Passed
+2026-06-04 14:52:34,202 | INFO | Parquet file created at D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/brands\brands_20260604_145234.parquet
+2026-06-04 14:52:34,203 | INFO | Extraction completed for brands
+2026-06-04 14:52:34,206 | INFO | Uploading brands_20260604_145234.parquet to AWS S3
+2026-06-04 14:52:34,457 | INFO | S3 client created successfully
+2026-06-04 14:52:38,974 | INFO | Archiving: bikestores/production/brands/brands_20260604_143423.parquet -> archive/bikestores/production/brands/brands_20260604_143423.parquet
+2026-06-04 14:52:39,707 | INFO | All existing files archived successfully
+2026-06-04 14:52:39,711 | INFO | Previous S3 file archived successfully
+2026-06-04 14:52:39,731 | INFO | S3 client created successfully
+2026-06-04 14:52:39,732 | INFO | Upload attempt 1
+2026-06-04 14:52:44,724 | INFO | Upload Successful
+2026-06-04 14:52:44,969 | INFO | Local File Size: 2569
+2026-06-04 14:52:44,974 | INFO | S3 File Size: 2569
+2026-06-04 14:52:44,979 | INFO | Uploaded brands_20260604_145234.parquet to s3://stageddataparqe/bikestores/production/brands/brands_20260604_145234.parquet
+2026-06-04 14:52:45,031 | INFO | Local file Not deleted after upload: D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/brands\brands_20260604_145234.parquet
+2026-06-04 14:52:45,066 | INFO | Creating target objects on 'snowflake' for table: bikestores.production.brands
+2026-06-04 14:52:45,070 | INFO | Starting Snowflake object creation for bikestores.production.brands
+2026-06-04 14:52:45,205 | INFO | Retrieved source schema:
+        COLUMN_NAME DATA_TYPE
+0          brand_id       int
+1        brand_name   varchar
+2  LastModifiedDate  datetime
+2026-06-04 14:52:45,284 | INFO | Creating snowflake Database bikestores 
+2026-06-04 14:52:50,357 | INFO | RAW & TGT objects created successfully
+2026-06-04 14:52:50,359 | INFO | Cursor closed
+2026-06-04 14:52:50,360 | INFO | Target objects created successfully on 'snowflake' 
+2026-06-04 14:52:51,235 | INFO | Snowflake control table ready in bikestores.SampleDB_STG
+2026-06-04 14:52:51,235 | INFO | Snowflake control table created successfully.
+2026-06-04 14:52:51,237 | INFO | Loading data into Snowflake table bikestore_stg.production.brands
+2026-06-04 14:52:54,603 | INFO | File: s3://stageddataparqe/bikestores/production/brands/brands_20260604_145234.parquet, Status: LOADED, Parsed: 9, Loaded: 9, Errors: 0, Error Limit: 1
+2026-06-04 14:52:56,819 | INFO | RAW MERGE RESULT: (9, 0)
+2026-06-04 14:52:56,820 | INFO | MERGE complete — Inserted: 9, Updated: 0
+2026-06-04 14:52:57,627 | INFO | Truncated Table brands in bikestore_stg
+2026-06-04 14:52:57,629 | INFO | Merge metrics | Inserted: 9, Updated: 0
+2026-06-04 14:52:57,629 | INFO | {'event': 'snowflake_load_complete', 'table': 'bikestore_stg.production.brands', 'rows_loaded': 9, 'status': 'SUCCESS'}
+2026-06-04 14:52:57,631 | INFO | Snowflake Loading completed successfully
+2026-06-04 14:52:58,189 | INFO | Completed table brands
+2026-06-04 14:52:59,062 | INFO | Inserted into Snowflake control table in SampleDB_STG: brands
+2026-06-04 14:52:59,064 | INFO | Processing table bikestores_stg.production.categories
+2026-06-04 14:52:59,104 | INFO | Starting extraction for bikestores.production.categories
+2026-06-04 14:52:59,248 | INFO | Schema retrieved
+2026-06-04 14:52:59,249 | INFO | category_id                  int64
+category_name               object
+LastModifiedDate    datetime64[us]
+dtype: object
+2026-06-04 14:52:59,271 | INFO | Source count: 7
+2026-06-04 14:52:59,272 | INFO | Parquet count: 7
+2026-06-04 14:52:59,273 | INFO | Reconciliation Passed
+2026-06-04 14:52:59,274 | INFO | Parquet file created at D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/categories\categories_20260604_145259.parquet
+2026-06-04 14:52:59,275 | INFO | Extraction completed for categories
+2026-06-04 14:52:59,277 | INFO | Uploading categories_20260604_145259.parquet to AWS S3
+2026-06-04 14:52:59,296 | INFO | S3 client created successfully
+2026-06-04 14:53:03,998 | INFO | Archiving: bikestores/production/categories/categories_20260604_143359.parquet -> archive/bikestores/production/categories/categories_20260604_143359.parquet
+2026-06-04 14:53:04,593 | INFO | All existing files archived successfully
+2026-06-04 14:53:04,609 | INFO | Previous S3 file archived successfully
+2026-06-04 14:53:04,666 | INFO | S3 client created successfully
+2026-06-04 14:53:04,669 | INFO | Upload attempt 1
+2026-06-04 14:53:09,610 | INFO | Upload Successful
+2026-06-04 14:53:09,921 | INFO | Local File Size: 2647
+2026-06-04 14:53:09,923 | INFO | S3 File Size: 2647
+2026-06-04 14:53:09,924 | INFO | Uploaded categories_20260604_145259.parquet to s3://stageddataparqe/bikestores/production/categories/categories_20260604_145259.parquet
+2026-06-04 14:53:09,937 | INFO | Local file Not deleted after upload: D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/categories\categories_20260604_145259.parquet
+2026-06-04 14:53:09,939 | INFO | Creating target objects on 'snowflake' for table: bikestores.production.categories
+2026-06-04 14:53:09,940 | INFO | Starting Snowflake object creation for bikestores.production.categories
+2026-06-04 14:53:09,988 | INFO | Retrieved source schema:
+        COLUMN_NAME DATA_TYPE
+0       category_id       int
+1     category_name   varchar
+2  LastModifiedDate  datetime
+2026-06-04 14:53:10,011 | INFO | Creating snowflake Database bikestores 
+2026-06-04 14:53:14,970 | INFO | RAW & TGT objects created successfully
+2026-06-04 14:53:14,972 | INFO | Cursor closed
+2026-06-04 14:53:14,974 | INFO | Target objects created successfully on 'snowflake' 
+2026-06-04 14:53:15,652 | INFO | Snowflake control table ready in bikestores.SampleDB_STG
+2026-06-04 14:53:15,654 | INFO | Snowflake control table created successfully.
+2026-06-04 14:53:15,660 | INFO | Loading data into Snowflake table bikestore_stg.production.categories
+2026-06-04 14:53:18,825 | INFO | File: s3://stageddataparqe/bikestores/production/categories/categories_20260604_145259.parquet, Status: LOADED, Parsed: 7, Loaded: 7, Errors: 0, Error Limit: 1
+2026-06-04 14:53:21,183 | INFO | RAW MERGE RESULT: (7, 0)
+2026-06-04 14:53:21,185 | INFO | MERGE complete — Inserted: 7, Updated: 0
+2026-06-04 14:53:21,898 | INFO | Truncated Table categories in bikestore_stg
+2026-06-04 14:53:21,901 | INFO | Merge metrics | Inserted: 7, Updated: 0
+2026-06-04 14:53:21,904 | INFO | {'event': 'snowflake_load_complete', 'table': 'bikestore_stg.production.categories', 'rows_loaded': 7, 'status': 'SUCCESS'}
+2026-06-04 14:53:21,907 | INFO | Snowflake Loading completed successfully
+2026-06-04 14:53:23,226 | INFO | Completed table categories
+2026-06-04 14:53:24,045 | INFO | Inserted into Snowflake control table in SampleDB_STG: categories
+2026-06-04 14:53:24,058 | INFO | Full Load Pipeline Completed Successfully
+2026-06-04 14:53:24,059 | INFO | Source Connection closed successfully
+2026-06-04 14:53:24,642 | INFO | Target Connection closed successfully
+2026-06-04 14:53:43,747 | INFO | Connecting to SAP SQL Server...
+2026-06-04 14:53:43,757 | INFO | Connected to SAP SQL Server.
+2026-06-04 14:53:45,361 | INFO | Connected to Snowflake
+2026-06-04 14:53:59,260 | INFO | Connected to Snowflake
+2026-06-04 14:54:01,155 | INFO | Connecting to SAP SQL Server...
+2026-06-04 14:54:01,157 | INFO | Connected to SAP SQL Server.
+2026-06-04 14:54:15,637 | INFO | Connecting to SAP SQL Server...
+2026-06-04 14:54:15,650 | INFO | Connected to SAP SQL Server.
+2026-06-04 14:54:17,167 | INFO | Connected to Snowflake
+2026-06-04 14:54:31,600 | INFO | Connecting to SAP SQL Server...
+2026-06-04 14:54:31,602 | INFO | Connected to SAP SQL Server.
+2026-06-04 14:54:33,802 | INFO | Connected to Snowflake
+2026-06-04 14:54:41,073 | INFO | Config file verified     : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\config\sapsqlserver_aws_snowflake.cfg
+2026-06-04 14:54:41,074 | INFO | Metadata file verified   : D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\metadata\sapsqlserver_metadata.csv
+2026-06-04 14:54:41,076 | INFO | Starting Modular Incremental/Full Load Pipeline
+2026-06-04 14:54:41,089 | INFO | Connecting to SAP SQL Server...
+2026-06-04 14:54:41,091 | INFO | Connected to SAP SQL Server.
+2026-06-04 14:54:42,806 | INFO | Connected to Snowflake
+2026-06-04 14:54:43,740 | INFO | Snowflake control table ready in bikestores.bikestores_stg
+2026-06-04 14:54:44,236 | INFO | [production.brands] Target last run timestamp = None; Extraction window start = None
+2026-06-04 14:54:44,251 | INFO | Starting incremental extraction for bikestores.production.brands
+2026-06-04 14:54:44,252 | INFO | Incremental extract query: SELECT [brand_id], [brand_name], [LastModifiedDate] FROM [bikestores].[production].[brands] ORDER BY [LastModifiedDate]
+2026-06-04 14:54:44,276 | INFO | Schema retrieved
+2026-06-04 14:54:44,279 | INFO | BRAND_ID                     int64
+BRAND_NAME                  object
+LASTMODIFIEDDATE    datetime64[us]
+dtype: object
+2026-06-04 14:54:44,315 | INFO | Reconciliation Passed
+2026-06-04 14:54:44,316 | INFO | Parquet file created at D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/brands\brands_20260604_145444.parquet
+2026-06-04 14:54:44,320 | INFO | Incremental extraction completed for brands; rows=9
+2026-06-04 14:54:44,343 | INFO | S3 client created successfully
+2026-06-04 14:54:48,787 | INFO | Archiving: bikestores/production/brands/brands_20260604_145234.parquet -> archive/bikestores/production/brands/brands_20260604_145234.parquet
+2026-06-04 14:54:49,372 | INFO | All existing files archived successfully
+2026-06-04 14:54:49,379 | INFO | Previous S3 files archived successfully
+2026-06-04 14:54:49,406 | INFO | S3 client created successfully
+2026-06-04 14:54:49,407 | INFO | Upload attempt 1
+2026-06-04 14:54:54,014 | INFO | Upload Successful
+2026-06-04 14:54:54,244 | INFO | Local File Size: 2592
+2026-06-04 14:54:54,245 | INFO | S3 File Size: 2592
+2026-06-04 14:54:54,245 | INFO | Uploaded brands_20260604_145444.parquet to s3://stageddataparqe/bikestores/production/brands/brands_20260604_145444.parquet
+2026-06-04 14:54:54,249 | INFO | Local file deleted after upload: D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/brands\brands_20260604_145444.parquet
+2026-06-04 14:54:58,377 | INFO | Loading data into Snowflake table bikestore_stg.PRODUCTION.BRANDS
+2026-06-04 14:55:01,298 | INFO | File: s3://stageddataparqe/bikestores/production/brands/brands_20260604_145444.parquet, Status: LOADED, Parsed: 9, Loaded: 9, Errors: 0, Error Limit: 1
+2026-06-04 14:55:04,026 | INFO | RAW MERGE RESULT: (0, 9)
+2026-06-04 14:55:04,027 | INFO | MERGE complete — Inserted: 0, Updated: 9
+2026-06-04 14:55:04,941 | INFO | Truncated Table BRANDS in bikestore_stg
+2026-06-04 14:55:04,943 | INFO | Merge metrics | Inserted: 0, Updated: 9
+2026-06-04 14:55:04,943 | INFO | {'event': 'snowflake_load_complete', 'table': 'bikestore_stg.PRODUCTION.BRANDS', 'rows_loaded': 9, 'status': 'SUCCESS'}
+2026-06-04 14:55:04,944 | INFO | Snowflake Loading completed successfully
+2026-06-04 14:55:06,682 | INFO | Snowflake control table ready in bikestores.bikestores_stg
+2026-06-04 14:55:07,369 | INFO | Inserted into Snowflake control table in bikestores_stg: brands
+2026-06-04 14:55:08,096 | INFO | Snowflake control table ready in bikestores.bikestores_stg
+2026-06-04 14:55:08,506 | INFO | [production.categories] Target last run timestamp = None; Extraction window start = None
+2026-06-04 14:55:08,528 | INFO | Starting incremental extraction for bikestores.production.categories
+2026-06-04 14:55:08,529 | INFO | Incremental extract query: SELECT [category_id], [category_name], [LastModifiedDate] FROM [bikestores].[production].[categories] ORDER BY [LastModifiedDate]
+2026-06-04 14:55:08,544 | INFO | Schema retrieved
+2026-06-04 14:55:08,545 | INFO | CATEGORY_ID                  int64
+CATEGORY_NAME               object
+LASTMODIFIEDDATE    datetime64[us]
+dtype: object
+2026-06-04 14:55:08,561 | INFO | Reconciliation Passed
+2026-06-04 14:55:08,562 | INFO | Parquet file created at D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/categories\categories_20260604_145508.parquet
+2026-06-04 14:55:08,566 | INFO | Incremental extraction completed for categories; rows=7
+2026-06-04 14:55:08,592 | INFO | S3 client created successfully
+2026-06-04 14:55:12,459 | INFO | Archiving: bikestores/production/categories/categories_20260604_145259.parquet -> archive/bikestores/production/categories/categories_20260604_145259.parquet
+2026-06-04 14:55:12,926 | INFO | All existing files archived successfully
+2026-06-04 14:55:12,933 | INFO | Previous S3 files archived successfully
+2026-06-04 14:55:12,968 | INFO | S3 client created successfully
+2026-06-04 14:55:12,970 | INFO | Upload attempt 1
+2026-06-04 14:55:17,198 | INFO | Upload Successful
+2026-06-04 14:55:17,506 | INFO | Local File Size: 2666
+2026-06-04 14:55:17,506 | INFO | S3 File Size: 2666
+2026-06-04 14:55:17,507 | INFO | Uploaded categories_20260604_145508.parquet to s3://stageddataparqe/bikestores/production/categories/categories_20260604_145508.parquet
+2026-06-04 14:55:17,510 | INFO | Local file deleted after upload: D:\DATA LOAD ACCELERATORS\ingestion_engine\core_engine\Extract\bikestores/production/categories\categories_20260604_145508.parquet
+2026-06-04 14:55:21,293 | INFO | Loading data into Snowflake table bikestore_stg.PRODUCTION.CATEGORIES
+2026-06-04 14:55:24,162 | INFO | File: s3://stageddataparqe/bikestores/production/categories/categories_20260604_145508.parquet, Status: LOADED, Parsed: 7, Loaded: 7, Errors: 0, Error Limit: 1
+2026-06-04 14:55:26,315 | INFO | RAW MERGE RESULT: (0, 7)
+2026-06-04 14:55:26,316 | INFO | MERGE complete — Inserted: 0, Updated: 7
+2026-06-04 14:55:27,130 | INFO | Truncated Table CATEGORIES in bikestore_stg
+2026-06-04 14:55:27,131 | INFO | Merge metrics | Inserted: 0, Updated: 7
+2026-06-04 14:55:27,131 | INFO | {'event': 'snowflake_load_complete', 'table': 'bikestore_stg.PRODUCTION.CATEGORIES', 'rows_loaded': 7, 'status': 'SUCCESS'}
+2026-06-04 14:55:27,132 | INFO | Snowflake Loading completed successfully
+2026-06-04 14:55:28,496 | INFO | Snowflake control table ready in bikestores.bikestores_stg
+2026-06-04 14:55:29,428 | INFO | Inserted into Snowflake control table in bikestores_stg: categories
+2026-06-04 14:55:29,429 | INFO | Pipeline Execution Completed Successfully
+2026-06-04 14:55:29,442 | INFO | Source Connection closed
+2026-06-04 14:55:29,999 | INFO | Target Connection closed
+2026-06-04 16:51:28,617 | INFO | Connecting to SAP SQL Server...
+2026-06-04 16:51:28,827 | INFO | Connected to SAP SQL Server.
+2026-06-04 16:51:28,887 | INFO | Connecting to SAP SQL Server...
+2026-06-04 16:51:28,889 | INFO | Connected to SAP SQL Server.

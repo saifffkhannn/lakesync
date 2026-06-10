@@ -1,0 +1,25 @@
+ORACLE,DATABRICKS
+number,DECIMAL(38,18)
+float,DOUBLE
+binary_float,FLOAT
+binary_double,DOUBLE
+integer,INT
+smallint,SMALLINT
+int,INT
+varchar2,STRING
+nvarchar2,STRING
+char,CHAR
+nchar,CHAR
+clob,STRING
+nclob,STRING
+long,STRING
+date,TIMESTAMP
+timestamp,TIMESTAMP
+timestamp with time zone,TIMESTAMP
+timestamp with local time zone,TIMESTAMP
+interval year to month,STRING
+interval day to second,STRING
+blob,BINARY
+raw,BINARY
+long raw,BINARY
+xmltype,STRING

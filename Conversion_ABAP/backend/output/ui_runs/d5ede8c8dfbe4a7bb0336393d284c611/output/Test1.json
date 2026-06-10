@@ -1,0 +1,47 @@
+{
+  "source": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\d5ede8c8dfbe4a7bb0336393d284c611\\input\\Test1.txt",
+  "sql": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\d5ede8c8dfbe4a7bb0336393d284c611\\output\\Test1.sql",
+  "confidence": 0.35,
+  "warnings": [
+    "Confidence capped because the output identifies core SAP runtime behavior that is not SQL-convertible."
+  ],
+  "assumptions": [
+    "Only translating the active (uncommented) INNER JOIN example as specified in the ABAP source",
+    "Commented out join examples (LEFT OUTER JOIN, RIGHT OUTER JOIN, CROSS JOIN) are not included in the translation",
+    "Table aliases _carr and _flsch_in are preserved as defined in the active code"
+  ],
+  "conversion_notes": [
+    "ABAP CDS DEFINE VIEW translated to SQL CREATE OR REPLACE VIEW",
+    "ABAP annotations @AccessControl and @EndUserText stripped as they have no SQL equivalent",
+    "ABAP table~column syntax (_carr.carrid) translated to SQL table.column syntax",
+    "ABAP 'key' keyword removed as it's not needed in SQL view definition",
+    "Only the uncommented INNER JOIN section was translated, following the literal translation rule"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\Accelerator\\Conversion_ABAP\\backend\\output\\ui_runs\\d5ede8c8dfbe4a7bb0336393d284c611\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 22,
+      "select": 3
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "A",
+      "AND",
+      "CONDITION",
+      "CONDITIONS",
+      "MUST",
+      "SELECTS",
+      "TYPE",
+      "ZDEMO_ABAP_CARR",
+      "ZDEMO_ABAP_FLSCH"
+    ]
+  }
+}

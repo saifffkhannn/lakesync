@@ -1,0 +1,23 @@
+{
+  "clusters": {
+    "number": [
+      "int", "integer", "bigint", "smallint", "tinyint",
+      "number", "numeric", "decimal", "float", "double","long"
+    ],
+    "text": [
+      "string", "varchar", "char", "text"
+    ],
+    "boolean": [
+      "boolean"
+    ],
+    "date": [
+      "date"
+    ],
+    "datetime": [
+      "timestamp", "timestamp_ntz", "timestamp_ltz", "timestamp_tz", "datetime", "datetime2"
+    ],
+    "json": [
+      "variant", "object", "array", "struct", "map"
+    ]
+  }
+}
