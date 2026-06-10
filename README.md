@@ -99,7 +99,9 @@ This script will automatically:
 ## 📖 Module Run & Execution Guides
 
 For step-by-step instructions on running each module independently or via the CLI interfaces, consult the execution guides:
+- 📊 **[Data Ingestion Data Flow Guide](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/data_flow_ingestion.md)**
+- ⚙️ **[ABAP Conversion Data Flow Guide](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/data_flow_abap.md)**
+- 🔄 **[Master Data Management Data Flow Guide](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/data_flow_mdm.md)**
 - 📊 **[Data Load Run Guide](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/run_dataload.md)**
 - ⚙️ **[ABAP Conversion Run Guide](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/run_abap.md)**
 - 🔄 **[Master Data Management (MDM) Run Guide](file:///d:/DATA%20LOAD%20ACCELERATORS/docs/run_mdm.md)**
-
