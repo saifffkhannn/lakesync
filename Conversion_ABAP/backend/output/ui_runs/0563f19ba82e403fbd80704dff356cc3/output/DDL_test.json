@@ -1,0 +1,36 @@
+{
+  "source": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\0563f19ba82e403fbd80704dff356cc3\\input\\DDL_test.txt",
+  "sql": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\0563f19ba82e403fbd80704dff356cc3\\output\\DDL_test.sql",
+  "confidence": 1.0,
+  "warnings": [],
+  "assumptions": [
+    "Tables vbak and vbap exist in Snowflake with the same structure as SAP",
+    "Column data types are compatible between SAP and Snowflake"
+  ],
+  "conversion_notes": [
+    "Stripped ABAP annotations @AbapCatalog.sqlViewName and @EndUserText.label",
+    "Translated ABAP CDS DEFINE VIEW to SQL CREATE OR REPLACE VIEW",
+    "Translated key fields as regular SELECT columns",
+    "Preserved INNER JOIN syntax and join condition",
+    "Translated CASE expression directly to SQL CASE WHEN...THEN...ELSE...END"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\0563f19ba82e403fbd80704dff356cc3\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "select": 1
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "VBAK",
+      "VBAP"
+    ]
+  }
+}

@@ -50,7 +50,7 @@ class ConversionMemory:
             "abap_snippet": self._snippet(source),
             "generated_sql_snippet": self._snippet(output.sql),
             "confidence": output.confidence,
-            "artifact_type": output.artifact_type.value,
+            "artifact_type": output.artifact_type,
             "gaps": gaps,
             "severity": self._severity(output, gaps),
             "feature_counts": parsed.annotations.get("feature_counts", {}),

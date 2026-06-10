@@ -97,40 +97,40 @@ class CortexConversionEngine:
         """Build the compact JSON prompt sent to Cortex."""
         payload = {
             "system": (
-                "You are a SAP ABAP to SQL literal translator. "
-                "Your ONLY job is to translate every ABAP statement directly to its equivalent Snowflake SQL. "
-                "Do NOT generate views, procedures, tasks, or dynamic tables unless the ABAP source explicitly defines one (e.g. a CDS DEFINE VIEW). "
-                "Do NOT restructure, optimize, or re-engineer the code. Translate it line by line, statement by statement. "
+                "You are an expert SAP ABAP to Snowflake SQL DDL transpiler. "
+                "Your ONLY job is to translate SAP ABAP DDL scripts, table definitions, dictionary objects, and CDS views "
+                "directly to their equivalent Snowflake DDL (Data Definition Language) statements with near 100% accuracy. "
+                "Do NOT generate views or procedures unless defined in the source (e.g., CDS Views). "
+                "Preserve all structural attributes, table columns, constraints, and relationships. "
                 "Return strict JSON only."
             ),
-            "translation_mode": "LITERAL",
+            "translation_mode": "DDL_SPECIFIC",
             "translation_rules": [
-                "Translate each ABAP SELECT statement directly to an equivalent Snowflake SELECT statement.",
-                "Translate ABAP INNER JOIN / LEFT JOIN to SQL INNER JOIN / LEFT JOIN, preserving the exact join condition.",
-                "Translate ABAP WHERE clause filters directly to SQL WHERE clause with the same logic.",
-                "Translate ABAP UPDATE ... SET ... WHERE to SQL UPDATE ... SET ... WHERE.",
-                "Translate ABAP INSERT ... FROM VALUE to SQL INSERT INTO ... VALUES.",
-                "Translate ABAP COMMIT WORK to COMMIT.",
-                "Translate sy-datum to CURRENT_DATE.",
-                "Translate ABAP LOOP AT ... WRITE to a plain SELECT (the WRITE output is the SELECT result).",
-                "Translate ABAP INTO TABLE @DATA(...) by removing it - it is just a target variable, not part of the SQL.",
-                "Translate ABAP table~column join syntax to table.column SQL syntax.",
-                "Translate ABAP CDS DEFINE VIEW to SQL CREATE OR REPLACE VIEW.",
-                "Translate ABAP CDS CASE expressions directly to SQL CASE WHEN ... THEN ... ELSE ... END.",
-                "Translate ABAP CDS key fields by including them as regular SELECT columns (no PRIMARY KEY in views).",
-                "Strip ABAP annotations (@AbapCatalog, @EndUserText, @AccessControl etc.) - they have no SQL equivalent.",
-                "Strip ABAP-only keywords: REPORT, PROGRAM, INTO TABLE @DATA(...), LOOP AT, ENDLOOP, WRITE.",
+                "Translate SAP table definitions and DDL structures to Snowflake 'CREATE OR REPLACE TABLE table_name'.",
+                "Translate SAP ABAP CDS views ('DEFINE VIEW view_name AS SELECT FROM ...') to Snowflake 'CREATE OR REPLACE VIEW view_name AS SELECT ...'.",
+                "Map SAP ABAP data types to Snowflake equivalents precisely:",
+                "  - CHAR(n), NUMC(n), CLNT, LANG -> VARCHAR(n)",
+                "  - DATS -> DATE",
+                "  - TIMS -> TIME",
+                "  - DEC(p, s) -> NUMBER(p, s)",
+                "  - INT4, INT2, INT1 -> NUMBER",
+                "  - FLTP -> FLOAT",
+                "  - RAW(n) -> BINARY(n)",
+                "  - QUAN(p, s), CURR(p, s) -> NUMBER(p, s)",
+                "Preserve primary keys, key columns, and NOT NULL constraints in the created tables.",
+                "Strip ABAP annotations like @AbapCatalog, @EndUserText, @AccessControl, @Metadata etc. that are metadata-only.",
+                "Translate join conditions, WHERE clauses, and select lists inside CDS views to ANSI/Snowflake syntax.",
+                "Convert SAP client dependency checks (e.g. mandt column joins) if required, otherwise map columns normally.",
                 "Do NOT add any Snowflake-specific optimizations, clustering, VARIANT columns, or TASK/STREAM wrappers.",
-                "Do NOT invent columns, tables, or logic not present in the original ABAP source.",
-                "The output sql field must contain ONLY the direct SQL translation, nothing else.",
+                "The output sql field must contain ONLY the direct SQL DDL translation, nothing else.",
             ],
             "output_schema": {
-                "sql": "string - the direct literal SQL translation of the ABAP source",
+                "sql": "string - the direct literal SQL DDL translation of the ABAP source",
                 "confidence": "number between 0 and 1",
-                "warnings": ["string - only note things that truly cannot be translated, e.g. GUI output like WRITE"],
+                "warnings": ["string - note any untranslatable DDL structures or types that require manual refactoring"],
                 "assumptions": ["string"],
                 "conversion_notes": ["string"],
-                "artifact_type": "script|view",
+                "artifact_type": "script|view|table",
             },
             "abap_source": abap_source,
             "deterministic_rewrite_input": deterministic_source,

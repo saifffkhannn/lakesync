@@ -16,6 +16,7 @@ class ArtifactType(StrEnum):
     TASK = "task"
     DYNAMIC_TABLE = "dynamic_table"
     SCRIPT = "script"
+    TABLE = "table"
 
 
 class ReviewDecision(StrEnum):
@@ -87,7 +88,7 @@ class ConversionOutput(BaseModel):
     warnings: list[str] = Field(default_factory=list)
     assumptions: list[str] = Field(default_factory=list)
     conversion_notes: list[str] = Field(default_factory=list)
-    artifact_type: ArtifactType = ArtifactType.SCRIPT
+    artifact_type: str = "script"
     applied_rules: list[RuleResult] = Field(default_factory=list)
 
 
