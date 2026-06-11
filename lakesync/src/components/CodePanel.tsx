@@ -89,14 +89,15 @@ export function CodePanel({
             <p className="text-center text-xs font-bold uppercase tracking-wider text-slate-400">{empty}</p>
           </div>
         ) : (
-          <pre className="m-0 flex font-mono text-xs leading-relaxed h-full w-full overflow-y-auto overflow-x-hidden !bg-slate-50">
+          <pre className="m-0 flex font-mono text-xs h-full w-full overflow-y-auto overflow-x-hidden !bg-slate-50 items-start">
             {/* Line numbers gutter */}
             <code
               aria-hidden
               className="sticky left-0 select-none border-r border-slate-200 bg-slate-100/80 px-3 py-4 text-right text-slate-400 min-w-[3rem] !bg-slate-100/80 !text-slate-400 !border-slate-200 z-10"
+              style={{ lineHeight: "20px" }}
             >
               {lines.map((_, i) => (
-                <div key={i}>{i + 1}</div>
+                <div key={i} style={{ height: "20px", lineHeight: "20px" }}>{i + 1}</div>
               ))}
             </code>
             
@@ -105,12 +106,22 @@ export function CodePanel({
               <textarea
                 value={code}
                 onChange={(e) => onChange(e.target.value)}
-                className="flex-1 w-full bg-slate-50 px-5 py-4 text-slate-800 font-mono text-xs leading-relaxed border-none outline-none resize-none focus:ring-0 focus:outline-none overflow-x-auto overflow-y-hidden whitespace-pre !bg-slate-50 !text-slate-800"
-                style={{ minHeight: "100%", height: "100%" }}
+                className="flex-1 w-full bg-slate-50 px-5 py-4 text-slate-800 font-mono text-xs border-none outline-none resize-none focus:ring-0 focus:outline-none overflow-x-auto overflow-y-hidden whitespace-pre !bg-slate-50 !text-slate-800"
+                style={{ 
+                  height: `${lines.length * 20 + 32}px`, 
+                  lineHeight: "20px",
+                  fontSize: "12px"
+                }}
                 spellCheck="false"
               />
             ) : (
-              <code className="block flex-1 whitespace-pre px-5 py-4 text-slate-800 font-mono overflow-x-auto overflow-y-hidden !bg-slate-50 !text-slate-800">
+              <code 
+                className="block flex-1 whitespace-pre px-5 py-4 text-slate-800 font-mono overflow-x-auto overflow-y-hidden !bg-slate-50 !text-slate-800"
+                style={{ 
+                  lineHeight: "20px",
+                  fontSize: "12px"
+                }}
+              >
                 {code}
               </code>
             )}

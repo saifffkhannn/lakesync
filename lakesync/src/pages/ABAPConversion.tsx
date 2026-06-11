@@ -475,7 +475,17 @@ export const ABAPConversion: React.FC<ABAPConversionProps> = ({ onBack }) => {
                         <input 
                           type="checkbox" 
                           checked={isNewDb} 
-                          onChange={e => setIsNewDb(e.target.checked)} 
+                          onChange={e => {
+                            const checked = e.target.checked;
+                            setIsNewDb(checked);
+                            if (checked) {
+                              setIsNewSchema(true);
+                              setNewSchemaName('PUBLIC');
+                            } else {
+                              setIsNewSchema(false);
+                              setNewSchemaName('');
+                            }
+                          }} 
                           className="custom-checkbox w-3.5 h-3.5 rounded border-slate-300 text-indigo-600"
                         />
                         Create New Database
@@ -514,7 +524,15 @@ export const ABAPConversion: React.FC<ABAPConversionProps> = ({ onBack }) => {
                         <input 
                           type="checkbox" 
                           checked={isNewSchema} 
-                          onChange={e => setIsNewSchema(e.target.checked)} 
+                          onChange={e => {
+                            const checked = e.target.checked;
+                            setIsNewSchema(checked);
+                            if (checked) {
+                              setNewSchemaName('PUBLIC');
+                            } else {
+                              setNewSchemaName('');
+                            }
+                          }} 
                           className="custom-checkbox w-3.5 h-3.5 rounded border-slate-300 text-indigo-600"
                         />
                         Create New Schema
@@ -534,10 +552,11 @@ export const ABAPConversion: React.FC<ABAPConversionProps> = ({ onBack }) => {
                           className={selectCls} 
                           value={selectedSchema} 
                           onChange={e => setSelectedSchema(e.target.value)}
-                          disabled={!selectedDb}
+                          disabled={!selectedDb && !isNewDb}
                         >
                           <option value="">-- Select Existing Schema --</option>
-                          {schemas.map(sch => (
+                          <option value="PUBLIC">PUBLIC</option>
+                          {schemas.filter(sch => sch.toUpperCase() !== 'PUBLIC').map(sch => (
                             <option key={sch} value={sch}>{sch}</option>
                           ))}
                         </select>
