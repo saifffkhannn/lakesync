@@ -1,0 +1,42 @@
+{
+  "source": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\a451c1eb6e754f48904256fcd8627159\\input\\ddl_01_customer_master.abap",
+  "sql": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\a451c1eb6e754f48904256fcd8627159\\output\\ddl_01_customer_master.sql",
+  "confidence": 0.87,
+  "warnings": [
+    "SAP data element types mapped to standard VARCHAR/DATE/TIME - actual field lengths may need adjustment based on SAP dictionary definitions"
+  ],
+  "assumptions": [
+    "Standard SAP data element field lengths used for mapping",
+    "mandt assumed as VARCHAR(3) for client field",
+    "kunnr assumed as VARCHAR(10) for customer number",
+    "Date fields (erdat, aedat, sydatum) mapped to DATE type",
+    "Time field (syuzeit) mapped to TIME type",
+    "All other fields mapped to VARCHAR with estimated lengths"
+  ],
+  "conversion_notes": [
+    "Stripped ABAP annotations (@EndUserText, @AbapCatalog)",
+    "Converted composite primary key (mandt, kunnr) to Snowflake PRIMARY KEY constraint",
+    "Mapped SAP data elements to Snowflake data types based on common SAP field patterns"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\a451c1eb6e754f48904256fcd8627159\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [
+    {
+      "rule_name": "remove_mandt_projection",
+      "before": "@EndUserText.label : 'Customer Master Data'\n@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE\n@AbapCatalog.tableCategory : #TRANSPARENT\n@AbapCatalog.deliveryClass : #A\n@AbapCatalog.dataMaintenance : #RESTRICTED\ndefine table zcustomer_master {\n\n  key mandt       : mandt not null;\n  key kunnr       : kunnr not null;\n\n  erdat           : erdat;\n  ernam           : ernam;\n  aedat           : aedat;\n  name1           : name1_gp;\n  name2           : name2_gp;\n  sortl           : sortl;\n  stras           : stras_gp;\n  pfach           : pfach;\n  pstlz           : pstlz;\n  ort01           : ort01_gp;\n  regio           : regio;\n  land1           : land1_gp;\n  telf1           : telf1;\n  telfx           : telfx;\n  smtp_addr       : ad_smtpadr;\n  ktokd           : ktokd;\n  spras           : spras;\n  waers           : waers;\n  kukla           : kukla;\n  vbund           : vbund;\n  lifnr           : lifnr;\n  brsch           : brsch;\n  stcd1           : stcd1;\n  stcd2           : stcd2;\n  stkzu           : stkzu;\n  stkzn           : stkzn;\n  crea_user       : syuname;\n  crea_date       : sydatum;\n  crea_time       : syuzeit;\n  chng_user       : syuname;\n  chng_date       : sydatum;\n\n}",
+      "after": "@EndUserText.label : 'Customer Master Data'\n@AbapCatalog.enhancement.category : #NOT_EXTENSIBLE\n@AbapCatalog.tableCategory : #TRANSPARENT\n@AbapCatalog.deliveryClass : #A\n@AbapCatalog.dataMaintenance : #RESTRICTED\ndefine table zcustomer_master {\n\n  key : not null;\n  key kunnr       : kunnr not null;\n\n  erdat           : erdat;\n  ernam           : ernam;\n  aedat           : aedat;\n  name1           : name1_gp;\n  name2           : name2_gp;\n  sortl           : sortl;\n  stras           : stras_gp;\n  pfach           : pfach;\n  pstlz           : pstlz;\n  ort01           : ort01_gp;\n  regio           : regio;\n  land1           : land1_gp;\n  telf1           : telf1;\n  telfx           : telfx;\n  smtp_addr       : ad_smtpadr;\n  ktokd           : ktokd;\n  spras           : spras;\n  waers           : waers;\n  kukla           : kukla;\n  vbund           : vbund;\n  lifnr           : lifnr;\n  brsch           : brsch;\n  stcd1           : stcd1;\n  stcd2           : stcd2;\n  stkzu           : stkzu;\n  stkzn           : stkzn;\n  crea_user       : syuname;\n  crea_date       : sydatum;\n  crea_time       : syuzeit;\n  chng_user       : syuname;\n  chng_date       : sydatum;\n\n}",
+      "confidence_delta": 0.02
+    }
+  ],
+  "ast_annotations": {
+    "feature_counts": {
+      "statement": 1
+    },
+    "contains_mandt": true,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {}
+}

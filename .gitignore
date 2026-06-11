@@ -45,3 +45,4 @@ test/
 .idea/
 .DS_Store
 Thumbs.db
+/Conversion_ABAP/backend/output/ui_runs

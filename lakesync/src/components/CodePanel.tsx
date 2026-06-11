@@ -9,6 +9,7 @@ interface CodePanelProps {
   accent?: "source" | "target";
   filename?: string;
   empty?: string;
+  onChange?: (val: string) => void;
 }
 
 export function CodePanel({
@@ -19,6 +20,7 @@ export function CodePanel({
   accent = "source",
   filename,
   empty = "No content yet",
+  onChange,
 }: CodePanelProps) {
   const [copied, setCopied] = useState(false);
   const lines = useMemo(() => (code ? code.split("\n") : []), [code]);
@@ -64,7 +66,7 @@ export function CodePanel({
           <button
             onClick={copy}
             disabled={!code}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-250 bg-white text-[10px] font-bold text-slate-500 hover:text-slate-800 hover:border-slate-350 transition-all disabled:opacity-40"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-slate-250 bg-white text-[10px] font-bold text-slate-500 hover:text-slate-880 hover:border-slate-350 transition-all disabled:opacity-40"
           >
             {copied ? (
               <>
@@ -80,28 +82,49 @@ export function CodePanel({
       </div>
 
       {/* Content */}
-      <div className="relative min-h-0 flex-1 overflow-auto bg-slate-950 text-slate-100 text-left">
+      <div className="relative min-h-0 flex-1 overflow-hidden bg-slate-50 text-slate-800 text-left">
         {lines.length === 0 ? (
           <div className="flex h-full min-h-[300px] flex-col items-center justify-center p-8 opacity-40">
             <DocumentTextIcon className="w-12 h-12 text-slate-400 mb-2" />
             <p className="text-center text-xs font-bold uppercase tracking-wider text-slate-400">{empty}</p>
           </div>
         ) : (
-          <pre className="m-0 flex font-mono text-xs leading-relaxed">
+          <pre className="m-0 flex font-mono text-xs h-full w-full overflow-y-auto overflow-x-hidden !bg-slate-50 items-start">
             {/* Line numbers gutter */}
             <code
               aria-hidden
-              className="sticky left-0 select-none border-r border-slate-800 bg-slate-900 px-3 py-4 text-right text-slate-500 min-w-[3rem]"
+              className="sticky left-0 select-none border-r border-slate-200 bg-slate-100/80 px-3 py-4 text-right text-slate-400 min-w-[3rem] !bg-slate-100/80 !text-slate-400 !border-slate-200 z-10"
+              style={{ lineHeight: "20px" }}
             >
               {lines.map((_, i) => (
-                <div key={i}>{i + 1}</div>
+                <div key={i} style={{ height: "20px", lineHeight: "20px" }}>{i + 1}</div>
               ))}
             </code>
             
-            {/* Code lines */}
-            <code className="block flex-1 whitespace-pre px-5 py-4 text-slate-300 font-mono overflow-x-auto">
-              {code}
-            </code>
+            {/* Code lines / Editor */}
+            {onChange ? (
+              <textarea
+                value={code}
+                onChange={(e) => onChange(e.target.value)}
+                className="flex-1 w-full bg-slate-50 px-5 py-4 text-slate-800 font-mono text-xs border-none outline-none resize-none focus:ring-0 focus:outline-none overflow-x-auto overflow-y-hidden whitespace-pre !bg-slate-50 !text-slate-800"
+                style={{ 
+                  height: `${lines.length * 20 + 32}px`, 
+                  lineHeight: "20px",
+                  fontSize: "12px"
+                }}
+                spellCheck="false"
+              />
+            ) : (
+              <code 
+                className="block flex-1 whitespace-pre px-5 py-4 text-slate-800 font-mono overflow-x-auto overflow-y-hidden !bg-slate-50 !text-slate-800"
+                style={{ 
+                  lineHeight: "20px",
+                  fontSize: "12px"
+                }}
+              >
+                {code}
+              </code>
+            )}
           </pre>
         )}
       </div>

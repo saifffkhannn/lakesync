@@ -1,0 +1,36 @@
+{
+  "source": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\6284f68e732440cf98ee14f4c621af2d\\input\\DDL_test.txt",
+  "sql": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\6284f68e732440cf98ee14f4c621af2d\\output\\DDL_test.sql",
+  "confidence": 0.95,
+  "warnings": [],
+  "assumptions": [
+    "Source tables vbak and vbap exist in Snowflake with compatible column data types",
+    "Key columns vbeln and posnr maintain their original data types for join compatibility"
+  ],
+  "conversion_notes": [
+    "Stripped ABAP annotations @AbapCatalog.sqlViewName and @EndUserText.label as they are metadata-only",
+    "Converted CDS view 'define view' syntax to Snowflake 'CREATE OR REPLACE VIEW'",
+    "Preserved INNER JOIN logic and ON condition",
+    "Maintained CASE statement logic with numeric comparison",
+    "Key column indicators removed as they are CDS-specific metadata"
+  ],
+  "learning_memory": {
+    "stored": false,
+    "memory_file": "D:\\DATA LOAD ACCELERATORS\\Conversion_ABAP\\backend\\output\\ui_runs\\6284f68e732440cf98ee14f4c621af2d\\output\\conversion_memory.jsonl",
+    "retrieved_examples": 0
+  },
+  "applied_rules": [],
+  "ast_annotations": {
+    "feature_counts": {
+      "select": 1
+    },
+    "contains_mandt": false,
+    "contains_for_all_entries": false
+  },
+  "dependencies": {
+    "tables": [
+      "VBAK",
+      "VBAP"
+    ]
+  }
+}

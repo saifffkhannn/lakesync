@@ -33,13 +33,12 @@ class SnowflakeConnector:
                 "SNOWFLAKE_WAREHOUSE": self.settings.snowflake_warehouse,
                 "SNOWFLAKE_DATABASE": self.settings.snowflake_database,
                 "SNOWFLAKE_SCHEMA": self.settings.snowflake_schema,
-                "SNOWFLAKE_ROLE": self.settings.snowflake_role,
             }.items()
             if value is None
         ]
         if missing:
             raise SnowflakeConfigurationError(f"Missing Snowflake environment variables: {', '.join(missing)}")
-        return {
+        kwargs = {
             "account": self.settings.snowflake_account,
             "user": self.settings.snowflake_user,
             "password": self.settings.snowflake_password.get_secret_value()
@@ -48,11 +47,13 @@ class SnowflakeConnector:
             "warehouse": self.settings.snowflake_warehouse,
             "database": self.settings.snowflake_database,
             "schema": self.settings.snowflake_schema,
-            "role": self.settings.snowflake_role,
             "client_session_keep_alive": False,
             "login_timeout": 15,
             "network_timeout": 45,
         }
+        if self.settings.snowflake_role:
+            kwargs["role"] = self.settings.snowflake_role
+        return kwargs
 
     @contextmanager
     def connect(self):
