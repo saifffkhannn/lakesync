@@ -1,3 +1,4 @@
+import pandas as pd
 from src.db_connections import get_Source_connection
 from src.data_extractor import query_execution
 from src.pipeline_logger import get_logger
@@ -133,60 +134,90 @@ def source_metadata(sourc_platform, config_path):
         if sourc_platform == "oracle":
             connection = get_Source_connection(config_path, sourc_platform)
             oracle_cfg = parse_config(config_path)["oracle"]
-            source_schema = oracle_cfg["schema"].upper()
+            source_schema = oracle_cfg.get("schema", oracle_cfg.get("user", oracle_cfg.get("username", "SYSTEM"))).upper()
             source_database = oracle_cfg["service_name"]
 
-            query = f"""
-            SELECT
-                '{source_database}' AS DB_NAME,
-                t.OWNER AS TABLE_SCHEMA,
-                t.TABLE_NAME AS TABLE_NAME,
-                LISTAGG(cc.COLUMN_NAME, ', ') WITHIN GROUP (ORDER BY cc.POSITION) AS PRIMARY_KEY_COLUMNS
-            FROM ALL_TABLES t
-            LEFT JOIN ALL_CONSTRAINTS c
-                ON c.OWNER = t.OWNER
-               AND c.TABLE_NAME = t.TABLE_NAME
-               AND c.CONSTRAINT_TYPE = 'P'
-            LEFT JOIN ALL_CONS_COLUMNS cc
-                ON cc.OWNER = c.OWNER
-               AND cc.CONSTRAINT_NAME = c.CONSTRAINT_NAME
-               AND cc.TABLE_NAME = c.TABLE_NAME
-            WHERE t.OWNER = '{source_schema}'
-            GROUP BY t.OWNER, t.TABLE_NAME
-            ORDER BY t.OWNER, t.TABLE_NAME
-            """
+            # Exclude system/internal schemas
+            exclude_schemas = (
+                'SYS', 'OUTLN', 'DBSNMP', 'APPQOSSYS', 'AUDSYS', 'CTXSYS', 
+                'DBSFWUSER', 'DVSYS', 'GSMADMIN_INTERNAL', 'LBACSYS', 'MDSYS', 
+                'OJVMSYS', 'OLAPSYS', 'ORDDATA', 'ORDSYS', 'WMSYS', 'XDB', 'XS$NULL',
+                'ANONYMOUS', 'DGPDB_INT', 'DIP', 'DVF', 'GGSYS', 'GSMCATUSER', 'GSMUSER',
+                'MDDATA', 'ORACLE_OCM', 'ORDPLUGINS', 'PDBADMIN', 'REMOTE_SCHEDULER_AGENT',
+                'SI_INFORMTN_SCHEMA', 'SYS$UMF', 'SYSBACKUP', 'SYSDG', 'SYSKM', 'SYSRAC'
+            )
+            exclude_placeholder = ", ".join(f"'{s}'" for s in exclude_schemas)
 
-            df = query_execution(connection, "oracle", query)
-            connection.close()
+            try:
+                # Query tables and primary keys separately to prevent performance hang on Oracle's metadata views
+                tables_query = f"""
+                SELECT OWNER AS TABLE_SCHEMA, TABLE_NAME 
+                FROM ALL_TABLES 
+                WHERE OWNER NOT IN ({exclude_placeholder})
+                ORDER BY OWNER, TABLE_NAME
+                """
+                df_tables = query_execution(connection, "oracle", tables_query)
 
-            return df
+                pk_query = f"""
+                SELECT cols.OWNER AS TABLE_SCHEMA, cols.TABLE_NAME, cols.COLUMN_NAME
+                FROM ALL_CONSTRAINTS cons
+                JOIN ALL_CONS_COLUMNS cols 
+                  ON cons.CONSTRAINT_NAME = cols.CONSTRAINT_NAME 
+                 AND cons.OWNER = cols.OWNER
+                WHERE cons.CONSTRAINT_TYPE = 'P'
+                  AND cons.OWNER NOT IN ({exclude_placeholder})
+                ORDER BY cols.OWNER, cols.TABLE_NAME, cols.POSITION
+                """
+                df_pks = query_execution(connection, "oracle", pk_query)
 
-        if sourc_platform == "teradata":
-            connection = get_Source_connection(config_path, sourc_platform)
-            teradata_cfg = parse_config(config_path)["teradata"]
-            source_database = teradata_cfg["database"]
+                # Group primary keys by schema and table
+                pk_map = {}
+                for _, row in df_pks.iterrows():
+                    key = (row["TABLE_SCHEMA"], row["TABLE_NAME"])
+                    if key not in pk_map:
+                        pk_map[key] = []
+                    pk_map[key].append(str(row["COLUMN_NAME"]))
 
-            query = f"""
-            SELECT
-                t.DatabaseName AS DB_NAME,
-                t.DatabaseName AS TABLE_SCHEMA,
-                t.TableName AS TABLE_NAME,
-                TRIM(TRAILING ',' FROM TRIM(TRAILING ' ' FROM (CAST(XMLAGG(TRIM(i.ColumnName) || ', ' ORDER BY i.ColumnPosition) AS VARCHAR(1000))))) AS PRIMARY_KEY_COLUMNS
-            FROM DBC.TablesV t
-            LEFT JOIN DBC.IndicesV i
-                ON t.DatabaseName = i.DatabaseName
-               AND t.TableName = i.TableName
-               AND i.IndexType IN ('P', 'K')
-            WHERE t.DatabaseName = '{source_database}'
-              AND t.TableKind = 'T'
-            GROUP BY t.DatabaseName, t.TableName
-            ORDER BY t.TableName
-            """
+                # Combine tables and primary keys
+                results = []
+                for _, row in df_tables.iterrows():
+                    owner = row["TABLE_SCHEMA"]
+                    table = row["TABLE_NAME"]
+                    pk_cols = ", ".join(pk_map.get((owner, table), []))
+                    results.append({
+                        "DB_NAME": source_database,
+                        "TABLE_SCHEMA": owner,
+                        "TABLE_NAME": table,
+                        "PRIMARY_KEY_COLUMNS": pk_cols if pk_cols else None
+                    })
 
-            df = query_execution(connection, "teradata", query)
-            connection.close()
-
-            return df
+                df = pd.DataFrame(results)
+                connection.close()
+                return df
+            except Exception as e:
+                logger.info(f"Optimized Oracle metadata query failed: {str(e)}. Falling back to legacy query.")
+                query = f"""
+                SELECT
+                    '{source_database}' AS DB_NAME,
+                    t.OWNER AS TABLE_SCHEMA,
+                    t.TABLE_NAME AS TABLE_NAME,
+                    LISTAGG(cc.COLUMN_NAME, ', ') WITHIN GROUP (ORDER BY cc.POSITION) AS PRIMARY_KEY_COLUMNS
+                FROM ALL_TABLES t
+                LEFT JOIN ALL_CONSTRAINTS c
+                    ON c.OWNER = t.OWNER
+                   AND c.TABLE_NAME = t.TABLE_NAME
+                   AND c.CONSTRAINT_TYPE = 'P'
+                LEFT JOIN ALL_CONS_COLUMNS cc
+                    ON cc.OWNER = c.OWNER
+                   AND cc.CONSTRAINT_NAME = c.CONSTRAINT_NAME
+                   AND cc.TABLE_NAME = c.TABLE_NAME
+                WHERE t.OWNER NOT IN ({exclude_placeholder})
+                GROUP BY t.OWNER, t.TABLE_NAME
+                ORDER BY t.OWNER, t.TABLE_NAME
+                """
+                df = query_execution(connection, "oracle", query)
+                connection.close()
+                return df
 
         # Return None for unsupported platforms
         return None

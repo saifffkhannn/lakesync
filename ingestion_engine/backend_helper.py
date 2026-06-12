@@ -156,10 +156,18 @@ class BackendHelper:
 
             elif source_type == "oracle":
                 if action == "schemas":
+                    exclude_schemas = (
+                        'SYS', 'OUTLN', 'DBSNMP', 'APPQOSSYS', 'AUDSYS', 'CTXSYS', 
+                        'DBSFWUSER', 'DVSYS', 'GSMADMIN_INTERNAL', 'LBACSYS', 'MDSYS', 
+                        'OJVMSYS', 'OLAPSYS', 'ORDDATA', 'ORDSYS', 'WMSYS', 'XDB', 'XS$NULL',
+                        'ANONYMOUS', 'DGPDB_INT', 'DIP', 'DVF', 'GGSYS', 'GSMCATUSER', 'GSMUSER',
+                        'MDDATA', 'ORACLE_OCM', 'ORDPLUGINS', 'PDBADMIN', 'REMOTE_SCHEDULER_AGENT',
+                        'SI_INFORMTN_SCHEMA', 'SYS$UMF', 'SYSBACKUP', 'SYSDG', 'SYSKM', 'SYSRAC'
+                    )
                     cursor.execute("SELECT USERNAME FROM all_users ORDER BY USERNAME")
-                    return [row[0] for row in cursor.fetchall()]
+                    return [row[0] for row in cursor.fetchall() if row[0] not in exclude_schemas]
                 elif action == "tables":
-                    cursor.execute("SELECT TABLE_NAME FROM all_tables WHERE OWNER = :owner ORDER BY TABLE_NAME", [schema_name.upper()])
+                    cursor.execute("SELECT TABLE_NAME FROM all_tables WHERE OWNER = :owner ORDER BY TABLE_NAME", {"owner": schema_name.upper()})
                     return [row[0] for row in cursor.fetchall()]
                 elif action == "columns":
                     cursor.execute("""
@@ -169,7 +177,7 @@ class BackendHelper:
                         FROM all_tab_columns
                         WHERE OWNER = :owner AND TABLE_NAME = :tbl
                         ORDER BY COLUMN_ID
-                    """, [schema_name.upper(), table_name.upper()])
+                    """, {"owner": schema_name.upper(), "tbl": table_name.upper()})
                     rows = cursor.fetchall()
                     cursor.execute("""
                         SELECT cols.COLUMN_NAME
@@ -178,7 +186,7 @@ class BackendHelper:
                             ON cons.CONSTRAINT_NAME = cols.CONSTRAINT_NAME AND cons.OWNER = cols.OWNER
                         WHERE cons.CONSTRAINT_TYPE = 'P'
                         AND cons.OWNER = :owner AND cons.TABLE_NAME = :tbl
-                    """, [schema_name.upper(), table_name.upper()])
+                    """, {"owner": schema_name.upper(), "tbl": table_name.upper()})
                     pks = [r[0] for r in cursor.fetchall()]
                     return [{
                         "column_name": row[0],
@@ -200,14 +208,14 @@ class BackendHelper:
                     return [row[0] for row in cursor.fetchall()]
                 elif action == "columns":
                     cursor.execute(f"""
-                        SELECT TRIM(ColumnName) 
+                        SELECT ColumnName 
                         FROM DBC.IndicesV 
-                        WHERE DatabaseName = '{schema_name}' AND TableName = '{table_name}' AND IndexType IN ('P', 'K')
+                        WHERE DatabaseName = '{schema_name}' AND TableName = '{table_name}' AND IndexType = 'P'
                     """)
-                    pks = [str(row[0]).strip().lower() for row in cursor.fetchall()]
- 
+                    pks = [row[0] for row in cursor.fetchall()]
+
                     cursor.execute(f"""
-                        SELECT TRIM(ColumnName), ColumnType, ColumnLength, DecimalFractionalDigits, ColumnId, Nullable
+                        SELECT ColumnName, ColumnType, ColumnLength, DecimalFractionalDigits, ColumnId, Nullable
                         FROM DBC.ColumnsV
                         WHERE DatabaseName = '{schema_name}' AND TableName = '{table_name}'
                         ORDER BY ColumnId
@@ -223,14 +231,14 @@ class BackendHelper:
                     }
                     
                     return [{
-                        "column_name": str(row[0]).strip(),
+                        "column_name": row[0],
                         "data_type": type_mapping.get(str(row[1]).strip().upper(), str(row[1]).lower()),
                         "char_length": row[2],
                         "precision": row[2] if str(row[1]).strip().upper() == 'D' else None,
                         "scale": row[3] if str(row[1]).strip().upper() == 'D' else None,
                         "ordinal_position": row[4],
                         "nullable": "YES" if str(row[5]).strip().upper() == 'Y' else "NO",
-                        "is_primary_key": str(row[0]).strip().lower() in pks
+                        "is_primary_key": row[0] in pks
                     } for row in rows]
 
             else:

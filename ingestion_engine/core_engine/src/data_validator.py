@@ -23,20 +23,37 @@ def _format_sql_literal(value):
  
 def get_source_row_count(conn, database, schema, table, source=None):
     """
-    Fetch row count from source table.
+    Fetch row count from source table, using database-specific identifier quoting.
+ 
+    Flow:
+    1. Build COUNT(*) query using database-specific quoting
+    2. Execute using pandas
+    3. Extract count from DataFrame positionally to avoid casing issues
     """
+ 
     try:
-        from src.data_extractor import build_source_table_reference
-        table_ref = build_source_table_reference(source, database, schema, table)
-        
+        src = str(source or "sapsqlserver").lower()
+        if src in {"sapsqlserver", "sqlserver"}:
+            table_ref = f"[{database}].[{schema}].[{table}]"
+        elif src == "mysql":
+            table_ref = f"`{schema}`.`{table}`"
+        elif src == "postgres":
+            table_ref = f'"{schema}"."{table}"'
+        elif src == "oracle":
+            table_ref = f'"{schema.upper()}"."{table.upper()}"'
+        elif src == "teradata":
+            table_ref = f'"{database}"."{table}"' if database else f'"{table}"'
+        else:
+            table_ref = f"{schema}.{table}"
+
         # Construct COUNT query
         query = f"SELECT COUNT(*) as row_count FROM {table_ref}"
  
         # Execute query
         df = pd.read_sql(query, conn)
  
-        # Return row count as integer (use position to be case-insensitive)
-        return int(df.iloc[0].iloc[0])
+        # Return row count as integer from the first cell
+        return int(df.iloc[0, 0])
  
     except pd.errors.DatabaseError as e:
         # Database-related issues (query failure, permissions, etc.)
