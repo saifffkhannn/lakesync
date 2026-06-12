@@ -23,23 +23,20 @@ def _format_sql_literal(value):
  
 def get_source_row_count(conn, database, schema, table, source=None):
     """
-    Fetch row count from source SQL Server table.
- 
-    Flow:
-    1. Build COUNT(*) query*
-    2. Execute using pandas
-    3. Extract count from DataFrame
+    Fetch row count from source table.
     """
- 
     try:
+        from src.data_extractor import build_source_table_reference
+        table_ref = build_source_table_reference(source, database, schema, table)
+        
         # Construct COUNT query
-        query = f"SELECT COUNT(*) as row_count FROM [{database}].[{schema}].[{table}]"
+        query = f"SELECT COUNT(*) as row_count FROM {table_ref}"
  
         # Execute query
         df = pd.read_sql(query, conn)
  
-        # Return row count as integer
-        return int(df.iloc[0]["row_count"])
+        # Return row count as integer (use position to be case-insensitive)
+        return int(df.iloc[0].iloc[0])
  
     except pd.errors.DatabaseError as e:
         # Database-related issues (query failure, permissions, etc.)

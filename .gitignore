@@ -46,3 +46,6 @@ test/
 .DS_Store
 Thumbs.db
 /Conversion_ABAP/backend/output/ui_runs
+*.parquet
+*.log
+/ingestion_engine/core_engine/logs

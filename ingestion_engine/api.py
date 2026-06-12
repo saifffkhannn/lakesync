@@ -326,7 +326,7 @@ from src.pipeline_state_manager import set_current_log_file, set_progress, appen
 
 METADATA_DIR = os.path.join(BACKEND_ROOT, "metadata")
 CONFIG_DIR = os.path.join(BACKEND_ROOT, "config")
-SUPPORTED_SOURCES = {"sapsqlserver", "sqlserver", "mysql", "postgres", "oracle"}
+SUPPORTED_SOURCES = {"sapsqlserver", "sqlserver", "mysql", "postgres", "oracle", "teradata"}
 
 class Credentials(BaseModel):
     source: str

@@ -161,6 +161,33 @@ def source_metadata(sourc_platform, config_path):
 
             return df
 
+        if sourc_platform == "teradata":
+            connection = get_Source_connection(config_path, sourc_platform)
+            teradata_cfg = parse_config(config_path)["teradata"]
+            source_database = teradata_cfg["database"]
+
+            query = f"""
+            SELECT
+                t.DatabaseName AS DB_NAME,
+                t.DatabaseName AS TABLE_SCHEMA,
+                t.TableName AS TABLE_NAME,
+                TRIM(TRAILING ',' FROM TRIM(TRAILING ' ' FROM (CAST(XMLAGG(TRIM(i.ColumnName) || ', ' ORDER BY i.ColumnPosition) AS VARCHAR(1000))))) AS PRIMARY_KEY_COLUMNS
+            FROM DBC.TablesV t
+            LEFT JOIN DBC.IndicesV i
+                ON t.DatabaseName = i.DatabaseName
+               AND t.TableName = i.TableName
+               AND i.IndexType IN ('P', 'K')
+            WHERE t.DatabaseName = '{source_database}'
+              AND t.TableKind = 'T'
+            GROUP BY t.DatabaseName, t.TableName
+            ORDER BY t.TableName
+            """
+
+            df = query_execution(connection, "teradata", query)
+            connection.close()
+
+            return df
+
         # Return None for unsupported platforms
         return None
 

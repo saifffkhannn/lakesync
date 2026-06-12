@@ -1,0 +1,2 @@
+SOURCE,source_database,source_schema,source_table,target,target_database,target_schema,target_table,Primary_key_column,source selected columns,target columns,mapped_columns,watermark column(src)
+teradata,bikestores,bikestores,categories,snowflake,bikestores,PRODUCTION,CATEGORIES,"[""category_id""]","[""category_id"", ""category_name"", ""last_modify""]","[""CATEGORY_ID"", ""CATEGORY_NAME"", ""LASTMODIFIEDDATE""]","{""CATEGORY_ID"": ""category_id"", ""CATEGORY_NAME"": ""category_name"", ""LASTMODIFIEDDATE"": ""last_modify""}",last_modify

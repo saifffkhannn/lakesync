@@ -533,6 +533,11 @@ def build_source_table_reference(source: str, database: str, schema: str, table:
     if source == "oracle":
         return f'"{schema.upper()}"."{table.upper()}"'
 
+    if source == "teradata":
+        if database:
+            return f'"{database}"."{table}"'
+        return f'"{table}"'
+
     raise ValueError(f"Unsupported source type: {source}")
 
 
@@ -572,6 +577,37 @@ def build_source_columns_query(source: str, database: str, schema: str, table: s
         WHERE OWNER = '{schema.upper()}'
           AND TABLE_NAME = '{table.upper()}'
         ORDER BY COLUMN_ID
+        """
+
+    if source == "teradata":
+        return f"""
+        SELECT 
+            ColumnName AS COLUMN_NAME,
+            CASE TRIM(ColumnType)
+                WHEN 'BF' THEN 'byte'
+                WHEN 'BV' THEN 'varbyte'
+                WHEN 'CF' THEN 'char'
+                WHEN 'CV' THEN 'varchar'
+                WHEN 'D' THEN 'decimal'
+                WHEN 'DA' THEN 'date'
+                WHEN 'F' THEN 'float'
+                WHEN 'I1' THEN 'byteint'
+                WHEN 'I2' THEN 'smallint'
+                WHEN 'I8' THEN 'bigint'
+                WHEN 'I' THEN 'integer'
+                WHEN 'N' THEN 'number'
+                WHEN 'SZ' THEN 'timestamp with time zone'
+                WHEN 'TS' THEN 'timestamp'
+                WHEN 'TZ' THEN 'time with time zone'
+                WHEN 'TM' THEN 'time'
+                WHEN 'BO' THEN 'blob'
+                WHEN 'CO' THEN 'clob'
+                ELSE LOWER(TRIM(ColumnType))
+            END AS DATA_TYPE
+        FROM DBC.ColumnsV
+        WHERE DatabaseName = '{database or schema}'
+          AND TableName = '{table}'
+        ORDER BY ColumnId
         """
 
     raise ValueError(f"Unsupported source type: {source}")
