@@ -215,11 +215,12 @@ def extract_delta_data(source, source_conn, local_folder_path, table_metadata, w
     Step 2: Extract delta data from source based on watermark column and type mapping to Parquet.
     """
     update_table_status(ui_table_name, "extracting")
-    if source == "sapsqlserver":
+    if source in ("sapsqlserver", "sqlserver"):
         file_path, batch_watermark = extract_sapsqlserver_incremental_data(
             source_conn, local_folder_path, table_metadata, window_start, target
         )
     elif source == "mysql":
+
         file_path, batch_watermark = extract_mysql_incremental_data(
             source_conn, local_folder_path, table_metadata, window_start, target
         )

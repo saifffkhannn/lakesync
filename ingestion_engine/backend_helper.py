@@ -208,14 +208,14 @@ class BackendHelper:
                     return [row[0] for row in cursor.fetchall()]
                 elif action == "columns":
                     cursor.execute(f"""
-                        SELECT ColumnName 
+                        SELECT TRIM(ColumnName) 
                         FROM DBC.IndicesV 
-                        WHERE DatabaseName = '{schema_name}' AND TableName = '{table_name}' AND IndexType = 'P'
+                        WHERE DatabaseName = '{schema_name}' AND TableName = '{table_name}' AND IndexType IN ('P', 'K')
                     """)
-                    pks = [row[0] for row in cursor.fetchall()]
+                    pks = [str(row[0]).strip().lower() for row in cursor.fetchall()]
 
                     cursor.execute(f"""
-                        SELECT ColumnName, ColumnType, ColumnLength, DecimalFractionalDigits, ColumnId, Nullable
+                        SELECT TRIM(ColumnName), ColumnType, ColumnLength, DecimalFractionalDigits, ColumnId, Nullable
                         FROM DBC.ColumnsV
                         WHERE DatabaseName = '{schema_name}' AND TableName = '{table_name}'
                         ORDER BY ColumnId
@@ -231,14 +231,14 @@ class BackendHelper:
                     }
                     
                     return [{
-                        "column_name": row[0],
+                        "column_name": str(row[0]).strip(),
                         "data_type": type_mapping.get(str(row[1]).strip().upper(), str(row[1]).lower()),
                         "char_length": row[2],
                         "precision": row[2] if str(row[1]).strip().upper() == 'D' else None,
                         "scale": row[3] if str(row[1]).strip().upper() == 'D' else None,
                         "ordinal_position": row[4],
                         "nullable": "YES" if str(row[5]).strip().upper() == 'Y' else "NO",
-                        "is_primary_key": row[0] in pks
+                        "is_primary_key": str(row[0]).strip().lower() in pks
                     } for row in rows]
 
             else:

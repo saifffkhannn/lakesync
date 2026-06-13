@@ -49,3 +49,14 @@ Thumbs.db
 *.parquet
 *.log
 /ingestion_engine/core_engine/logs
+
+# Local UI/agent cache, backups, scratch, and debug folders
+brain/
+.vite/
+*.bak
+chrome-debug/
+scratch/
+
+/ingestion_engine/core_engine/metadata
+/ingestion_engine/core_engine/metadata
+/ingestion_engine/core_engine/metadata

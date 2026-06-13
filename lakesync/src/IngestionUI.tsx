@@ -780,7 +780,7 @@ const IngestionUI = ({
         )}
 
         {/* ══ STEP 3 ══ */}
-        {step === 3 && (
+        {step === 3 && selection.loadType !== 'FULL' && (
           <MappingStep
             selection={selection}
             tablePairs={tablePairs}

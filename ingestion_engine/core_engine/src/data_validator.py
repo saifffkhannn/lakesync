@@ -138,28 +138,8 @@ def get_incremental_source_row_count(conn, table_metadata, last_watermark_value=
 
  
  
-def get_parquet_row_count(parquet_path):
-    """
-    Fetch row count from Parquet file.
- 
-    Flow:
-    1. Open Parquet file
-    2. Read metadata
-    3. Return total row count
-    """
- 
-    try:
-        # Load Parquet file metadata
-        parquet_file = pq.ParquetFile(parquet_path)
- 
-        # Return number of rows from metadata
-        return parquet_file.metadata.num_rows
- 
-    except FileNotFoundError as e:
-        # File path issues
-        raise Exception(f"Parquet file not found: {str(e)}")
- 
- 
+
+
  
 def get_parquet_row_count(parquet_path):
     """

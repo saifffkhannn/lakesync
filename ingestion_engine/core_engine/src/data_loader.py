@@ -456,22 +456,27 @@ def load_s3_to_snowflake(
         # --------------------------------------------------
         # Validate COPY INTO results (critical)
         # --------------------------------------------------
+        # Snowflake COPY INTO can return an empty result set when no files match
         if not result:
-            logger.error("COPY INTO returned no result")
-            raise Exception("COPY INTO returned no result")
+            logger.warning("COPY INTO returned no result — no new files staged. Skipping load.")
+            return True, {"inserted": 0, "updated": 0}
 
         total_rows_loaded = 0
 
         for row in result:
+            # Handle the "0 files processed" message row (no columns beyond the message)
             if len(row) < 4:
-                msg = row[0] if len(row) > 0 else "Unknown status"
-                logger.error(f"COPY INTO failed or processed 0 files. Message: {msg}")
-                raise Exception(f"COPY INTO failed or processed 0 files. Message: {msg}")
+                msg = str(row[0]) if len(row) > 0 else "Unknown status"
+                if "0 files" in msg.lower() or "copy executed" in msg.lower():
+                    logger.info(f"COPY INTO: {msg} — no new data to load.")
+                    return True, {"inserted": 0, "updated": 0}
+                logger.error(f"COPY INTO failed. Message: {msg}")
+                raise Exception(f"COPY INTO failed. Message: {msg}")
 
             # Snowflake COPY result structure:
             # (file, status, rows_parsed, rows_loaded, errors_seen, ...)
             file_name = row[0]
-            status = row[1]
+            status = str(row[1]).upper()
             rows_parsed = row[2]
             rows_loaded = row[3]
             error_limit = row[4] if len(row) > 4 else None
@@ -483,13 +488,13 @@ def load_s3_to_snowflake(
                 f"Errors: {errors_seen}, Error Limit: {error_limit}"
             )
 
-            # Fail if no rows loaded (critical issue)
-            if rows_loaded == 0:
-                logger.error(f"Critical failure: No rows loaded for {file_name}")
+            # Only fail if status is not LOADED and no rows came through
+            if rows_loaded == 0 and status not in ("LOADED", "SKIPPED"):
+                logger.error(f"Critical failure: No rows loaded for {file_name} (status={status})")
                 raise Exception(f"Critical failure: No rows loaded for {file_name}")
 
             # Log non-critical issues (but do not fail)
-            if errors_seen > 0:
+            if errors_seen and errors_seen > 0:
                 logger.info(f"Non-critical issues: {errors_seen} errors in {file_name}")
 
             total_rows_loaded += rows_loaded
@@ -621,22 +626,27 @@ def load_azure_to_snowflake(
         # --------------------------------------------------
         # Validate COPY results (critical)
         # --------------------------------------------------
+        # Snowflake COPY INTO can return an empty result when no files match
         if not result:
-            logger.error("COPY INTO returned no result")
-            raise Exception("COPY INTO returned no result")
+            logger.warning("COPY INTO returned no result — no new files staged. Skipping load.")
+            return True, {"inserted": 0, "updated": 0}
 
         total_rows_loaded = 0
 
         for row in result:
+            # Handle the "0 files processed" message row
             if len(row) < 4:
-                msg = row[0] if len(row) > 0 else "Unknown status"
-                logger.error(f"COPY INTO failed or processed 0 files. Message: {msg}")
-                raise Exception(f"COPY INTO failed or processed 0 files. Message: {msg}")
+                msg = str(row[0]) if len(row) > 0 else "Unknown status"
+                if "0 files" in msg.lower() or "copy executed" in msg.lower():
+                    logger.info(f"COPY INTO: {msg} — no new data to load.")
+                    return True, {"inserted": 0, "updated": 0}
+                logger.error(f"COPY INTO failed. Message: {msg}")
+                raise Exception(f"COPY INTO failed. Message: {msg}")
 
             # Snowflake COPY result format:
             # (file, status, rows_parsed, rows_loaded, errors_seen, ...)
             file_name = row[0]
-            status = row[1]
+            status = str(row[1]).upper()
             rows_parsed = row[2]
             rows_loaded = row[3]
             error_limit = row[4] if len(row) > 4 else None
@@ -648,13 +658,13 @@ def load_azure_to_snowflake(
                 f"Errors: {errors_seen}, Error Limit: {error_limit}"
             )
 
-            # Fail if no data loaded (critical issue)
-            if rows_loaded == 0:
-                logger.error(f"Critical failure: No rows loaded for {file_name}")
+            # Only fail if status is not LOADED and no rows came through
+            if rows_loaded == 0 and status not in ("LOADED", "SKIPPED"):
+                logger.error(f"Critical failure: No rows loaded for {file_name} (status={status})")
                 raise Exception(f"Critical failure: No rows loaded for {file_name}")
 
             # Log non-critical data issues
-            if errors_seen > 0:
+            if errors_seen and errors_seen > 0:
                 logger.info(f"Non-critical issues: {errors_seen} errors in {file_name}")
 
             total_rows_loaded += rows_loaded

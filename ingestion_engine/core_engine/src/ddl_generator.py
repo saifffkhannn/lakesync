@@ -19,12 +19,20 @@ def _create_snowflake_stage(target_conn, config_path, cloud, database):
 
     if cloud.lower() == "aws":
         aws_cfg = config["aws"]
+        key_id = aws_cfg["aws_access_key_id"].strip()
+        secret = aws_cfg["aws_secret_access_key"].strip()
+        if key_id.upper() in ("YOUR_AWS_ACCESS_KEY_ID", "", "PLACEHOLDER") or \
+           secret.upper() in ("YOUR_AWS_SECRET_ACCESS_KEY", "", "PLACEHOLDER"):
+            raise ValueError(
+                "AWS credentials are not configured. "
+                "Please update aws_access_key_id and aws_secret_access_key in the pipeline credentials."
+            )
         create_stage_sql = f"""
         CREATE OR REPLACE STAGE {stage_full_name}
         URL = 's3://{aws_cfg["s3_bucket_name"]}/'
         CREDENTIALS = (
-            AWS_KEY_ID = '{aws_cfg["aws_access_key_id"]}'
-            AWS_SECRET_KEY = '{aws_cfg["aws_secret_access_key"]}'
+            AWS_KEY_ID = '{key_id}'
+            AWS_SECRET_KEY = '{secret}'
         )
         FILE_FORMAT = (TYPE = PARQUET)
         """
@@ -47,6 +55,7 @@ def _create_snowflake_stage(target_conn, config_path, cloud, database):
         cursor.execute(create_stage_sql)
     finally:
         cursor.close()
+
 
 
 def _snowflake_raw_type(data_type, precision, scale):
