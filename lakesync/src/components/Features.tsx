@@ -1,36 +1,37 @@
 import {
-  Bars3BottomLeftIcon,
-  CodeBracketIcon,
-  ShareIcon,
+  ArrowPathIcon,
   SparklesIcon,
+  CodeBracketIcon,
+  Square3Stack3DIcon,
 } from '@heroicons/react/24/outline';
 
 const features = [
   {
-    name: 'Incremental Load Optimization',
-    description: "Load only what's changed. Reduce processing time and infrastructure costs significantly.",
-    icon: SparklesIcon,
+    name: 'Full & Incremental Ingestion',
+    description: 'High-throughput full migration and automated CDC pipelines from operational databases to cloud targets.',
+    icon: ArrowPathIcon,
     iconTone: 'bg-[#e9efff] text-[#4d6df6]',
   },
   {
-    name: 'Schema Evolution Handling',
-    description: 'Automatically detect and handle schema changes without pipeline failures.',
+    name: 'ABAP to Snowflake SQL AI',
+    description: 'Intelligent transpiler converting legacy SAP ABAP/Open SQL into native Snowflake SQL using Snowflake Cortex.',
     icon: CodeBracketIcon,
     iconTone: 'bg-[#f5e8ff] text-[#9955f7]',
   },
   {
-    name: 'Auto MERGE Logic',
-    description: 'Intelligent upserts with auto MERGE capabilities for accurate and consistent data.',
-    icon: ShareIcon,
+    name: 'Master Data Management',
+    description: 'Deduplicate, cluster, and unify multi-source records via Snowpark procedures and similarity matching rules.',
+    icon: Square3Stack3DIcon,
     iconTone: 'bg-[#e8f9ec] text-[#22b26a]',
   },
   {
-    name: 'Audit & Data Tracking',
-    description: 'End-to-end tracking, logging, and auditability for every data load operation.',
-    icon: Bars3BottomLeftIcon,
+    name: 'Real-Time Logging & Auditing',
+    description: 'Track, log, and audit every phase of schema mappings, migrations, and code conversions instantly.',
+    icon: SparklesIcon,
     iconTone: 'bg-[#fff0df] text-[#ff9a31]',
   },
 ];
+
 
 export default function Features() {
   return (

@@ -316,22 +316,27 @@ class BackendHelper:
                             return []
                         raise
                 elif action == "columns":
-                    cursor.execute(f"""
-                        SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE, ORDINAL_POSITION, IS_NULLABLE
-                        FROM {db}.INFORMATION_SCHEMA.COLUMNS
-                        WHERE TABLE_SCHEMA = '{schema_name.upper()}' AND TABLE_NAME = '{table_name.upper()}'
-                        ORDER BY ORDINAL_POSITION
-                    """)
-                    rows = cursor.fetchall()
-                    return [{
-                        "column_name": row[0],
-                        "data_type": row[1].lower(),
-                        "char_length": row[2],
-                        "precision": row[3],
-                        "scale": row[4],
-                        "ordinal_position": row[5],
-                        "nullable": row[6]
-                    } for row in rows]
+                    try:
+                        cursor.execute(f"""
+                            SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE, ORDINAL_POSITION, IS_NULLABLE
+                            FROM {db}.INFORMATION_SCHEMA.COLUMNS
+                            WHERE TABLE_SCHEMA = '{schema_name.upper()}' AND TABLE_NAME = '{table_name.upper()}'
+                            ORDER BY ORDINAL_POSITION
+                        """)
+                        rows = cursor.fetchall()
+                        return [{
+                            "column_name": row[0],
+                            "data_type": row[1].lower() if row[1] else "",
+                            "char_length": row[2],
+                            "precision": row[3],
+                            "scale": row[4],
+                            "ordinal_position": row[5],
+                            "nullable": row[6]
+                        } for row in rows]
+                    except Exception as e:
+                        if "does not exist" in str(e).lower() or "not authorized" in str(e).lower() or "not found" in str(e).lower():
+                            return []
+                        raise
             
             elif target_type == "databricks":
                 cursor = conn.cursor()
@@ -355,23 +360,28 @@ class BackendHelper:
                     cursor.execute(f"SHOW TABLES IN {prefix}{schema_name}")
                     return [row[1] for row in cursor.fetchall()]
                 elif action == "columns":
-                    prefix = f"{catalog}." if catalog else ""
-                    cursor.execute(f"""
-                        SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE, ORDINAL_POSITION, IS_NULLABLE
-                        FROM {prefix}INFORMATION_SCHEMA.COLUMNS
-                        WHERE TABLE_SCHEMA = '{schema_name}' AND TABLE_NAME = '{table_name}'
-                        ORDER BY ORDINAL_POSITION
-                    """)
-                    rows = cursor.fetchall()
-                    return [{
-                        "column_name": row[0],
-                        "data_type": row[1],
-                        "char_length": row[2],
-                        "precision": row[3],
-                        "scale": row[4],
-                        "ordinal_position": row[5],
-                        "nullable": row[6]
-                    } for row in rows]
+                    try:
+                        prefix = f"{catalog}." if catalog else ""
+                        cursor.execute(f"""
+                            SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, NUMERIC_PRECISION, NUMERIC_SCALE, ORDINAL_POSITION, IS_NULLABLE
+                            FROM {prefix}INFORMATION_SCHEMA.COLUMNS
+                            WHERE TABLE_SCHEMA = '{schema_name}' AND TABLE_NAME = '{table_name}'
+                            ORDER BY ORDINAL_POSITION
+                        """)
+                        rows = cursor.fetchall()
+                        return [{
+                            "column_name": row[0],
+                            "data_type": row[1],
+                            "char_length": row[2],
+                            "precision": row[3],
+                            "scale": row[4],
+                            "ordinal_position": row[5],
+                            "nullable": row[6]
+                        } for row in rows]
+                    except Exception as e:
+                        if "does not exist" in str(e).lower() or "not authorized" in str(e).lower() or "not found" in str(e).lower():
+                            return []
+                        raise
 
             elif target_type == "bigquery":
                 project = config_dict["target"].get("project_id")
@@ -380,20 +390,25 @@ class BackendHelper:
                 elif action == "tables":
                     return [t.table_id for t in conn.list_tables(f"{project}.{schema_name}")]
                 elif action == "columns":
-                    query = f"""
-                        SELECT column_name, data_type, ordinal_position, is_nullable, column_default, is_generated
-                        FROM `{project}.{schema_name}.INFORMATION_SCHEMA.COLUMNS`
-                        WHERE table_name = '{table_name}'
-                        ORDER BY ordinal_position
-                    """
-                    rows = conn.query(query).result()
-                    return [{
-                        "column_name": row.column_name,
-                        "data_type": row.data_type.lower(),
-                        "ordinal_position": row.ordinal_position,
-                        "nullable": row.is_nullable,
-                        "is_primary_key": False
-                    } for row in rows]
+                    try:
+                        query = f"""
+                            SELECT column_name, data_type, ordinal_position, is_nullable, column_default, is_generated
+                            FROM `{project}.{schema_name}.INFORMATION_SCHEMA.COLUMNS`
+                            WHERE table_name = '{table_name}'
+                            ORDER BY ordinal_position
+                        """
+                        rows = conn.query(query).result()
+                        return [{
+                            "column_name": row.column_name,
+                            "data_type": row.data_type.lower() if row.data_type else "",
+                            "ordinal_position": row.ordinal_position,
+                            "nullable": row.is_nullable,
+                            "is_primary_key": False
+                        } for row in rows]
+                    except Exception as e:
+                        if "not found" in str(e).lower() or "does not exist" in str(e).lower() or "not authorized" in str(e).lower():
+                            return []
+                        raise
         finally:
             if hasattr(conn, 'close'):
                 conn.close()

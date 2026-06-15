@@ -25,7 +25,7 @@ export default function Hero({ onEnter }: { onEnter: () => void }) {
           </h1>
 
           <p className="mt-5 max-w-[33rem] text-[17px] leading-9 text-slate-600">
-            Efficient, scalable, and automated data loading for modern data platform like Snowflake.
+            A unified, high-performance data engineering platform for enterprise migration (Full & Incremental CDC), legacy SAP ABAP-to-Snowflake SQL transpilation, and Snowpark-powered Master Data Management (MDM) entity unification.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-4">

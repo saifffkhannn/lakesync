@@ -2,43 +2,66 @@ import {
   Database,
   Cog,
   HardDrive,
-  Funnel,
+  Sparkles,
   Zap,
   Scale,
   Boxes,
   Link2,
   MoveRight,
+  FileCode,
+  Layers,
+  Cpu,
 } from "lucide-react";
 
-const steps = [
-  { title: "Source", subtitle: "", Icon: Database, tone: "text-slate-600 bg-slate-100" },
-  { title: "Ingestion", subtitle: "& Processing", Icon: Cog, tone: "text-indigo-600 bg-indigo-50" },
-  { title: "Storage", subtitle: "(Lake / Staging)", Icon: HardDrive, tone: "text-emerald-600 bg-emerald-50" },
-  { title: "Transform", subtitle: "& Optimize", Icon: Funnel, tone: "text-orange-600 bg-orange-50" },
+const pipelines = [
+  {
+    name: "Data Ingestion (Bulk & CDC)",
+    steps: [
+      { label: "Operational DBs", desc: "Teradata, MySQL, Oracle", Icon: Database, tone: "text-slate-600 bg-slate-100 border-slate-200" },
+      { label: "FastAPI Engine", desc: "Parquet Extraction", Icon: Cog, tone: "text-indigo-600 bg-indigo-50 border-indigo-100" },
+      { label: "AWS S3 Staging", desc: "Optimized Parquet", Icon: HardDrive, tone: "text-emerald-600 bg-emerald-50 border-emerald-100" },
+    ]
+  },
+  {
+    name: "SQL Code Modernization",
+    steps: [
+      { label: "SAP ABAP / Open SQL", desc: "Legacy SAP Codebases", Icon: FileCode, tone: "text-amber-600 bg-amber-50 border-amber-100" },
+      { label: "Cortex AI / Parser", desc: "Intelligent Translation", Icon: Sparkles, tone: "text-violet-600 bg-violet-50 border-violet-100" },
+      { label: "Snowflake SQL", desc: "Modern target code", Icon: Cpu, tone: "text-pink-600 bg-pink-50 border-pink-100" },
+    ]
+  },
+  {
+    name: "Master Data Management (MDM)",
+    steps: [
+      { label: "Multi-Source Data", desc: "Siloed customer records", Icon: Layers, tone: "text-cyan-600 bg-cyan-50 border-cyan-100" },
+      { label: "Snowpark Engine", desc: "Fuzzy-match procedures", Icon: Boxes, tone: "text-teal-600 bg-teal-50 border-teal-100" },
+      { label: "Golden Record Flat", desc: "Unified Golden entities", Icon: Zap, tone: "text-blue-600 bg-blue-50 border-blue-100" },
+    ]
+  }
 ];
 
 const benefits = [
   {
-    title: "Reduce load time",
-    description: "Only process incremental data, not the full dataset.",
+    title: "End-to-End Acceleration",
+    description: "Migrate database schemas, convert legacy ABAP code, and unify master data in one dashboard.",
     Icon: Zap,
     tone: "bg-blue-50 text-blue-600",
   },
   {
-    title: "Cost-efficient processing",
-    description: "Lower compute and storage costs across the pipeline.",
+    title: "AI-Powered Transpilation",
+    description: "Translate complex SAP ABAP & Open SQL into native Snowflake SQL using Cortex AI.",
     Icon: Scale,
     tone: "bg-purple-50 text-purple-600",
   },
   {
-    title: "Scalable pipelines",
-    description: "Handle growing data volumes with ease.",
+    title: "Native Snowflake Execution",
+    description: "Perform fuzzy-matching deduplication within Snowflake using Snowpark procedures.",
     Icon: Boxes,
     tone: "bg-emerald-50 text-emerald-600",
   },
   {
-    title: "Easy integration",
-    description: "Seamlessly integrate with your existing data stack.",
+    title: "Optimized Cloud Ingestion",
+    description: "Accelerate loading via staging as Parquet files in S3 for instant Snowflake loading.",
     Icon: Link2,
     tone: "bg-orange-50 text-orange-600",
   },
@@ -52,56 +75,53 @@ export default function ArchitectureSection() {
         <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
           <h2 className="text-3xl font-bold text-slate-900">Architecture</h2>
           <p className="mt-2 text-slate-500">
-            High-level flow of incremental data loading pipeline.
+            High-level flow of the ingestion, transpilation, and Master Data Management architecture.
           </p>
 
-          {/* Pipeline - aligned by icon row */}
-          <div className="mt-10 flex items-start justify-between gap-3 flex-nowrap overflow-x-auto pb-2">
-            {steps.map((step) => (
-              <div key={step.title} className="flex items-start gap-3 shrink-0">
-                <div className="flex flex-col items-center w-24">
-                  {/* Icon row - fixed height for alignment */}
-                  <div className="h-14 flex items-center">
-                    <div
-                      className={`w-14 h-14 rounded-xl border border-slate-200 flex items-center justify-center ${step.tone}`}
-                    >
-                      <step.Icon className="w-7 h-7" strokeWidth={1.75} />
-                    </div>
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-12 gap-6 items-stretch">
+            {/* Pipelines lanes (Left Side) */}
+            <div className="md:col-span-9 space-y-6">
+              {pipelines.map((pipeline) => (
+                <div key={pipeline.name} className="border border-slate-100 bg-slate-50/40 rounded-xl p-4">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">{pipeline.name}</h3>
+                  <div className="flex items-center gap-2 flex-wrap md:flex-nowrap">
+                    {pipeline.steps.map((step, idx) => (
+                      <div key={step.label} className="flex items-center gap-2 flex-1 min-w-[140px]">
+                        <div className="flex items-center gap-3 p-2 bg-white rounded-lg border border-slate-100 shadow-sm w-full">
+                          <div className={`p-1.5 rounded-md ${step.tone} shrink-0`}>
+                            <step.Icon className="w-5 h-5" />
+                          </div>
+                          <div className="leading-tight">
+                            <p className="text-[11px] font-bold text-slate-800">{step.label}</p>
+                            <p className="text-[9px] text-slate-400">{step.desc}</p>
+                          </div>
+                        </div>
+                        {idx < pipeline.steps.length - 1 && (
+                          <MoveRight className="w-4 h-4 text-slate-300 hidden md:block shrink-0" />
+                        )}
+                      </div>
+                    ))}
                   </div>
-                  <p className="mt-2 text-xs font-semibold text-slate-800 text-center">
-                    {step.title}
-                  </p>
-                  <p className="text-[11px] text-slate-500 text-center leading-tight">
-                    {step.subtitle}
-                  </p>
                 </div>
-                {/* Arrow vertically centered with the 56px icon row */}
-                <div className="h-14 flex items-center">
-                  <MoveRight className="w-5 h-5 text-blue-400 shrink-0" strokeWidth={2} />
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
 
-            {/* Targets block - aligned with icon row, matches step styles */}
-            <div className="flex flex-col items-center w-24 shrink-0">
-              <div className="h-14 flex items-center">
-                <div
-                  className="w-14 h-14 rounded-xl border border-slate-200 flex items-center justify-center bg-sky-50"
-                  title="Snowflake"
-                >
-                  <img
-                    src="/logos/Snowflake.png"
-                    alt="Snowflake"
-                    className="h-8 w-8 object-contain"
-                  />
+            {/* Shared Snowflake Target (Right Side) */}
+            <div className="md:col-span-3 flex flex-col justify-center items-center bg-sky-50/50 border border-sky-100 rounded-xl p-6 text-center">
+              <div className="w-16 h-16 rounded-2xl bg-white border border-sky-100 flex items-center justify-center shadow-md mb-4">
+                <img
+                  src="/logos/Snowflake.png"
+                  alt="Snowflake"
+                  className="h-10 w-10 object-contain animate-pulse"
+                />
+              </div>
+              <h4 className="text-sm font-bold text-slate-800">Unified Target</h4>
+              <p className="text-[11px] text-slate-500 font-medium tracking-wide uppercase mt-1">Snowflake Platform</p>
+              <div className="mt-4 border-t border-sky-100/60 pt-4 w-full">
+                <div className="text-[9px] font-semibold text-sky-700 bg-sky-100/60 rounded px-2 py-1 inline-block">
+                  Cortex AI & Snowpark
                 </div>
               </div>
-              <p className="mt-2 text-xs font-semibold text-slate-800 text-center">
-                Target
-              </p>
-              <p className="text-[11px] text-slate-500 text-center leading-tight">
-                Snowflake
-              </p>
             </div>
           </div>
         </div>
@@ -129,3 +149,4 @@ export default function ArchitectureSection() {
     </section>
   );
 }
+
