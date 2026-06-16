@@ -113,6 +113,13 @@ function App() {
   const resetPipeline = () => {
     setPipelineStep(1);
     setLoadType('');
+    try {
+      localStorage.removeItem('lake_sync_mdm_step');
+      localStorage.removeItem('lake_sync_mdm_group_name');
+      localStorage.removeItem('lake_sync_mdm_selected_tables');
+      localStorage.removeItem('lake_sync_mdm_mappings');
+      localStorage.removeItem('lake_sync_mdm_selected_table_key');
+    } catch (e) { /* ignore */ }
   };
 
   if (view === 'landing') {
@@ -190,7 +197,10 @@ function App() {
           <ABAPConversion onBack={() => setView('dashboard')} />
         )}
         {view === 'mdm-workflow' && (
-          <MDMWorkflow onBack={() => setView('dashboard')} />
+          <MDMWorkflow
+            onBack={() => setView('dashboard')}
+            onBackToPipeline={() => setView('pipeline')}
+          />
         )}
       </main>
     </div>
