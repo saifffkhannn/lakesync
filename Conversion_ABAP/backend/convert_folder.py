@@ -73,6 +73,7 @@ def run_conversion(
     skip_snowflake_persist: bool = False,
     require_ai_success: bool = False,
     recursive: bool = False,
+    creds: dict | None = None,
 ) -> int:
     """Convert all supported ABAP files in the requested folder and write SQL/report files."""
     input_folder = Path(input_folder_path).resolve()
@@ -94,6 +95,23 @@ def run_conversion(
     output_folder.mkdir(parents=True, exist_ok=True)
 
     settings = get_settings()
+    if creds:
+        from pydantic import SecretStr
+        if creds.get("account"):
+            settings.snowflake_account = creds.get("account")
+        if creds.get("username"):
+            settings.snowflake_user = creds.get("username")
+        if creds.get("password"):
+            settings.snowflake_password = SecretStr(creds.get("password"))
+        if creds.get("warehouse"):
+            settings.snowflake_warehouse = creds.get("warehouse")
+        if creds.get("database"):
+            settings.snowflake_database = creds.get("database")
+        if creds.get("schema"):
+            settings.snowflake_schema = creds.get("schema")
+        # Explicitly clear role or set it from credentials to avoid using default .env role
+        settings.snowflake_role = creds.get("role") or None
+
     connector = SnowflakeConnector(settings)
     metadata = SemanticKnowledgeService(connector)
     pattern_library = PatternLibrary(connector)
@@ -277,7 +295,7 @@ def _persist_to_snowflake(connector: SnowflakeConnector, artifact, output) -> No
             "request_id": str(request.request_id),
             "sql": output.sql,
             "confidence": output.confidence,
-            "artifact_type": output.artifact_type.value,
+            "artifact_type": output.artifact_type,
             "warnings": json.dumps(output.warnings),
             "assumptions": json.dumps(output.assumptions),
             "notes": json.dumps(output.conversion_notes),

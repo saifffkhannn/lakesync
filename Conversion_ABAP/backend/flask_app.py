@@ -79,7 +79,15 @@ def convert_upload():
     source_path = input_folder / filename
     uploaded.save(source_path)
 
-    result, engine, fallback_reason = _run_ui_conversion(input_folder, output_folder)
+    creds_raw = request.form.get("creds")
+    creds = None
+    if creds_raw:
+        try:
+            creds = json.loads(creds_raw)
+        except Exception:
+            pass
+
+    result, engine, fallback_reason = _run_ui_conversion(input_folder, output_folder, creds)
 
     if result != 0:
         return jsonify({"detail": "Conversion finished with errors. Check backend logs for details."}), 500
@@ -143,6 +151,150 @@ def upload_snowflake():
     return jsonify({"status": "uploaded", "request_id": str(artifact.request.request_id)})
 
 
+def _get_dynamic_connection(creds: dict):
+    """Establish a dynamic connection to Snowflake using client-provided credentials, bypassing proxies if configured."""
+    import os
+    import snowflake.connector
+    
+    proxy_keys = ["HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY", "http_proxy", "https_proxy", "all_proxy"]
+    previous = {key: os.environ.get(key) for key in proxy_keys}
+    no_proxy = os.environ.get("NO_PROXY") or os.environ.get("no_proxy") or ""
+    no_proxy_parts = {part.strip() for part in no_proxy.split(",") if part.strip()}
+    no_proxy_parts.update({"localhost", "127.0.0.1", "::1", ".snowflakecomputing.com"})
+    
+    try:
+        for key in proxy_keys:
+            os.environ.pop(key, None)
+        os.environ["NO_PROXY"] = ",".join(sorted(no_proxy_parts))
+        
+        return snowflake.connector.connect(
+            account=creds.get("account"),
+            user=creds.get("username"),
+            password=creds.get("password"),
+            warehouse=creds.get("warehouse"),
+            database=creds.get("database") or None,
+            schema=creds.get("schema") or None,
+            role=creds.get("role") or None,
+            client_session_keep_alive=False,
+            login_timeout=15,
+        )
+    finally:
+        for key, value in previous.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+        if no_proxy:
+            os.environ["NO_PROXY"] = no_proxy
+
+
+@app.post("/snowflake/databases")
+def get_snowflake_databases():
+    """Return list of databases for a connected Snowflake account."""
+    payload = request.get_json(silent=True) or {}
+    creds = payload.get("creds", {})
+    try:
+        conn = _get_dynamic_connection(creds)
+        cursor = conn.cursor()
+        cursor.execute("SHOW DATABASES")
+        columns = [col[0].upper() for col in cursor.description]
+        name_idx = columns.index("NAME") if "NAME" in columns else 1
+        databases = [row[name_idx] for row in cursor.fetchall()]
+        cursor.close()
+        conn.close()
+        return jsonify({"databases": sorted(databases)})
+    except Exception as e:
+        return jsonify({"detail": f"Failed to fetch databases: {e}"}), 500
+
+
+@app.post("/snowflake/schemas")
+def get_snowflake_schemas():
+    """Return list of schemas in a selected database."""
+    payload = request.get_json(silent=True) or {}
+    creds = payload.get("creds", {})
+    database = payload.get("database")
+    if not database:
+        return jsonify({"detail": "Database is required"}), 400
+    try:
+        conn = _get_dynamic_connection(creds)
+        cursor = conn.cursor()
+        cursor.execute(f"SHOW SCHEMAS IN DATABASE {database}")
+        columns = [col[0].upper() for col in cursor.description]
+        name_idx = columns.index("NAME") if "NAME" in columns else 1
+        schemas = [row[name_idx] for row in cursor.fetchall()]
+        cursor.close()
+        conn.close()
+        return jsonify({"schemas": sorted(schemas)})
+    except Exception as e:
+        return jsonify({"detail": f"Failed to fetch schemas: {e}"}), 500
+
+
+@app.post("/execute-snowflake")
+def execute_snowflake_ddl():
+    """Execute converted DDL script in the targeted database and schema."""
+    payload = request.get_json(silent=True) or {}
+    creds = payload.get("creds", {})
+    sql = payload.get("sql", "")
+    database = payload.get("database")
+    schema = payload.get("schema")
+    
+    is_new_db = payload.get("is_new_db", False)
+    new_db_name = str(payload.get("new_db_name", "")).strip().upper()
+    is_new_schema = payload.get("is_new_schema", False)
+    new_schema_name = str(payload.get("new_schema_name", "")).strip().upper()
+    
+    target_db = new_db_name if is_new_db else database
+    target_schema = new_schema_name if is_new_schema else schema
+    
+    if not sql.strip():
+        return jsonify({"detail": "SQL script is empty"}), 400
+    if not target_db:
+        return jsonify({"detail": "Target database is required"}), 400
+    if not target_schema:
+        return jsonify({"detail": "Target schema is required"}), 400
+        
+    try:
+        conn_creds = dict(creds)
+        if not is_new_db:
+            conn_creds["database"] = target_db
+            if not is_new_schema:
+                conn_creds["schema"] = target_schema
+                
+        conn = _get_dynamic_connection(conn_creds)
+        cursor = conn.cursor()
+        
+        if is_new_db:
+            cursor.execute(f"CREATE DATABASE IF NOT EXISTS {target_db}")
+            
+        cursor.execute(f"USE DATABASE {target_db}")
+        
+        if is_new_schema:
+            cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {target_schema}")
+            
+        cursor.execute(f"USE SCHEMA {target_schema}")
+        
+        # Execute each DDL statement sequentially
+        statements = [s.strip() for s in sql.split(";") if s.strip()]
+        executed_count = 0
+        for stmt in statements:
+            cursor.execute(stmt)
+            executed_count += 1
+            
+        conn.commit()
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            "status": "success", 
+            "message": f"Successfully executed DDL script ({executed_count} statements) in Snowflake",
+            "database": target_db,
+            "schema": target_schema
+        })
+    except Exception as e:
+        return jsonify({"detail": f"Snowflake execution failed: {e}"}), 500
+
+
+
 def _read_text(path: Path) -> str:
     """Read ABAP source using common encodings found in SAP exports."""
     for encoding in SOURCE_ENCODINGS:
@@ -153,7 +305,7 @@ def _read_text(path: Path) -> str:
     return path.read_text(encoding="latin-1")
 
 
-def _run_ui_conversion(input_folder: Path, output_folder: Path) -> tuple[int, str, str | None]:
+def _run_ui_conversion(input_folder: Path, output_folder: Path, creds: dict | None = None) -> tuple[int, str, str | None]:
     """Run the UI conversion path reliably and return the generated files."""
     result = run_conversion(
         input_folder_path=str(input_folder),
@@ -162,7 +314,8 @@ def _run_ui_conversion(input_folder: Path, output_folder: Path) -> tuple[int, st
         skip_storage_setup=True,
         skip_snowflake_persist=True,
         require_ai_success=True,
-        recursive=True
+        recursive=True,
+        creds=creds
     )
     return result, UI_CONVERSION_ENGINE, None
 
@@ -231,4 +384,4 @@ def _persist_displayed_conversion(
 
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=False, use_reloader=False, threaded=True)
+    app.run(host="127.0.0.1", port=5000, debug=True, use_reloader=True, threaded=True)
