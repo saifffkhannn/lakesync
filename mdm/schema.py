@@ -124,3 +124,71 @@ class SchemaDeployer:
 
         finally:
             conn.close()
+
+    @staticmethod
+    def replicate_to_bronze(creds: dict, tables: list):
+        conn = ConnectionManager.get_connection(creds)
+        results = []
+        try:
+            cursor = conn.cursor()
+            for t in tables:
+                db = t.get("bronze_database", t.get("database", "")).upper()
+                schema = t.get("bronze_schema", "BRONZE").upper()
+                table = t.get("bronze_table", f"BRONZE_{t.get('table', '')}").upper()
+                col_mapping = t.get("column_mapping", [])
+
+                try:
+                    cursor.execute(f"CREATE SCHEMA IF NOT EXISTS {db}.{schema}")
+                    
+                    columns = []
+                    for col in col_mapping:
+                        col_name = col.get("tgt", col.get("src", "")).upper()
+                        col_type = col.get("type", "VARCHAR").upper()
+                        columns.append(f"{col_name} {col_type}")
+                    
+                    columns.append("SOURCE_SYSTEM VARCHAR")
+                    columns.append("LOAD_TIMESTAMP TIMESTAMP_NTZ")
+                    columns.append("LAST_MODIFIED_DATE TIMESTAMP_NTZ")
+                    
+                    columns_sql = ", ".join(columns)
+                    cursor.execute(f"CREATE TABLE IF NOT EXISTS {db}.{schema}.{table} ({columns_sql})")
+                    
+                    results.append({
+                        "database": t.get("database"),
+                        "schema": t.get("schema"),
+                        "table": t.get("table"),
+                        "bronze_table": table,
+                        "bronze_schema": schema,
+                        "bronze_database": db,
+                        "status": "SUCCESS"
+                    })
+                except Exception as table_err:
+                    logger.error(f"Failed to create bronze table {db}.{schema}.{table}: {table_err}")
+                    results.append({
+                        "database": t.get("database"),
+                        "schema": t.get("schema"),
+                        "table": t.get("table"),
+                        "bronze_table": table,
+                        "bronze_schema": schema,
+                        "bronze_database": db,
+                        "status": "FAILED",
+                        "error": str(table_err)
+                    })
+            return results
+        finally:
+            conn.close()
+
+    @staticmethod
+    def configure_batch(creds: dict, group_name: str, configs: list):
+        # 1. Deploy structures
+        SchemaDeployer.deploy_structures(creds)
+        
+        # 2. Configure mappings
+        for config_payload in configs:
+            config_payload["group_name"] = group_name
+            SchemaDeployer.configure_mapping(creds, config_payload)
+            
+        # 3. Deploy procedures
+        from mdm.procedures import ProcedureDeployer
+        ProcedureDeployer.deploy_procedures(creds)
+

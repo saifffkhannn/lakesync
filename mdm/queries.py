@@ -42,6 +42,32 @@ class QueryHandler:
             conn.close()
 
     @staticmethod
+    def fetch_databases(creds: dict):
+        conn = ConnectionManager.get_connection(creds)
+        try:
+            cursor = conn.cursor()
+            cursor.execute("SHOW DATABASES")
+            desc = cursor.description
+            name_idx = 1
+            for idx, col in enumerate(desc):
+                if col[0].upper() == 'NAME':
+                    name_idx = idx
+                    break
+            return [row[name_idx] for row in cursor.fetchall()]
+        finally:
+            conn.close()
+
+    @staticmethod
+    def fetch_schemas(creds: dict, database: str):
+        conn = ConnectionManager.get_connection(creds)
+        try:
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT SCHEMA_NAME FROM {database.upper()}.INFORMATION_SCHEMA.SCHEMATA")
+            return [row[0] for row in cursor.fetchall()]
+        finally:
+            conn.close()
+
+    @staticmethod
     def fetch_audit_logs(creds: dict, group_name: str):
         conn = ConnectionManager.get_connection(creds)
         try:

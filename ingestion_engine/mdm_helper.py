@@ -43,3 +43,15 @@ class MDMHelper:
 
     def fetch_master_records(self, creds: dict, group_name: str):
         return QueryHandler.fetch_master_records(creds, group_name)
+
+    def fetch_databases(self, creds: dict):
+        return QueryHandler.fetch_databases(creds)
+
+    def fetch_schemas(self, creds: dict, database: str):
+        return QueryHandler.fetch_schemas(creds, database)
+
+    def replicate_to_bronze(self, creds: dict, tables: list):
+        return SchemaDeployer.replicate_to_bronze(creds, tables)
+
+    def configure_batch(self, creds: dict, group_name: str, configs: list):
+        return SchemaDeployer.configure_batch(creds, group_name, configs)

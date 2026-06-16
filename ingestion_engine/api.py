@@ -698,6 +698,23 @@ class MDMRunRequest(BaseModel):
     creds: Dict[str, Any]
     group_name: str
 
+class MDMDatabasesRequest(BaseModel):
+    creds: Dict[str, Any]
+
+class MDMSchemasRequest(BaseModel):
+    creds: Dict[str, Any]
+    database: str
+
+class MDMReplicateRequest(BaseModel):
+    creds: Dict[str, Any]
+    group_name: str
+    tables: List[Dict[str, Any]]
+
+class MDMConfigureBatchRequest(BaseModel):
+    creds: Dict[str, Any]
+    group_name: str
+    configs: List[Dict[str, Any]]
+
 @app.post("/mdm/test-connection")
 def mdm_test_connection(req: MDMConnectionRequest):
     try:
@@ -706,6 +723,24 @@ def mdm_test_connection(req: MDMConnectionRequest):
         return {"status": "success", "message": "Connected successfully to Snowflake"}
     except Exception as e:
         logger.error(f"MDM test connection failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/mdm/databases")
+def mdm_get_databases(req: MDMDatabasesRequest):
+    try:
+        dbs = mdm_helper.fetch_databases(req.creds)
+        return dbs
+    except Exception as e:
+        logger.error(f"MDM fetch databases failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/mdm/schemas")
+def mdm_get_schemas(req: MDMSchemasRequest):
+    try:
+        schemas = mdm_helper.fetch_schemas(req.creds, req.database)
+        return schemas
+    except Exception as e:
+        logger.error(f"MDM fetch schemas failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/mdm/tables")
@@ -731,6 +766,15 @@ def mdm_get_columns(req: Dict[str, Any]):
         logger.error(f"MDM fetch columns failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/mdm/replicate-to-bronze")
+def mdm_replicate_to_bronze(req: MDMReplicateRequest):
+    try:
+        res = mdm_helper.replicate_to_bronze(req.creds, req.tables)
+        return {"status": "success", "results": res}
+    except Exception as e:
+        logger.error(f"MDM replicate to bronze failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/mdm/configure")
 def mdm_configure(req: MDMConfigureRequest):
     try:
@@ -741,6 +785,15 @@ def mdm_configure(req: MDMConfigureRequest):
         return {"status": "success", "message": "MDM configuration and database structures deployed successfully"}
     except Exception as e:
         logger.error(f"MDM configuration deployment failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/mdm/configure/batch")
+def mdm_configure_batch(req: MDMConfigureBatchRequest):
+    try:
+        mdm_helper.configure_batch(req.creds, req.group_name, req.configs)
+        return {"status": "success", "message": "Batch MDM configuration deployed successfully"}
+    except Exception as e:
+        logger.error(f"MDM batch configuration deployment failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/mdm/run")
