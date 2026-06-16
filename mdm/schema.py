@@ -119,7 +119,7 @@ class SchemaDeployer:
             cursor.execute(f"""
                 INSERT INTO {db}.BRONZE.SOURCE_MAPPING_CONFIG
                 (GROUP_NAME, EXECUTION_SEQ, SOURCE_SYSTEM, SRC_DATABASE, STG_SCHEMA, STG_TABLE, TGT_DATABASE, TGT_SCHEMA, TGT_TABLE, MERGE_KEY, STG_MERGE_KEY, COLUMN_MAPPING, STREAM_NAME)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, PARSE_JSON(%s), %s)
+                SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, PARSE_JSON(%s), %s
             """, (group_name, next_seq, source_system, src_db, stg_schema, stg_table, db, tgt_schema, tgt_table, merge_key, stg_merge_key, json.dumps(column_mapping), stream_name))
 
         finally:
