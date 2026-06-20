@@ -13,3 +13,5 @@ tqdm
 pandas
 python-multipart
 python-dotenv
+azure-storage-blob
+azure-identity
