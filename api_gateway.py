@@ -18,8 +18,8 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-INGESTION_BACKEND = "http://localhost:8001"
-ABAP_BACKEND = "http://localhost:5000"
+INGESTION_BACKEND = "https://lakesync-api.onrender.com"
+ABAP_BACKEND = "https://lakesync-abap.onrender.com"
 
 # Create a shared HTTP client
 client = httpx.AsyncClient()
