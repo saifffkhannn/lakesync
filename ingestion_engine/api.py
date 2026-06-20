@@ -23,6 +23,15 @@ logging.basicConfig(level=logging.INFO)
 
 app = FastAPI()
 
+@app.get("/")
+def home():
+    return {
+        "status": "success",
+        "message": "LakeSync API is running!",
+        "docs": "/docs"
+    }
+
+
 # Enable CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
