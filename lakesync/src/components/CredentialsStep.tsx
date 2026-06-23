@@ -79,40 +79,41 @@ export const CredentialsStep: React.FC<CredentialsStepProps> = ({
     localStorage.setItem(ABAP_SF_KEY, JSON.stringify(snowflakeForm));
   }, [snowflakeForm]);
 
-  const isABAP = selection.loadType === 'ABAP';
-  const isMDM = selection.loadType === 'MDM';
+  const isABAP = selection?.loadType === 'ABAP';
+  const isMDM = selection?.loadType === 'MDM';
   const isSnowflakeOnly = isABAP || isMDM;
 
   const handleSaveProfile = (cat: 'source' | 'cloud' | 'target') => {
-    const platform = selection[`${cat}Platform`];
-    const data = formData[cat];
+    const platform = selection?.[`${cat}Platform`];
+    const data = formData?.[cat];
     if (!platform) return;
 
     setSavedProfiles(prev => ({
-      ...prev,
+      ...(prev || {}),
       [cat]: {
-        ...prev[cat],
+        ...(prev?.[cat] || {}),
         [platform]: data
       }
     }));
-    setOpenForms(prev => ({ ...prev, [cat]: false }));
+    setOpenForms(prev => ({ ...(prev || {}), [cat]: false }));
   };
 
   const handleDeleteConfig = (cat: 'source' | 'cloud' | 'target', platform: string) => {
+    if (!platform) return;
     if (window.confirm(`Are you sure you want to delete the configuration for ${platform}?`)) {
       setSavedProfiles(prev => {
-        const nextCat = { ...prev[cat] };
+        const nextCat = { ...(prev?.[cat] || {}) };
         delete nextCat[platform];
-        return { ...prev, [cat]: nextCat };
+        return { ...(prev || {}), [cat]: nextCat };
       });
-      if (selection[`${cat}Platform`] === platform) {
+      if (selection?.[`${cat}Platform`] === platform) {
         handlePlatformChange(`${cat}Platform` as any, '');
       }
     }
   };
 
   const handleSnowflakeChange = (key: string, value: string) => {
-    setSnowflakeForm(prev => ({ ...prev, [key]: value }));
+    setSnowflakeForm(prev => ({ ...(prev || {}), [key]: value }));
   };
 
   const handleABAPContinue = () => {
@@ -120,7 +121,7 @@ export const CredentialsStep: React.FC<CredentialsStepProps> = ({
     if (isMDM && onMDMContinue) onMDMContinue();
   };
 
-  const isSnowflakeReady = snowflakeForm.account && snowflakeForm.username && snowflakeForm.password && snowflakeForm.warehouse && snowflakeForm.database && snowflakeForm.schema;
+  const isSnowflakeReady = !!(snowflakeForm?.account && snowflakeForm?.username && snowflakeForm?.password && snowflakeForm?.warehouse && snowflakeForm?.database && snowflakeForm?.schema);
 
   return (
     <div className="animate-fadeIn">
@@ -188,7 +189,6 @@ export const CredentialsStep: React.FC<CredentialsStepProps> = ({
           </div>
         </div>
       )}
-
       {/* ── Source / Cloud / Target cards (hidden for ABAP) ── */}
       {!isSnowflakeOnly && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
@@ -197,14 +197,14 @@ export const CredentialsStep: React.FC<CredentialsStepProps> = ({
             { cat: 'cloud', accent: 'text-sky-600 bg-sky-50 border-sky-100' },
             { cat: 'target', accent: 'text-emerald-600 bg-emerald-50 border-emerald-100' }
           ] as const).map(({ cat, accent }) => {
-            const currentPlatform = selection[`${cat}Platform`];
+            const currentPlatform = selection?.[`${cat}Platform`];
 
-            const configured = (platforms[`${cat}s`] as string[]).filter(p =>
-              savedProfiles[cat]?.[p] && Object.keys(savedProfiles[cat][p]).length > 0
+            const configured = ((platforms?.[`${cat}s`] || []) as string[]).filter(p =>
+              savedProfiles?.[cat]?.[p] && Object.keys(savedProfiles[cat][p]).length > 0
             );
 
-            const unconfigured = (platforms[`${cat}s`] as string[]).filter(p =>
-              !savedProfiles[cat]?.[p] || Object.keys(savedProfiles[cat][p]).length === 0
+            const unconfigured = ((platforms?.[`${cat}s`] || []) as string[]).filter(p =>
+              !savedProfiles?.[cat]?.[p] || Object.keys(savedProfiles[cat][p]).length === 0
             );
 
             return (
@@ -212,25 +212,25 @@ export const CredentialsStep: React.FC<CredentialsStepProps> = ({
                 <div className={`px-4 py-3 border-b ${accent} flex items-center justify-between relative`}>
                   <span className="text-[11px] font-bold uppercase tracking-widest capitalize">{cat} Settings</span>
                   <div className="relative">
-                    {openPlusMenu[cat] && (
+                    {openPlusMenu?.[cat] && (
                       <>
                         <div
                           className="fixed inset-0 z-10"
-                          onClick={() => setOpenPlusMenu(prev => ({ ...prev, [cat]: false }))}
+                          onClick={() => setOpenPlusMenu(prev => ({ ...(prev || {}), [cat]: false }))}
                         />
                         <div className="absolute right-0 top-8 mt-1 w-48 bg-white border border-slate-200 rounded-xl shadow-xl z-20 py-1.5 animate-fadeIn">
                           <div className="px-3 py-1.5 border-b border-slate-100 text-[9px] font-bold text-slate-400 uppercase tracking-wider">
                             Configure New System
                           </div>
-                          {unconfigured.length > 0 ? (
-                            unconfigured.map(p => (
+                          {(unconfigured || []).length > 0 ? (
+                            (unconfigured || []).map(p => (
                               <button
                                 key={p}
                                 type="button"
                                 onClick={() => {
-                                  setOpenPlusMenu(prev => ({ ...prev, [cat]: false }));
+                                  setOpenPlusMenu(prev => ({ ...(prev || {}), [cat]: false }));
                                   handlePlatformChange(`${cat}Platform` as any, p);
-                                  setOpenForms(prev => ({ ...prev, [cat]: true }));
+                                  setOpenForms(prev => ({ ...(prev || {}), [cat]: true }));
                                 }}
                                 className="w-full text-left px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-indigo-650 transition-colors flex items-center justify-between"
                               >
@@ -259,7 +259,8 @@ export const CredentialsStep: React.FC<CredentialsStepProps> = ({
                           onChange={e => handlePlatformChange(`${cat}Platform` as any, e.target.value)}
                           className={selectCls}
                         >
-                          {configured.map((p: string) => (
+                          <option value="">Select Platform…</option>
+                          {(configured || []).map((p: string) => (
                             <option key={p} value={p}>
                               {p}
                             </option>
@@ -267,7 +268,7 @@ export const CredentialsStep: React.FC<CredentialsStepProps> = ({
                         </select>
                         <ChevronRightIcon className="w-3.5 h-3.5 text-slate-400 rotate-90 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
-                      {currentPlatform && configured.includes(currentPlatform) && (
+                      {currentPlatform && (configured || []).includes(currentPlatform) && (
                         <button
                           type="button"
                           onClick={() => handleDeleteConfig(cat, currentPlatform)}
@@ -279,10 +280,10 @@ export const CredentialsStep: React.FC<CredentialsStepProps> = ({
                           </svg>
                         </button>
                       )}
-                      {currentPlatform && configured.includes(currentPlatform) && (
+                      {currentPlatform && (configured || []).includes(currentPlatform) && (
                         <button
                           type="button"
-                          onClick={() => setOpenForms(prev => ({ ...prev, [cat]: true }))}
+                          onClick={() => setOpenForms(prev => ({ ...(prev || {}), [cat]: true }))}
                           className="p-2 rounded-lg border border-slate-200 hover:border-indigo-200 hover:bg-indigo-50 text-slate-450 hover:text-indigo-600 transition-all shrink-0 flex items-center justify-center"
                           title={`Edit configuration for ${currentPlatform}`}
                         >
@@ -447,10 +448,10 @@ export const CredentialsStep: React.FC<CredentialsStepProps> = ({
           <button
             onClick={saveConfig}
             disabled={
-              !selection.loadType ||
-              !selection.sourcePlatform ||
-              !selection.targetPlatform ||
-              !selection.cloudPlatform ||
+              !selection?.loadType ||
+              !selection?.sourcePlatform ||
+              !selection?.targetPlatform ||
+              !selection?.cloudPlatform ||
               isProcessing
             }
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed shadow-sm shadow-indigo-200 transition-all"

@@ -43,7 +43,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartNew }) => {
   const fetchHistory = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/migration-history');
+      const response = await fetch('https://lakesync-gateway.onrender.com/migration-history');
       if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
       setHistory(data);

@@ -23,10 +23,10 @@ export function CodePanel({
   onChange,
 }: CodePanelProps) {
   const [copied, setCopied] = useState(false);
-  const lines = useMemo(() => (code ? code.split("\n") : []), [code]);
+  const lines = useMemo(() => (typeof code === 'string' && code ? code.split("\n") : []), [code]);
 
   const copy = async () => {
-    if (!code) return;
+    if (typeof code !== 'string' || !code) return;
     await navigator.clipboard.writeText(code);
     setCopied(true);
     setTimeout(() => setCopied(false), 1400);

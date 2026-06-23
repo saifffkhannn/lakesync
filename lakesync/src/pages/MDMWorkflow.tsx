@@ -18,7 +18,7 @@ import {
 
 import devConfig from '../data/dev_config.json';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = "https://lakesync-gateway.onrender.com";
 
 interface MDMWorkflowProps {
   onBack: () => void;
@@ -313,7 +313,7 @@ export const MDMWorkflow: React.FC<MDMWorkflowProps> = ({ onBack, onBackToPipeli
       return;
     }
     setErrorMessage(null);
-    const sys = pickerSourceSystem.trim().toUpperCase() || pickerDb.split('_')[0] || 'SOURCE';
+    const sys = (pickerSourceSystem ?? '').trim().toUpperCase() || (pickerDb ?? '').split('_')[0] || 'SOURCE';
     setSelectedTables(prev => [...prev, {
       database: pickerDb,
       schema: pickerSchema,
@@ -390,9 +390,9 @@ export const MDMWorkflow: React.FC<MDMWorkflowProps> = ({ onBack, onBackToPipeli
         const stgCols = stgRes.ok ? await stgRes.json() : [];
         const tgtCols = tgtRes.ok ? await tgtRes.json() : [];
 
-        const stgColNames = (stgCols || []).map((c: any) => c.column_name);
-        const tgtColNames = (tgtCols || []).map((c: any) => c.column_name)
-          .filter((c: string) => !['SOURCE_SYSTEM', 'LOAD_TIMESTAMP', 'LAST_MODIFIED_DATE'].includes(c));
+        const stgColNames = (Array.isArray(stgCols) ? stgCols : []).map((c: any) => c?.column_name).filter(Boolean);
+        const tgtColNames = (Array.isArray(tgtCols) ? tgtCols : []).map((c: any) => c?.column_name)
+          .filter((c: string) => c && !['SOURCE_SYSTEM', 'LOAD_TIMESTAMP', 'LAST_MODIFIED_DATE'].includes(c));
 
         setStgColumns(stgColNames);
 
@@ -413,13 +413,13 @@ export const MDMWorkflow: React.FC<MDMWorkflowProps> = ({ onBack, onBackToPipeli
           // NOTE: mappingsByTable is NOT in the dep array so we read it from
           // the closure; it may be slightly stale but will already have CSV values.
           const existingMappings = mappingsByTable[selectedTableKey] || [];
-          extraTgtCols = existingMappings
-            .map((m: ColumnMapItem) => m.tgt)
+          extraTgtCols = (Array.isArray(existingMappings) ? existingMappings : [])
+            .map((m: ColumnMapItem) => m?.tgt)
             .filter((t: string) => t && !reserved.has(t));
         }
 
         // Union: API-returned tgt cols + extra tgt cols, deduped
-        const merged = Array.from(new Set([...tgtColNames, ...extraTgtCols]));
+        const merged = Array.from(new Set([...(tgtColNames || []), ...(extraTgtCols || [])]));
         setTgtColumns(merged);
 
         // Auto-init only when no mappings exist yet for this table
@@ -430,20 +430,21 @@ export const MDMWorkflow: React.FC<MDMWorkflowProps> = ({ onBack, onBackToPipeli
 
         if (!mappingsByTable[selectedTableKey] || mappingsByTable[selectedTableKey].length === 0) {
           const initialMappings = tgtColNames.map((tCol: string) => {
+            const tColUpper = (tCol ?? '').toUpperCase();
             // Try exact name match
-            let matchingSrc = stgColNames.find((s: string) => s.toUpperCase() === tCol.toUpperCase());
+            let matchingSrc = stgColNames.find((s: string) => (s ?? '').toUpperCase() === tColUpper);
             // If not found, try normalized match
             if (!matchingSrc) {
               matchingSrc = stgColNames.find((s: string) => {
-                const sUpper = s.toUpperCase();
-                const tUpper = tCol.toUpperCase();
+                const sUpper = (s ?? '').toUpperCase();
+                const tUpper = tColUpper;
                 return sUpper.includes(tUpper) || tUpper.includes(sUpper);
               });
             }
 
             let weight: number | null = null;
             let norm: 'none' | 'text' | 'email' | 'phone' = 'none';
-            const nameLower = tCol.toLowerCase();
+            const nameLower = (tCol ?? '').toLowerCase();
 
             if (nameLower === 'name' || nameLower.includes('name')) {
               weight = 0.15; norm = 'text';
@@ -1511,7 +1512,7 @@ export const MDMWorkflow: React.FC<MDMWorkflowProps> = ({ onBack, onBackToPipeli
                     'CLUSTER_SIZE', 'MATCH_CONFIDENCE', 'PIPELINE_RUN_ID', 
                     'CREATED_TS', 'ENTITY_DATA'
                   ]);
-                  const entityCols = Object.keys(masterRecords[0]).filter(k => !standardKeys.has(k));
+                  const entityCols = Object.keys(masterRecords[0] || {}).filter(k => !standardKeys.has(k));
                   
                   return (
                     <table className="min-w-full divide-y divide-slate-150">

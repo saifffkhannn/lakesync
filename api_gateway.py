@@ -63,16 +63,21 @@ async def route_request(request: Request, path: str):
             timeout=60.0
         )
         
-        # Exclude connection/transfer headers that could break HTTP clients
-        resp_headers = {}
-        for k, v in response.headers.items():
-            if k.lower() not in ["content-length", "content-encoding", "transfer-encoding", "connection"]:
-                resp_headers[k] = v
+        # Print upstream headers to Render logs to diagnose compression issues
+        print("UPSTREAM HEADERS:", dict(response.headers))
 
+        # Copy non-structural headers we want to forward (like downloads/attachment)
+        gateway_headers = {}
+        for k, v in response.headers.items():
+            if k.lower() in ["content-disposition", "content-length"]:
+                gateway_headers[k] = v
+
+        # Explicitly pass content-type and let FastAPI handle structural headers safely
         return Response(
             content=response.content,
             status_code=response.status_code,
-            headers=resp_headers
+            media_type=response.headers.get("content-type"),
+            headers=gateway_headers
         )
     except httpx.RequestError as exc:
         logger.error(f"[GATEWAY] Connection failed to {target_url}: {exc}")

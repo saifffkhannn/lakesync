@@ -18,7 +18,7 @@ import { SelectionStep } from './components/SelectionStep';
 import { MappingStep } from './components/MappingStep';
 import { ExecutionStep } from './components/ExecutionStep';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = "https://lakesync-gateway.onrender.com";
 
 type TablePair = { id: string; srcTable: string; tgtTable: string; };
 type QueueStatus = 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'HALTED';

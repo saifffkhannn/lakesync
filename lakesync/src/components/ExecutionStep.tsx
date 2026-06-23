@@ -71,13 +71,14 @@ export const ExecutionStep: React.FC<ExecutionStepProps> = ({
             let displayStatus = itemStatus;
             let stepsInfo = { extraction: 'pending', upload: 'pending', load: 'pending' };
             let errorMsg = '';
-            const dbItem = ingestionStatus.details?.find((t: any) =>
-              t.table.toLowerCase() === item.srcTable.toLowerCase() ||
-              t.table.toLowerCase().endsWith('.' + item.srcTable.toLowerCase())
-            );
+            const dbItem = (Array.isArray(ingestionStatus?.details) ? ingestionStatus.details : []).find((t: any) => {
+              const tTableLower = (t?.table ?? '').toLowerCase();
+              const itemSrcTableLower = (item?.srcTable ?? '').toLowerCase();
+              return tTableLower === itemSrcTableLower || tTableLower.endsWith('.' + itemSrcTableLower);
+            });
 
             if (dbItem) {
-              const dbStatus = dbItem.status.toUpperCase();
+              const dbStatus = (dbItem?.status ?? '').toUpperCase();
               if (dbStatus === 'COMPLETED' || dbStatus === 'SUCCESS' || dbStatus.includes('SKIPPED')) {
                 itemStatus = 'COMPLETED'; displayStatus = dbItem.status;
               } else if (['FAILED', 'EXTRACTION_FAILED', 'UPLOAD_FAILED', 'TABLE_CREATION_FAILED', 'LOAD_FAILED', 'VALIDATION_FAILED'].includes(dbStatus)) {
@@ -92,8 +93,8 @@ export const ExecutionStep: React.FC<ExecutionStepProps> = ({
             }
 
             const isActive = dbItem
-              ? (ingestionStatus.message?.toLowerCase() === `table: ${dbItem.table.toLowerCase()}` || ingestionStatus.message?.toLowerCase() === `table: ${item.srcTable.toLowerCase()}`)
-              : (ingestionStatus.message?.toLowerCase().includes(item.srcTable.toLowerCase()) || false);
+              ? (ingestionStatus.message?.toLowerCase() === `table: ${(dbItem?.table ?? '').toLowerCase()}` || ingestionStatus.message?.toLowerCase() === `table: ${(item?.srcTable ?? '').toLowerCase()}`)
+              : (ingestionStatus.message?.toLowerCase()?.includes((item?.srcTable ?? '').toLowerCase()) || false);
 
             const srcRows = dbItem?.source_row_count ?? 0;
             const insertedRows = dbItem?.inserted_rows ?? 0;
@@ -101,10 +102,12 @@ export const ExecutionStep: React.FC<ExecutionStepProps> = ({
             const tgtRows = dbItem?.target_row_count ?? 0;
             const durationSec = dbItem?.duration_seconds ?? null;
 
-            const tableLogs = logs.filter(l =>
-              l.toLowerCase().includes(item.srcTable.toLowerCase()) ||
-              (dbItem?.table && l.toLowerCase().includes(dbItem.table.toLowerCase()))
-            );
+            const tableLogs = (Array.isArray(logs) ? logs : []).filter(l => {
+              const lLower = (l ?? '').toLowerCase();
+              const itemSrcTableLower = (item?.srcTable ?? '').toLowerCase();
+              return lLower.includes(itemSrcTableLower) ||
+                (dbItem?.table && lLower.includes((dbItem.table ?? '').toLowerCase()));
+            });
 
             const stepColor = (s: string) =>
               s === 'completed' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' :
@@ -213,10 +216,10 @@ export const ExecutionStep: React.FC<ExecutionStepProps> = ({
                       Execution Log ({tableLogs.length} events)
                     </summary>
                     <div className="bg-slate-950 px-4 py-3 font-mono text-[10px] space-y-0.5 max-h-36 overflow-y-auto">
-                      {tableLogs.map((log, i) => (
+                      {(Array.isArray(tableLogs) ? tableLogs : []).map((log, i) => (
                         <div key={i} className={`leading-relaxed ${
-                          log.includes('failed') || log.includes('Failed') || log.includes('ERROR') ? 'text-rose-400' :
-                          log.includes('completed') || log.includes('SUCCESS') ? 'text-emerald-400' :
+                          (log ?? '').includes('failed') || (log ?? '').includes('Failed') || (log ?? '').includes('ERROR') ? 'text-rose-400' :
+                          (log ?? '').includes('completed') || (log ?? '').includes('SUCCESS') ? 'text-emerald-400' :
                           'text-slate-400'
                         }`}>{log}</div>
                       ))}
@@ -262,8 +265,8 @@ export const ExecutionStep: React.FC<ExecutionStepProps> = ({
               <span className="ml-2 text-[9px] font-bold uppercase tracking-widest text-slate-500">Execution Log</span>
             </div>
             <div className="p-4 font-mono text-[11px] space-y-1 max-h-52 overflow-y-auto">
-              {logs.map((log, i) => (
-                <div key={i} className={`flex gap-2.5 leading-relaxed ${log.includes('ERROR') || log.includes('failed') || log.includes('Failed') ? 'text-rose-400' : 'text-slate-400'}`}>
+              {(Array.isArray(logs) ? logs : []).map((log, i) => (
+                <div key={i} className={`flex gap-2.5 leading-relaxed ${(log ?? '').includes('ERROR') || (log ?? '').includes('failed') || (log ?? '').includes('Failed') ? 'text-rose-400' : 'text-slate-400'}`}>
                   <span className="text-slate-600 select-none w-5 text-right shrink-0">{i + 1}</span>
                   <span>{log}</span>
                 </div>

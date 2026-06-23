@@ -11,8 +11,10 @@ class ConnectionManager:
             user = creds.get("username", creds.get("user", "")).strip()
             password = creds.get("password", "").strip()
             warehouse = creds.get("warehouse", "").strip()
-            database = creds.get("database", "").strip()
-            schema = creds.get("schema", "PUBLIC").strip()
+            database_val = creds.get("database")
+            database = database_val.strip() if database_val else None
+            schema_val = creds.get("schema")
+            schema = schema_val.strip() if schema_val else None
 
             return snowflake.connector.connect(
                 account=account,

@@ -67,23 +67,24 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
   }, [metadata.fullLoadTables, selectedSchema, search]);
 
   const toggleTableSelection = (table: string) => {
-    const exists = tablePairs.some(p => p.srcTable === table);
+    if (!table) return;
+    const exists = (tablePairs || []).some(p => p?.srcTable === table);
     if (exists) {
-      setTablePairs(prev => prev.filter(p => p.srcTable !== table));
+      setTablePairs(prev => (prev || []).filter(p => p?.srcTable !== table));
     } else {
-      setTablePairs(prev => [...prev, { id: table, srcTable: table, tgtTable: table }]);
+      setTablePairs(prev => [...(prev || []), { id: table, srcTable: table, tgtTable: table }]);
     }
   };
 
   const selectAllFiltered = () => {
-    const toAdd = filteredFullLoadTables.filter(t => !tablePairs.some(p => p.srcTable === t.table));
+    const toAdd = (filteredFullLoadTables || []).filter(t => t?.table && !(tablePairs || []).some(p => p?.srcTable === t.table));
     const newPairs = toAdd.map(t => ({ id: t.table, srcTable: t.table, tgtTable: t.table }));
-    setTablePairs(prev => [...prev, ...newPairs]);
+    setTablePairs(prev => [...(prev || []), ...newPairs]);
   };
 
   const clearAllFiltered = () => {
-    const filteredTableNames = filteredFullLoadTables.map(t => t.table);
-    setTablePairs(prev => prev.filter(p => !filteredTableNames.includes(p.srcTable)));
+    const filteredTableNames = (filteredFullLoadTables || []).map(t => t?.table || '').filter(Boolean);
+    setTablePairs(prev => (prev || []).filter(p => p?.srcTable && !filteredTableNames.includes(p.srcTable)));
   };
 
   if (isFullLoad) {
@@ -140,7 +141,7 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
                 <div className="flex justify-between items-center text-xs mb-1 font-semibold text-slate-600">
                   <span>Selected Tables:</span>
                   <span className="bg-indigo-600 text-white px-2 py-0.5 rounded-full text-[10px] font-black font-mono">
-                    {tablePairs.length}
+                    {(tablePairs || []).length}
                   </span>
                 </div>
               </div>
@@ -161,7 +162,7 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
               <div className={`${cardCls} p-5 flex flex-col h-full min-h-[400px]`}>
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-semibold text-slate-500">
-                    Showing <b>{filteredFullLoadTables.length}</b> tables
+                    Showing <b>{(filteredFullLoadTables || []).length}</b> tables
                   </span>
                   <div className="flex items-center gap-3">
                     <button
@@ -181,8 +182,9 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto pr-1">
-                  {filteredFullLoadTables.map(t => {
-                    const isSelected = tablePairs.some(p => p.srcTable === t.table);
+                  {(filteredFullLoadTables || []).map(t => {
+                    if (!t || !t.table) return null;
+                    const isSelected = (tablePairs || []).some(p => p?.srcTable === t.table);
                     return (
                       <label
                         key={t.table}
@@ -230,7 +232,7 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
           </button>
           <button
             onClick={prepareBatchMapping}
-            disabled={tablePairs.length === 0 || isProcessing}
+            disabled={(tablePairs || []).length === 0 || isProcessing}
             className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed shadow-sm shadow-indigo-200 transition-all animate-fadeIn"
           >
             {isProcessing ? 'Processing…' : 'Start Full Load Migration'}
@@ -251,10 +253,10 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
         {[
-          { type: 'source' as const, label: 'Source Schema', schemas: metadata.srcSchemas, val: selection.srcSchema, accent: 'text-indigo-600' },
-          { type: 'target' as const, label: 'Target Schema', schemas: metadata.tgtSchemas, val: selection.tgtSchema, accent: 'text-emerald-600' },
+          { type: 'source' as const, label: 'Source Schema', schemas: metadata?.srcSchemas || [], val: selection?.srcSchema || '', accent: 'text-indigo-600' },
+          { type: 'target' as const, label: 'Target Schema', schemas: metadata?.tgtSchemas || [], val: selection?.tgtSchema || '', accent: 'text-emerald-600' },
         ].filter(({ type }) => {
-          if (type === 'source' && selection.sourcePlatform?.toLowerCase() === 'mysql') return false;
+          if (type === 'source' && selection?.sourcePlatform?.toLowerCase() === 'mysql') return false;
           return true;
         }).map(({ type, label, schemas, val, accent }) => (
           <div key={type} className={cardCls + ' p-4'}>
@@ -262,7 +264,7 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
             <div className="relative">
               <select value={val} onChange={e => loadTables(type, e.target.value)} className={selectCls}>
                 <option value="">Choose schema…</option>
-                {schemas.map((s: string) => <option key={s} value={s}>{s}</option>)}
+                {(schemas || []).map((s: string) => <option key={s} value={s}>{s}</option>)}
               </select>
               <ChevronRightIcon className="w-3.5 h-3.5 text-slate-400 rotate-90 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
@@ -270,30 +272,33 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
         ))}
       </div>
 
-      {selection.srcSchema && selection.tgtSchema && (
+      {selection?.srcSchema && selection?.tgtSchema && (
         <div className={`${cardCls} animate-fadeIn`}>
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
             <span className="text-sm font-semibold text-slate-800">Table Pairings</span>
-            {tablePairs.length > 0 && (
-              <span className="bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-bold px-2 py-0.5 rounded-full">{tablePairs.length}</span>
+            {(tablePairs || []).length > 0 && (
+              <span className="bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-bold px-2 py-0.5 rounded-full">{(tablePairs || []).length}</span>
             )}
           </div>
           <div className="p-5 space-y-4">
-            {tablePairs.length > 0 && (
+            {(tablePairs || []).length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {tablePairs.map(p => (
-                  <div key={p.id} className="group flex items-center justify-between px-3.5 py-2.5 bg-indigo-50/60 border border-indigo-100 rounded-lg hover:bg-indigo-50 transition-colors">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <TableCellsIcon className="w-4 h-4 text-indigo-400 shrink-0" />
-                      <span className="text-xs font-semibold text-slate-700 truncate">{p.srcTable}</span>
-                      <ChevronRightIcon className="w-3 h-3 text-slate-300 shrink-0" />
-                      <span className="text-xs font-semibold text-slate-500 truncate">{p.tgtTable}</span>
+                {(tablePairs || []).map(p => {
+                  if (!p) return null;
+                  return (
+                    <div key={p.id} className="group flex items-center justify-between px-3.5 py-2.5 bg-indigo-50/60 border border-indigo-100 rounded-lg hover:bg-indigo-50 transition-colors">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <TableCellsIcon className="w-4 h-4 text-indigo-400 shrink-0" />
+                        <span className="text-xs font-semibold text-slate-700 truncate">{p.srcTable}</span>
+                        <ChevronRightIcon className="w-3 h-3 text-slate-300 shrink-0" />
+                        <span className="text-xs font-semibold text-slate-500 truncate">{p.tgtTable}</span>
+                      </div>
+                      <button onClick={() => setTablePairs(prev => (prev || []).filter(x => x?.id !== p.id))} className="ml-2 opacity-0 group-hover:opacity-100 text-rose-400 hover:text-rose-600 transition-all shrink-0">
+                        <StopIcon className="w-3.5 h-3.5 rotate-45" />
+                      </button>
                     </div>
-                    <button onClick={() => setTablePairs(prev => prev.filter(x => x.id !== p.id))} className="ml-2 opacity-0 group-hover:opacity-100 text-rose-400 hover:text-rose-600 transition-all shrink-0">
-                      <StopIcon className="w-3.5 h-3.5 rotate-45" />
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end pt-3 border-t border-slate-100">
@@ -302,13 +307,13 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
                   label: 'Source Table', 
                   val: currentSrcTable, 
                   setter: setCurrentSrcTable,
-                  tables: metadata.srcTables.filter((t: string) => !tablePairs.find(p => p.srcTable === t)) 
+                  tables: (metadata?.srcTables || []).filter((t: string) => !(tablePairs || []).find(p => p?.srcTable === t)) 
                 },
                 { 
                   label: 'Target Table', 
                   val: currentTgtTable, 
                   setter: setCurrentTgtTable, 
-                  tables: metadata.tgtTables.filter((t: string) => !tablePairs.find(p => p.tgtTable === t)) 
+                  tables: (metadata?.tgtTables || []).filter((t: string) => !(tablePairs || []).find(p => p?.tgtTable === t)) 
                 },
               ].map(({ label, val, setter, tables }) => (
                 <div key={label}>
@@ -316,7 +321,7 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
                   <div className="relative">
                     <select value={val} onChange={e => setter(e.target.value)} className={selectCls}>
                       <option value="">Select…</option>
-                      {tables.map((t: string) => <option key={t} value={t}>{t}</option>)}
+                      {(tables || []).map((t: string) => <option key={t} value={t}>{t}</option>)}
                     </select>
                     <ChevronRightIcon className="w-3.5 h-3.5 text-slate-400 rotate-90 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
@@ -340,7 +345,7 @@ export const SelectionStep: React.FC<SelectionStepProps> = ({
         </button>
         <button
           onClick={prepareBatchMapping}
-          disabled={tablePairs.length === 0 || isProcessing}
+          disabled={(tablePairs || []).length === 0 || isProcessing}
           className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 disabled:cursor-not-allowed shadow-sm shadow-indigo-200 transition-all"
         >
           {isProcessing ? 'Processing…' : 'Configure Mappings'}

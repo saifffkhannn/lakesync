@@ -686,7 +686,7 @@ class MDMConnectionRequest(BaseModel):
     username: str
     password: str
     warehouse: str
-    database: str
+    database: Optional[str] = None
     schema: Optional[str] = "PUBLIC"
 
 class MDMConfigureRequest(BaseModel):

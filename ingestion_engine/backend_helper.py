@@ -347,8 +347,7 @@ class BackendHelper:
                             cursor.execute(f"USE CATALOG {catalog}")
                         except Exception as e:
                             logger.warning(f"Failed to use catalog {catalog}: {str(e)}")
-                            # Try uppercase as fallback
-                            if catalog.islower():
+                            if catalog and catalog.islower():
                                 try:
                                     cursor.execute(f"USE CATALOG {catalog.upper()}")
                                     catalog = catalog.upper()

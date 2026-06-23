@@ -153,7 +153,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                           className={selectCls}
                         >
                           <option value="">Select column…</option>
-                          {cols.map((col: any) => <option key={col.column_name} value={col.column_name}>{col.column_name} ({col.data_type})</option>)}
+                          {(Array.isArray(cols) ? cols : []).map((col: any) => <option key={col?.column_name} value={col?.column_name}>{col?.column_name} ({col?.data_type})</option>)}
                         </select>
                         <ChevronRightIcon className="w-3.5 h-3.5 text-slate-400 rotate-90 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>
@@ -162,9 +162,9 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                 </div>
                 <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                   <div className="flex flex-wrap gap-1.5">
-                    {tableConfig[activeMappingId]?.primary_keys.map((pk: string) => (
+                    {(tableConfig[activeMappingId]?.primary_keys || []).map((pk: string) => (
                       <span key={pk} className="inline-flex items-center gap-1 bg-indigo-50 text-indigo-700 border border-indigo-100 text-[10px] font-semibold px-2 py-1 rounded">
-                        <ShieldCheckIcon className="w-3 h-3" />{pk}
+                        <ShieldCheckIcon className="w-3.5 h-3.5" />{pk}
                       </span>
                     ))}
                   </div>
@@ -172,7 +172,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                     type="button"
                     onClick={() => {
                       const commonNames = ['updated_at', 'modified_at', 'modified_timestamp', 'last_modified', 'timestamp', 'load_date'];
-                      const foundSrc = pairMetadata[activeMappingId].srcColumns.find((c: any) => commonNames.includes(c.column_name.toLowerCase()));
+                      const foundSrc = (pairMetadata[activeMappingId]?.srcColumns || []).find((c: any) => commonNames.includes(c?.column_name?.toLowerCase()));
                       if (foundSrc) {
                         setTableConfig((prev: any) => {
                           const cur = prev[activeMappingId] || { primary_keys: [], incremental_src_col: '' };
@@ -208,18 +208,18 @@ export const MappingStep: React.FC<MappingStepProps> = ({
 
               <div className="overflow-auto max-h-[500px] p-5 bg-slate-50/30">
                 <div className="space-y-4">
-                  {pairMetadata[activeMappingId].tgtColumns.map((tCol: any) => {
-                    const mVal = allMappings[activeMappingId]?.[tCol.column_name] || '';
-                    const hasDefault = tCol.default !== null && tCol.default !== undefined && tCol.default !== '';
-                    const isNullable = tCol.nullable === 'YES' || tCol.nullable === true;
+                  {(Array.isArray(pairMetadata[activeMappingId]?.tgtColumns) ? pairMetadata[activeMappingId].tgtColumns : []).map((tCol: any) => {
+                    const mVal = allMappings[activeMappingId]?.[tCol?.column_name] || '';
+                    const hasDefault = tCol?.default !== null && tCol?.default !== undefined && tCol?.default !== '';
+                    const isNullable = tCol?.nullable === 'YES' || tCol?.nullable === true;
                     const isOptional = isNullable || hasDefault;
-                    const isMapped = mVal && mVal !== '' && (mVal !== '_CUSTOM_' || !!allDefaultValues[activeMappingId]?.[tCol.column_name]?.trim());
+                    const isMapped = mVal && mVal !== '' && (mVal !== '_CUSTOM_' || !!allDefaultValues[activeMappingId]?.[tCol?.column_name]?.trim());
                     const isWatermarkCol = mVal === tableConfig[activeMappingId]?.incremental_src_col;
                     const usedSourceCols = Object.entries(allMappings[activeMappingId] || {})
-                      .filter(([t, s]) => t !== tCol.column_name && s !== '_NULL_' && s !== '_CUSTOM_')
+                      .filter(([t, s]) => t !== tCol?.column_name && s !== '_NULL_' && s !== '_CUSTOM_')
                       .map(([, s]) => s);
 
-                    const customMeta = getCustomInputMeta(tCol.data_type);
+                    const customMeta = getCustomInputMeta(tCol?.data_type);
 
                     const leftBarClass = isWatermarkCol
                       ? 'border-l-amber-500'
@@ -239,7 +239,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
 
                     return (
                       <div
-                        key={tCol.column_name}
+                        key={tCol?.column_name}
                         className={`flex flex-col md:flex-row items-stretch md:items-center gap-4 p-4.5 rounded-xl border border-l-4 shadow-sm hover:shadow-md transition-all ${leftBarClass} ${borderStateClass}`}
                       >
                         {/* Source Mapping Column */}
@@ -254,7 +254,7 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                             <select
                               value={mVal}
                               disabled={isWatermarkCol}
-                              onChange={e => setAllMappings((prev: any) => ({ ...prev, [activeMappingId]: { ...prev[activeMappingId], [tCol.column_name]: e.target.value } }))}
+                              onChange={e => setAllMappings((prev: any) => ({ ...prev, [activeMappingId]: { ...prev[activeMappingId], [tCol?.column_name]: e.target.value } }))}
                               className={`w-full pl-3 pr-8 py-2 rounded-lg border text-xs font-semibold outline-none transition-all appearance-none ${
                                 isWatermarkCol    ? 'bg-amber-50 border-amber-200 text-amber-900 cursor-not-allowed' :
                                 isMapped          ? 'bg-emerald-50/30 border-emerald-300 text-emerald-800 focus:ring-2 focus:ring-emerald-300/40 focus:border-emerald-400' :
@@ -263,17 +263,17 @@ export const MappingStep: React.FC<MappingStepProps> = ({
                             >
                               <option value="">— Select source column —</option>
                               <optgroup label="Source Fields">
-                                {pairMetadata[activeMappingId].srcColumns.map((sc: any) => {
-                                  const compatible = isTypeCompatible(sc.data_type, tCol.data_type);
-                                  const alreadyUsed = usedSourceCols.includes(sc.column_name);
+                                {(Array.isArray(pairMetadata[activeMappingId]?.srcColumns) ? pairMetadata[activeMappingId].srcColumns : []).map((sc: any) => {
+                                  const compatible = isTypeCompatible(sc?.data_type, tCol?.data_type);
+                                  const alreadyUsed = usedSourceCols.includes(sc?.column_name);
                                   return (
                                     <option
-                                      key={sc.column_name}
-                                      value={sc.column_name}
+                                      key={sc?.column_name}
+                                      value={sc?.column_name}
                                       disabled={alreadyUsed}
                                       className={!compatible ? 'text-rose-400 font-semibold' : 'font-medium'}
                                     >
-                                      {sc.column_name} ({sc.data_type})
+                                      {sc?.column_name} ({sc?.data_type})
                                       {!compatible ? ' ⚠️ Type warning' : ''}
                                       {alreadyUsed ? ' (already mapped)' : ''}
                                     </option>

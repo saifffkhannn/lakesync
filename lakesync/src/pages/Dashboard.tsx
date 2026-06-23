@@ -43,16 +43,17 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartNew }) => {
   const fetchHistory = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/migration-history');
+      const response = await fetch('https://lakesync-gateway.onrender.com/migration-history');
       if (!response.ok) throw new Error('Failed to fetch');
       const data = await response.json();
-      setHistory(data);
+      const historyList = Array.isArray(data) ? data : [];
+      setHistory(historyList);
       
       // Calculate stats
-      const total = data.length;
-      const success = data.filter((r: any) => r.status === 'SUCCESS').length;
-      const failed = data.filter((r: any) => r.status === 'FAILED').length;
-      const rows = data.reduce((acc: number, r: any) => acc + (r.rows_target || 0), 0);
+      const total = historyList.length;
+      const success = historyList.filter((r: any) => r?.status === 'SUCCESS').length;
+      const failed = historyList.filter((r: any) => r?.status === 'FAILED').length;
+      const rows = historyList.reduce((acc: number, r: any) => acc + (r?.rows_target || 0), 0);
       
       setStats({ total, success, failed, rows });
     } catch (error) {
@@ -66,32 +67,34 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartNew }) => {
   const [sourceFilter, setSourceFilter] = useState<string>('ALL');
 
   const getSourceType = (src: string) => {
-    if (!src) return '';
-    if (src.includes('://')) {
+    if (typeof src !== 'string' || !src) return '';
+    const srcStr = src;
+    if (srcStr.includes('://')) {
       try {
-        const url = new URL(src);
+        const url = new URL(srcStr);
         return url.protocol.replace(':', '').toUpperCase();
       } catch (e) {
-        return src.split('://')[0].toUpperCase();
+        return srcStr.split('://')[0].toUpperCase();
       }
     }
-    if (src.includes('.')) {
-      return src.split('.')[0];
+    if (srcStr.includes('.')) {
+      return srcStr.split('.')[0];
     }
-    return src;
+    return srcStr;
   };
 
   const uniqueSources = Array.from(
-    new Set(history.map((r) => getSourceType(r.source)))
+    new Set((history || []).map((r) => r?.source ? getSourceType(r.source) : ''))
   ).filter(Boolean);
 
-  const filteredHistory = history.filter((run) => {
+  const filteredHistory = (history || []).filter((run) => {
+    if (!run) return false;
     const matchesStatus = 
       statusFilter === 'ALL' || 
       run.status === statusFilter;
     const matchesSource = 
       sourceFilter === 'ALL' || 
-      getSourceType(run.source).toLowerCase() === sourceFilter.toLowerCase();
+      getSourceType(run.source || '').toLowerCase() === sourceFilter.toLowerCase();
     return matchesStatus && matchesSource;
   });
 
@@ -223,33 +226,33 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartNew }) => {
                 </tr>
               ) : (
                 filteredHistory.map((run, idx) => (
-                  <tr key={run.id + idx} className="hover:bg-slate-50/70 transition-all group">
+                  <tr key={(run?.id || '') + idx} className="hover:bg-slate-50/70 transition-all group">
                     <td className="px-10 py-6">
                       <div className="flex flex-col">
-                        <span className="text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{run.table}</span>
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-1 truncate max-w-[200px]">{run.source}</span>
+                        <span className="text-sm font-black text-slate-900 group-hover:text-indigo-600 transition-colors">{run?.table || 'Unnamed'}</span>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-1 truncate max-w-[200px]">{run?.source || 'Unknown'}</span>
                       </div>
                     </td>
                     <td className="px-10 py-6 text-center">
                       <span className={`text-[9px] font-black px-2.5 py-1 rounded-lg border tracking-widest uppercase ${
-                        run.load_type === 'INCREMENTAL' 
+                        run?.load_type === 'INCREMENTAL' 
                         ? 'bg-amber-50 text-amber-700 border-amber-100' 
                         : 'bg-indigo-50 text-indigo-700 border-indigo-100'
                       }`}>
-                        {run.load_type || 'SNAPSHOT'}
+                        {run?.load_type || 'SNAPSHOT'}
                       </span>
                     </td>
                     <td className="px-10 py-6">
                       <div className="flex items-center gap-3">
                         <div className={`px-3 py-1.5 rounded-xl flex items-center gap-2 border shadow-sm ${
-                          run.status === 'SUCCESS' ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 
-                          run.status === 'FAILED' ? 'bg-rose-50 border-rose-100 text-rose-700' : 
+                          run?.status === 'SUCCESS' ? 'bg-emerald-50 border-emerald-100 text-emerald-700' : 
+                          run?.status === 'FAILED' ? 'bg-rose-50 border-rose-100 text-rose-700' : 
                           'bg-slate-50 border-slate-100 text-slate-500'
                         }`}>
-                          <div className={`w-2 h-2 rounded-full bg-current ${run.status === 'IN_PROGRESS' ? 'animate-pulse' : ''}`} />
-                          <span className="text-[10px] font-black uppercase tracking-widest">{run.status}</span>
+                          <div className={`w-2 h-2 rounded-full bg-current ${run?.status === 'IN_PROGRESS' ? 'animate-pulse' : ''}`} />
+                          <span className="text-[10px] font-black uppercase tracking-widest">{run?.status || 'UNKNOWN'}</span>
                         </div>
-                        {run.error && (
+                        {run?.error && (
                           <div className="relative group/tooltip">
                             <ExclamationCircleIcon className="w-5 h-5 text-rose-400 cursor-help" />
                             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 hidden group-hover/tooltip:block w-72 p-4 bg-slate-900 text-white text-[10px] rounded-[16px] shadow-2xl z-50 leading-relaxed ring-1 ring-white/10">
@@ -262,20 +265,20 @@ const Dashboard: React.FC<DashboardProps> = ({ onStartNew }) => {
                     </td>
                     <td className="px-10 py-6">
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-black text-slate-700">{run.rows_source.toLocaleString()}</span>
+                        <span className="text-sm font-black text-slate-700">{(run?.rows_source ?? 0).toLocaleString()}</span>
                         <span className="text-slate-300">/</span>
-                        <span className="text-sm font-black text-slate-400">{run.rows_target.toLocaleString()}</span>
+                        <span className="text-sm font-black text-slate-400">{(run?.rows_target ?? 0).toLocaleString()}</span>
                       </div>
                     </td>
                     <td className="px-10 py-6">
                       <div className="flex items-center gap-2 text-slate-500 font-bold text-xs bg-slate-50 w-fit px-3 py-1 rounded-lg border border-slate-100">
                         <ClockIcon className="w-4 h-4 opacity-50" />
-                        {run.duration}s
+                        {run?.duration ?? 0}s
                       </div>
                     </td>
                     <td className="px-10 py-6">
                       <div className="text-[11px] font-bold text-slate-400 tracking-tight">
-                        {run.timestamp}
+                        {run?.timestamp || ''}
                       </div>
                     </td>
                   </tr>

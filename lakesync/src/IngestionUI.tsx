@@ -11,7 +11,7 @@ import { SelectionStep } from './components/SelectionStep';
 import { MappingStep } from './components/MappingStep';
 import { ExecutionStep } from './components/ExecutionStep';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = "https://lakesync-gateway.onrender.com";
 
 type TablePair = { id: string; srcTable: string; tgtTable: string; };
 type QueueStatus = 'QUEUED' | 'RUNNING' | 'COMPLETED' | 'FAILED' | 'HALTED';
@@ -164,35 +164,35 @@ const IngestionUI = ({
   useEffect(() => {
     if (step === ingestionStep) {
       pollingRef.current = setInterval(async () => {
-        if (selection.loadType === 'FULL' || currentRunningIndex !== -1) {
+        if (selection?.loadType === 'FULL' || currentRunningIndex !== -1) {
           try {
-            const endpoint = selection.loadType === 'FULL' ? `${API_BASE}/migration-status` : `${API_BASE}/ingest/status`;
+            const endpoint = selection?.loadType === 'FULL' ? `${API_BASE}/migration-status` : `${API_BASE}/ingest/status`;
             const res = await fetch(endpoint);
             const data = await res.json();
             
             let normalizedData = data;
-            if (selection.loadType === 'FULL') {
+            if (selection?.loadType === 'FULL') {
+              const tableStatus = data?.table_status || [];
               // Check if any table is in failed/error state
-              const hasFailed = data.table_status?.some((t: any) => ['failed', 'extraction_failed', 'upload_failed', 'table_creation_failed', 'load_failed', 'validation_failed'].includes(t.status?.toLowerCase()));
-              const allDone = data.table_status?.every((t: any) => ['completed', 'success', 'skipped'].includes(t.status?.toLowerCase()));
+              const hasFailed = tableStatus.some((t: any) => t?.status && ['failed', 'extraction_failed', 'upload_failed', 'table_creation_failed', 'load_failed', 'validation_failed'].includes(t.status.toLowerCase()));
+              const allDone = tableStatus.length > 0 && tableStatus.every((t: any) => t?.status && ['completed', 'success', 'skipped'].includes(t.status.toLowerCase()));
+              const activeTable = tableStatus.find((t: any) => t?.status && ['extracting', 'uploading', 'creating_table', 'loading'].includes(t.status.toLowerCase()));
               
               normalizedData = {
-                status: hasFailed ? 'FAILED' : (allDone || data.progress === 100) ? 'COMPLETED' : 'RUNNING',
-                progress: data.progress,
-                details: data.table_status,
-                logs: data.logs,
-                message: data.table_status?.find((t: any) => ['extracting', 'uploading', 'creating_table', 'loading'].includes(t.status?.toLowerCase())) 
-                  ? `Table: ${data.table_status.find((t: any) => ['extracting', 'uploading', 'creating_table', 'loading'].includes(t.status?.toLowerCase())).table}`
-                  : ''
+                status: hasFailed ? 'FAILED' : (allDone || data?.progress === 100) ? 'COMPLETED' : 'RUNNING',
+                progress: data?.progress ?? 0,
+                details: tableStatus,
+                logs: data?.logs || [],
+                message: activeTable ? `Table: ${activeTable.table || ''}` : ''
               };
             }
 
             if (JSON.stringify(normalizedData) !== JSON.stringify(ingestionStatus)) {
               setIngestionStatus((prev: any) => {
-                let newProgress = normalizedData.progress ?? 0;
+                let newProgress = normalizedData?.progress ?? 0;
                 if (
-                  normalizedData.status !== 'IDLE' &&
-                  normalizedData.status !== 'INITIALIZING' &&
+                  normalizedData?.status !== 'IDLE' &&
+                  normalizedData?.status !== 'INITIALIZING' &&
                   prev &&
                   prev.progress !== undefined &&
                   prev.status !== 'COMPLETED' &&
@@ -202,12 +202,12 @@ const IngestionUI = ({
                 }
                 return { ...normalizedData, progress: newProgress };
               });
-              if (normalizedData.logs && Array.isArray(normalizedData.logs)) {
+              if (normalizedData?.logs && Array.isArray(normalizedData.logs)) {
                 setLogs(prev => {
-                  const initialLogs = prev.filter(l => l.startsWith('['));
+                  const initialLogs = (prev || []).filter(l => l && l.startsWith('['));
                   const uniqueLogs = [...initialLogs];
                   normalizedData.logs.forEach((log: string) => {
-                    if (!uniqueLogs.includes(log)) {
+                    if (log && !uniqueLogs.includes(log)) {
                       uniqueLogs.push(log);
                     }
                   });
@@ -220,7 +220,7 @@ const IngestionUI = ({
       }, 2000);
     }
     return () => clearInterval(pollingRef.current);
-  }, [step, currentRunningIndex, ingestionStatus, selection.loadType]);
+  }, [step, currentRunningIndex, ingestionStatus, selection?.loadType]);
 
   const handleInputChange = (category: 'source' | 'cloud' | 'target', key: string, value: string) => {
     setFormData((prev: any) => ({ ...prev, [category]: { ...prev[category], [key]: value } }));
@@ -241,32 +241,43 @@ const IngestionUI = ({
   };
 
   const loadTypeMappings = async (src: string, tgt: string) => {
+    if (!src || !tgt) return;
     const fileName = `${src.toLowerCase()}_${tgt.toLowerCase()}.csv`;
     try {
       const response = await fetch(`/data/${fileName}`);
       if (!response.ok) return;
       const text = await response.text();
-      const lines = text.split('\n').slice(1);
+      const lines = (text || '').split('\n').slice(1);
       const map: Record<string, string[]> = {};
       lines.forEach(line => {
-        if (!line.trim()) return;
-        const [s, t] = line.split(',').map(x => x.trim().replace(/"/g, '').toLowerCase());
-        if (!map[s]) map[s] = [];
-        map[s].push(t);
+        if (!line || !line.trim()) return;
+        const parts = line.split(',');
+        if (parts.length >= 2) {
+          const s = parts[0]?.trim()?.replace(/"/g, '')?.toLowerCase();
+          const t = parts[1]?.trim()?.replace(/"/g, '')?.toLowerCase();
+          if (s && t) {
+            if (!map[s]) map[s] = [];
+            map[s].push(t);
+          }
+        }
       });
       setTypeMappings(map);
     } catch (e) { console.warn("Could not load type mappings:", e); }
   };
 
   // ─── Normalize: lowercase + strip precision e.g. NUMBER(10,0) → number ──
-  const normalizeType = (t: string): string =>
-    t.toLowerCase().replace(/\s*\(.*?\)/g, '').trim();
+  const normalizeType = (t: string): string => {
+    if (typeof t !== 'string') return '';
+    return t.toLowerCase().replace(/\s*\(.*?\)/g, '').trim();
+  };
 
   // ─── Resolve a type to its logical cluster from data_type_clusters.json ──
   const getCluster = (raw: string): string | null => {
     const n = normalizeType(raw);
-    for (const [cluster, members] of Object.entries(dataTypeClusters.clusters)) {
-      if ((members as string[]).map(m => m.toLowerCase()).includes(n)) return cluster;
+    if (!n) return null;
+    const clusters = dataTypeClusters?.clusters || {};
+    for (const [cluster, members] of Object.entries(clusters)) {
+      if (Array.isArray(members) && members.map(m => String(m).toLowerCase()).includes(n)) return cluster;
     }
     return null;
   };
@@ -274,6 +285,7 @@ const IngestionUI = ({
   // ─── Is this type numeric? ────────────────────────────────────────────────
   const isNumericType = (raw: string): boolean => {
     const n = normalizeType(raw);
+    if (!n) return false;
     if (getCluster(n) === 'number') return true;
     return /^(int|integer|bigint|smallint|tinyint|numeric|decimal|float|double|real|long|number|float64|int64)\b/.test(n);
   };
@@ -281,6 +293,7 @@ const IngestionUI = ({
   // ─── Is this type string-like? ────────────────────────────────────────────
   const isStringType = (raw: string): boolean => {
     const n = normalizeType(raw);
+    if (!n) return false;
     if (getCluster(n) === 'text') return true;
     return ['string', 'varchar', 'nvarchar', 'char', 'nchar', 'text', 'ntext'].includes(n);
   };
@@ -296,14 +309,12 @@ const IngestionUI = ({
     if (s === t) return true;
 
     // CSV direct mapping (e.g. datetime → timestamp, datetime → timestamp_ntz)
-    if (typeMappings[s]?.map(normalizeType).includes(t)) return true;
+    if (typeMappings[s]?.map(normalizeType)?.includes(t)) return true;
 
     const srcCluster = getCluster(s);
     const tgtCluster = getCluster(t);
 
     // Same cluster → always compatible
-    // datetime ↔ timestamp ↔ timestamp_ntz ↔ timestamp_tz ↔ timestamp_ltz
-    // int ↔ bigint ↔ number ↔ float ↔ double  etc.
     if (srcCluster && tgtCluster && srcCluster === tgtCluster) return true;
 
     // Numeric widening: int→float, number→bigint, int→double etc. all safe
@@ -423,27 +434,27 @@ const IngestionUI = ({
     setIsProcessing(true);
     setConnectionError(null);
     const payload = {
-      source: { ...formData.source, platform: selection.sourcePlatform },
-      target: { ...formData.target, platform: selection.targetPlatform },
-      cloud: { ...formData.cloud, platform: selection.cloudPlatform },
-      load_type: selection.loadType
+      source: { ...(formData?.source || {}), platform: selection?.sourcePlatform },
+      target: { ...(formData?.target || {}), platform: selection?.targetPlatform },
+      cloud: { ...(formData?.cloud || {}), platform: selection?.cloudPlatform },
+      load_type: selection?.loadType
     };
     try {
       const response = await fetch(`${API_BASE}/config`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       if (!response.ok) {
         const errDetail = await response.json().catch(() => ({ detail: 'Failed to save config' }));
-        throw new Error(errDetail.detail || 'Failed to save config');
+        throw new Error(errDetail?.detail || 'Failed to save config');
       }
       setConfig(payload);
       setLogs(prev => [...prev, `[INFO] Configuration saved successfully`]);
       
       let srcS = [];
       let tgtS = [];
-      if (selection.loadType === 'FULL') {
+      if (selection?.loadType === 'FULL') {
         const srcRes = await fetch(`${API_BASE}/source/schemas`);
         if (!srcRes.ok) {
           const errDetail = await srcRes.json().catch(() => ({ detail: 'Failed to fetch source schemas' }));
-          throw new Error(`Source connection failed: ${errDetail.detail || 'Invalid credentials or connection timeout'}`);
+          throw new Error(`Source connection failed: ${errDetail?.detail || 'Invalid credentials or connection timeout'}`);
         }
         srcS = await srcRes.json();
       } else {
@@ -453,35 +464,35 @@ const IngestionUI = ({
         ]);
         if (!srcRes.ok) {
           const errDetail = await srcRes.json().catch(() => ({ detail: 'Failed to fetch source schemas' }));
-          throw new Error(`Source connection failed: ${errDetail.detail || 'Invalid credentials or connection timeout'}`);
+          throw new Error(`Source connection failed: ${errDetail?.detail || 'Invalid credentials or connection timeout'}`);
         }
         if (!tgtRes.ok) {
           const errDetail = await tgtRes.json().catch(() => ({ detail: 'Failed to fetch target schemas' }));
-          throw new Error(`Target connection failed: ${errDetail.detail || 'Invalid credentials or connection timeout'}`);
+          throw new Error(`Target connection failed: ${errDetail?.detail || 'Invalid credentials or connection timeout'}`);
         }
         srcS = await srcRes.json();
         tgtS = await tgtRes.json();
       }
-      setMetadata((prev: any) => ({ ...prev, srcSchemas: srcS, tgtSchemas: tgtS }));
+      setMetadata((prev: any) => ({ ...prev, srcSchemas: Array.isArray(srcS) ? srcS : [], tgtSchemas: Array.isArray(tgtS) ? tgtS : [] }));
       
-      if (selection.loadType === 'FULL') {
-        const metadataUrl = `${API_BASE}/fetch-metadata?source=${selection.sourcePlatform}&cloud=${selection.cloudPlatform}&target=${selection.targetPlatform}`;
+      if (selection?.loadType === 'FULL') {
+        const metadataUrl = `${API_BASE}/fetch-metadata?source=${selection?.sourcePlatform || ''}&cloud=${selection?.cloudPlatform || ''}&target=${selection?.targetPlatform || ''}`;
         const res = await fetch(metadataUrl);
         if (!res.ok) {
           const errDetail = await res.json().catch(() => ({ detail: 'Failed to fetch metadata' }));
-          throw new Error(`Metadata retrieval failed: ${errDetail.detail || 'Invalid credentials'}`);
+          throw new Error(`Metadata retrieval failed: ${errDetail?.detail || 'Invalid credentials'}`);
         }
         const data = await res.json();
-        const mappedTables = data.map((t: any) => ({
-          database: t.DB_NAME || t.DATABASE || t.database || "",
-          schema: t.TABLE_SCHEMA || t.SCHEMA || t.schema,
-          table: t.TABLE_NAME || t.TABLE || t.table,
-          primaryKey: t.PRIMARY_KEY_COLUMNS || t.PRIMARY_KEY || t.primaryKey || ""
+        const mappedTables = (Array.isArray(data) ? data : []).map((t: any) => ({
+          database: t?.DB_NAME || t?.DATABASE || t?.database || "",
+          schema: t?.TABLE_SCHEMA || t?.SCHEMA || t?.schema || "",
+          table: t?.TABLE_NAME || t?.TABLE || t?.table || "",
+          primaryKey: t?.PRIMARY_KEY_COLUMNS || t?.PRIMARY_KEY || t?.primaryKey || ""
         }));
         setMetadata((prev: any) => ({ ...prev, fullLoadTables: mappedTables }));
       }
       
-      if (selection.sourcePlatform.toLowerCase() === 'mysql' && selection.loadType !== 'FULL') {
+      if (selection?.sourcePlatform && selection.sourcePlatform.toLowerCase() === 'mysql' && selection?.loadType !== 'FULL') {
         await loadTables('source', payload.source.database || '');
       }
       setStep(2);
@@ -493,10 +504,10 @@ const IngestionUI = ({
 
   const loadTables = async (type: 'source' | 'target', schema: string) => {
     try {
-      const res = await fetch(`${API_BASE}/${type}/tables?schema=${schema}`);
+      const res = await fetch(`${API_BASE}/${type}/tables?schema=${schema || ''}`);
       const tables = await res.json();
-      setMetadata((prev: any) => ({ ...prev, [type === 'source' ? 'srcTables' : 'tgtTables']: tables }));
-      setSelection((prev: any) => ({ ...prev, [type === 'source' ? 'srcSchema' : 'tgtSchema']: schema }));
+      setMetadata((prev: any) => ({ ...prev, [type === 'source' ? 'srcTables' : 'tgtTables']: Array.isArray(tables) ? tables : [] }));
+      setSelection((prev: any) => ({ ...prev, [type === 'source' ? 'srcSchema' : 'tgtSchema']: schema || '' }));
     } catch (err) { setLogs(prev => [...prev, `[ERROR] Failed to load tables for ${schema}: ${err}`]); }
   };
 
@@ -512,8 +523,8 @@ const IngestionUI = ({
     if (isProcessing) return;
     setIsProcessing(true);
     try {
-      const selections = (metadata.fullLoadTables || []).filter((t: any) =>
-        tablePairs.some(p => p.srcTable === t.table)
+      const selections = (metadata?.fullLoadTables || []).filter((t: any) =>
+        t?.table && (tablePairs || []).some(p => p?.srcTable === t.table)
       );
       if (selections.length === 0) {
         alert("Please select at least one table.");
@@ -521,13 +532,13 @@ const IngestionUI = ({
       }
       
       const savePayload = {
-        source: selection.sourcePlatform,
+        source: selection?.sourcePlatform || '',
         selections: selections.map((s: any) => ({
-          source: selection.sourcePlatform.toUpperCase(),
-          database: s.database,
-          schema_name: s.schema,
-          table: s.table,
-          primary_key: s.primaryKey || ""
+          source: (selection?.sourcePlatform || '').toUpperCase(),
+          database: s?.database || '',
+          schema_name: s?.schema || '',
+          table: s?.table || '',
+          primary_key: s?.primaryKey || ""
         }))
       };
       
@@ -538,15 +549,15 @@ const IngestionUI = ({
       });
       if (!saveRes.ok) {
         const err = await saveRes.json();
-        alert(`Error saving metadata: ${err.detail || "Failed"}`);
+        alert(`Error saving metadata: ${err?.detail || "Failed"}`);
         return;
       }
 
       const startPayload = {
-        source: selection.sourcePlatform,
-        cloud: selection.cloudPlatform,
-        target: selection.targetPlatform,
-        metadata_filename: `${selection.sourcePlatform.toLowerCase()}_metadata.csv`
+        source: selection?.sourcePlatform || '',
+        cloud: selection?.cloudPlatform || '',
+        target: selection?.targetPlatform || '',
+        metadata_filename: `${(selection?.sourcePlatform || '').toLowerCase()}_metadata.csv`
       };
       const startRes = await fetch(`${API_BASE}/start-extraction`, {
         method: "POST",
@@ -555,11 +566,11 @@ const IngestionUI = ({
       });
       if (!startRes.ok) {
         const err = await startRes.json();
-        alert(`Migration failed: ${err.detail || "Failed"}`);
+        alert(`Migration failed: ${err?.detail || "Failed"}`);
         return;
       }
 
-      const queueData = tablePairs.map(p => ({
+      const queueData = (tablePairs || []).map(p => ({
         id: p.id,
         srcTable: p.srcTable,
         tgtTable: p.tgtTable,
@@ -578,7 +589,7 @@ const IngestionUI = ({
   };
 
   const prepareBatchMapping = async () => {
-    if (selection.loadType === 'FULL') {
+    if (selection?.loadType === 'FULL') {
       await startFullLoadMigration();
       return;
     }
@@ -586,38 +597,40 @@ const IngestionUI = ({
     setIsProcessing(true);
     try {
       setStep(3);
-      if (tablePairs.length > 0) await loadColumnsForPair(tablePairs[0]);
+      if ((tablePairs || []).length > 0) await loadColumnsForPair(tablePairs[0]);
       else setActiveMappingId(null);
     } finally { setIsProcessing(false); }
   };
 
   const loadColumnsForPair = async (pair: TablePair) => {
+    if (!pair) return;
     setActiveMappingId(pair.id);
     if (!pairMetadata[pair.id]) {
       try {
         const [sRes, tRes] = await Promise.all([
-          fetch(`${API_BASE}/source/columns?schema=${selection.srcSchema}&table=${pair.srcTable}`).then(r => r.json()),
-          fetch(`${API_BASE}/target/columns?schema=${selection.tgtSchema}&table=${pair.tgtTable}`).then(r => r.json())
+          fetch(`${API_BASE}/source/columns?schema=${selection?.srcSchema || ''}&table=${pair.srcTable || ''}`).then(r => r.json()),
+          fetch(`${API_BASE}/target/columns?schema=${selection?.tgtSchema || ''}&table=${pair.tgtTable || ''}`).then(r => r.json())
         ]);
-        const srcC = sRes;
-        const tgtC = tRes;
+        const srcC = Array.isArray(sRes) ? sRes : [];
+        const tgtC = Array.isArray(tRes) ? tRes : [];
         setPairMetadata(prev => ({ ...prev, [pair.id]: { srcColumns: srcC, tgtColumns: tgtC } }));
         const newMapping: Record<string, string> = {};
         tgtC.forEach((col: any) => {
-          const match = srcC.find((s: any) => s.column_name.toLowerCase() === col.column_name.toLowerCase());
+          if (!col?.column_name) return;
+          const match = srcC.find((s: any) => s?.column_name && s.column_name.toLowerCase() === col.column_name.toLowerCase());
           const hasDefault = col.default !== null && col.default !== undefined && col.default !== '';
           if (match) newMapping[col.column_name] = match.column_name;
           else if (col.nullable === 'YES' || col.nullable === true || hasDefault) newMapping[col.column_name] = '_NULL_';
           else newMapping[col.column_name] = '';
         });
         const commonWatermarks = ['updated_at', 'modified_at', 'modified_timestamp', 'last_modified', 'timestamp', 'load_date'];
-        const autoWatermarkSrc = srcC.find((c: any) => commonWatermarks.includes(c.column_name.toLowerCase()))?.column_name || '';
+        const autoWatermarkSrc = srcC.find((c: any) => c?.column_name && commonWatermarks.includes(c.column_name.toLowerCase()))?.column_name || '';
         setAllDefaultValues(prev => ({ ...prev, [pair.id]: {} }));
-        const defaultPks = srcC.filter((c: any) => c.is_primary_key).map((c: any) => c.column_name);
+        const defaultPks = srcC.filter((c: any) => c?.is_primary_key && c?.column_name).map((c: any) => c.column_name);
         setAllMappings(prev => ({ ...prev, [pair.id]: newMapping }));
         setTableConfig(prev => {
           if (!prev[pair.id]) return { ...prev, [pair.id]: { primary_keys: defaultPks, incremental_src_col: autoWatermarkSrc } };
-          return { ...prev, [pair.id]: { ...prev[pair.id], primary_keys: prev[pair.id].primary_keys.length > 0 ? prev[pair.id].primary_keys : defaultPks, incremental_src_col: prev[pair.id].incremental_src_col || autoWatermarkSrc } };
+          return { ...prev, [pair.id]: { ...prev[pair.id], primary_keys: prev[pair.id].primary_keys && prev[pair.id].primary_keys.length > 0 ? prev[pair.id].primary_keys : defaultPks, incremental_src_col: prev[pair.id].incremental_src_col || autoWatermarkSrc } };
         });
       } catch (err) { setLogs(prev => [...prev, `[ERROR] Failed to load columns: ${err}`]); }
     }
@@ -628,54 +641,52 @@ const IngestionUI = ({
     setIsProcessing(true);
     try {
       const queueData: QueueItem[] = [];
-      for (const pair of tablePairs) {
+      for (const pair of (tablePairs || [])) {
         const meta = pairMetadata[pair.id];
-        if (!meta) { alert(`Please configure mapped columns for table ${pair.srcTable}`); setActiveMappingId(pair.id); return; }
+        if (!meta) { alert(`Please configure mapped columns for table ${pair?.srcTable || ''}`); setActiveMappingId(pair.id); return; }
         const tcfg = tableConfig[pair.id] || { primary_keys: [], incremental_src_col: '' };
         let watermarkCol = tcfg.incremental_src_col;
-        if (selection.loadType === 'FULL' && !watermarkCol) {
-          watermarkCol = meta?.srcColumns[0]?.column_name || '';
+        if (selection?.loadType === 'FULL' && !watermarkCol) {
+          watermarkCol = meta?.srcColumns?.[0]?.column_name || '';
         }
-        if (!watermarkCol) { alert(`Please configure the Watermark column for table ${pair.srcTable}`); setActiveMappingId(pair.id); return; }
+        if (!watermarkCol) { alert(`Please configure the Watermark column for table ${pair?.srcTable || ''}`); setActiveMappingId(pair.id); return; }
         const maps = allMappings[pair.id] || {};
         const defaults = allDefaultValues[pair.id] || {};
         const finalMap: any = {};
-        for (const tCol of meta.tgtColumns) {
+        for (const tCol of (meta?.tgtColumns || [])) {
+          if (!tCol?.column_name) continue;
           let m = maps[tCol.column_name];
           const hasDefault = tCol.default !== null && tCol.default !== undefined && tCol.default !== '';
           const isNullable = tCol.nullable === 'YES' || tCol.nullable === true;
           const isOptional = isNullable || hasDefault;
-          if (!m || m === '') { if (isOptional) continue; alert(`Target column "${tCol.column_name}" in ${pair.tgtTable} is required but not mapped.`); setActiveMappingId(pair.id); return; }
-          if (m === '_CUSTOM_' && (!defaults[tCol.column_name] || !defaults[tCol.column_name].trim())) { alert(`Please enter a custom value for target column "${tCol.column_name}" in ${pair.tgtTable}.`); setActiveMappingId(pair.id); return; }
+          if (!m || m === '') { if (isOptional) continue; alert(`Target column "${tCol.column_name}" in ${pair?.tgtTable || 'table'} is required but not mapped.`); setActiveMappingId(pair.id); return; }
+          if (m === '_CUSTOM_' && (!defaults[tCol.column_name] || !defaults[tCol.column_name].trim())) { alert(`Please enter a custom value for target column "${tCol.column_name}" in ${pair?.tgtTable || 'table'}.`); setActiveMappingId(pair.id); return; }
           if (m === '_NULL_') {
-            if (!isNullable) { alert(`Target column "${tCol.column_name}" in ${pair.tgtTable} cannot be NULL.`); setActiveMappingId(pair.id); return; }
+            if (!isNullable) { alert(`Target column "${tCol.column_name}" in ${pair?.tgtTable || 'table'} cannot be NULL.`); setActiveMappingId(pair.id); return; }
             finalMap[tCol.column_name] = 'NULL';
           } else if (m === '_CUSTOM_') {
-            // ── Use cluster-aware validation instead of old logicalType lookup ──
             let rawVal = defaults[tCol.column_name] || '';
-            // If it's a calendar datetime-local output (e.g. 2026-05-27T15:45), format to SQL timestamp
             if (rawVal.includes('T')) {
               rawVal = rawVal.replace('T', ' ');
-              // Add seconds if not present
               if (rawVal.length === 16) rawVal += ':00';
             }
-            const result = validateCustomValue(rawVal, tCol.data_type, tCol.column_name, pair.tgtTable, pair.id);
+            const result = validateCustomValue(rawVal, tCol.data_type || '', tCol.column_name, pair?.tgtTable || '', pair.id);
             if (!result.ok) return;
             finalMap[tCol.column_name] = result.coerced;
           } else { finalMap[tCol.column_name] = m; }
         }
-        queueData.push({ ...pair, status: 'QUEUED', finalMap, primary_keys: tcfg.primary_keys, incremental_src_col: watermarkCol } as any);
+        queueData.push({ ...pair, status: 'QUEUED', finalMap, primary_keys: tcfg.primary_keys || [], incremental_src_col: watermarkCol } as any);
       }
       const fullPayload = queueData.map((q: any) => ({
-        src_db: config.source.database || config.source.project_id || '',
-        src_schema: selection.srcSchema || config.source.schema || config.source.dataset_id || '',
+        src_db: config?.source?.database || config?.source?.project_id || '',
+        src_schema: selection?.srcSchema || config?.source?.schema || config?.source?.dataset_id || '',
         src_table: q.srcTable,
-        tgt_db: config.target.database || config.target.project_id || config.target.catalog || '',
-        tgt_schema: selection.tgtSchema || config.target.schema || config.target.dataset_id || '',
+        tgt_db: config?.target?.database || config?.target?.project_id || config?.target?.catalog || '',
+        tgt_schema: selection?.tgtSchema || config?.target?.schema || config?.target?.dataset_id || '',
         tgt_table: q.tgtTable,
         column_map: q.finalMap,
-        source_columns: pairMetadata[q.id]?.srcColumns.map((c: any) => c.column_name) || [],
-        target_columns: pairMetadata[q.id]?.tgtColumns.map((c: any) => c.column_name) || [],
+        source_columns: pairMetadata[q.id]?.srcColumns?.map((c: any) => c?.column_name).filter(Boolean) || [],
+        target_columns: pairMetadata[q.id]?.tgtColumns?.map((c: any) => c?.column_name).filter(Boolean) || [],
         incremental_src_col: q.incremental_src_col || '',
         primary_keys: q.primary_keys || []
       }));

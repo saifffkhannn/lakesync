@@ -32,7 +32,7 @@ interface ConversionResult {
 }
 
 const SUPPORTED_EXT = [".abap", ".txt", ".src", ".clas", ".prog", ".fugr", ".cds"];
-const API_BASE = "http://localhost:8000";
+const API_BASE = "https://lakesync-gateway.onrender.com";
 const ABAP_SF_KEY = 'lake_sync_abap_snowflake';
 
 const labelCls = "block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 text-left";
@@ -95,9 +95,10 @@ export const ABAPConversion: React.FC<ABAPConversionProps> = ({ onBack }) => {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.detail || `Snowflake connection failed (${res.status})`);
       
-      setDatabases(data.databases || []);
-      const defaultDb = creds.database?.toUpperCase();
-      if (defaultDb && data.databases.includes(defaultDb)) {
+      const dbList = Array.isArray(data?.databases) ? data.databases : [];
+      setDatabases(dbList);
+      const defaultDb = creds?.database?.toUpperCase();
+      if (defaultDb && dbList.includes(defaultDb)) {
         setSelectedDb(defaultDb);
         fetchSchemas(creds, defaultDb);
       }
@@ -120,12 +121,13 @@ export const ABAPConversion: React.FC<ABAPConversionProps> = ({ onBack }) => {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.detail || `Failed to fetch schemas`);
       
-      setSchemas(data.schemas || []);
-      const defaultSchema = creds.schema?.toUpperCase();
-      if (defaultSchema && data.schemas.includes(defaultSchema)) {
+      const schemaList = Array.isArray(data?.schemas) ? data.schemas : [];
+      setSchemas(schemaList);
+      const defaultSchema = creds?.schema?.toUpperCase();
+      if (defaultSchema && schemaList.includes(defaultSchema)) {
         setSelectedSchema(defaultSchema);
-      } else if (data.schemas.length > 0) {
-        setSelectedSchema(data.schemas[0]);
+      } else if (schemaList.length > 0) {
+        setSelectedSchema(schemaList[0]);
       }
     } catch (e: any) {
       console.error("Fetch schemas error:", e);
